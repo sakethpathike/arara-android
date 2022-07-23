@@ -26,8 +26,3 @@ fun SongThing() {
     ) {
     }
 }
-
-@Composable
-fun Spacers(modifier: Modifier) {
-    Spacer(modifier = modifier)
-}
