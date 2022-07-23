@@ -10,11 +10,11 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SongThing() {
-    val paddingValue = 8.dp
+    val paddingValue = 10.dp
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .requiredHeight(85.dp)
+            .requiredHeight(80.dp)
             .padding(
                 start = paddingValue,
                 end = paddingValue,
