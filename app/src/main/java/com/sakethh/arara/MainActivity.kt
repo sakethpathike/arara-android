@@ -21,9 +21,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AraraTheme {
+            MaterialTheme() {
                 SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-               }
+            }
+
         }
     }
 }

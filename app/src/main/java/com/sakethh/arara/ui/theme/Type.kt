@@ -2,33 +2,29 @@ package com.sakethh.arara.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.sakethh.arara.R
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-        bodyLarge = TextStyle(
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 0.5.sp
-        )
-        /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
+val generalFont = FontFamily(
+    Font(R.font.regular, weight = FontWeight.Normal),
+    Font(R.font.light, weight = FontWeight.Light),
+    Font(R.font.medium, weight = FontWeight.Medium),
+    Font(R.font.semibold, weight = FontWeight.SemiBold),
+    Font(R.font.bold, weight = FontWeight.Bold)
+)
+val eddaCaps = FontFamily(Font(R.font.eddacaps, weight = FontWeight.Normal))
+val Typography = Typography(  // for font towards the text style(heading, description, title and whatever!!)
+    titleSmall = TextStyle(
+        fontFamily = generalFont,
+        fontWeight = FontWeight.Light
+    ), // "lyrics" label
+    titleMedium = TextStyle(fontFamily = generalFont, fontWeight = FontWeight.Medium), // title
+    bodySmall = TextStyle(fontFamily = generalFont, fontWeight = FontWeight.Normal) /*description*/,
     labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+        fontFamily = eddaCaps,
+        fontWeight = FontWeight.Normal
+    ) // attribute in about page:))
 )

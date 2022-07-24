@@ -1,6 +1,13 @@
 buildscript {
+    ext.kotlin_version = '1.5.31'
     ext {
         compose_version = '1.1.0-beta01'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
