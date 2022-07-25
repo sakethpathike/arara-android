@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -30,16 +31,13 @@ fun SongThing(imageLink: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .requiredHeight(80.dp)
+            .requiredHeight(70.dp)
             .padding(
                 start = paddingValue,
                 end = paddingValue,
-                top = paddingValue,
                 bottom = paddingValue
             )
-            .border(width = 3.dp, color = Color.DarkGray)
-            .background(color = Color.Transparent)
-            .shadow(elevation = 4.dp)
+            .border(width = 3.dp, color = Color.DarkGray).shadow(2.dp).background(color = Color.White)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
@@ -52,8 +50,7 @@ fun SongThing(imageLink: String) {
                     .padding(start = 10.dp) //gives 10dp padding in left
                     .requiredWidth(40.dp) //renders width of the image
                     .shadow(elevation = 1.dp)
-                    .border(BorderStroke(width = 2.dp, color = Color.DarkGray))
-                    .blur(4.dp),
+                    .border(BorderStroke(width = 2.dp, color = Color.DarkGray)),
                 error = painterResource(R.drawable.image)
             )
             Spacer(modifier = Modifier.width(5.dp))
@@ -63,7 +60,7 @@ fun SongThing(imageLink: String) {
                     .padding(end = 60.dp)
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(11.dp))
                 Text(
                     text = "Broken Satellites, Wake Up, Architect, The Gods We Can Touch And Many More",
                     style = MaterialTheme.typography.titleMedium,
@@ -73,7 +70,7 @@ fun SongThing(imageLink: String) {
                 Text(
                     text = "Lyrics",
                     modifier = Modifier
-                        .padding(top=4.dp, bottom = 4.dp)
+                        .padding(top = 3.dp, bottom = 3.dp)
                         .background(color = Color.LightGray)
                         .wrapContentSize()
                         .padding(2.dp),
