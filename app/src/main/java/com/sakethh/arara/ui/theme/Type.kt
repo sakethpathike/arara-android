@@ -21,7 +21,7 @@ val Typography =
         titleSmall = TextStyle(
             fontFamily = generalFont,
             fontWeight = FontWeight.Light, fontSize = 16.sp
-        ), // "lyrics" label
+        ),
         titleMedium = TextStyle(
             fontFamily = generalFont,
             fontWeight = FontWeight.Normal,
@@ -31,7 +31,7 @@ val Typography =
             fontFamily = generalFont,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp
-        ) /*description*/,
+        ) /*description and "lyrics" label*/,
         labelSmall = TextStyle(
             fontFamily = eddaCaps,
             fontWeight = FontWeight.Normal, fontSize = 16.sp
