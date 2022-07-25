@@ -11,20 +11,29 @@ import com.sakethh.arara.R
 val generalFont = FontFamily(
     Font(R.font.regular, weight = FontWeight.Normal),
     Font(R.font.light, weight = FontWeight.Light),
-    Font(R.font.medium, weight = FontWeight.Medium),
+    Font(R.font.description, weight = FontWeight.Medium),
     Font(R.font.semibold, weight = FontWeight.SemiBold),
     Font(R.font.bold, weight = FontWeight.Bold)
 )
 val eddaCaps = FontFamily(Font(R.font.eddacaps, weight = FontWeight.Normal))
-val Typography = Typography(  // for font towards the text style(heading, description, title and whatever!!)
-    titleSmall = TextStyle(
-        fontFamily = generalFont,
-        fontWeight = FontWeight.Light
-    ), // "lyrics" label
-    titleMedium = TextStyle(fontFamily = generalFont, fontWeight = FontWeight.Medium), // title
-    bodySmall = TextStyle(fontFamily = generalFont, fontWeight = FontWeight.Normal) /*description*/,
-    labelSmall = TextStyle(
-        fontFamily = eddaCaps,
-        fontWeight = FontWeight.Normal
-    ) // attribute in about page:))
-)
+val Typography =
+    Typography(  // for font towards the text style(heading, description, title and whatever!!)
+        titleSmall = TextStyle(
+            fontFamily = generalFont,
+            fontWeight = FontWeight.Light, fontSize = 16.sp
+        ), // "lyrics" label
+        titleMedium = TextStyle(
+            fontFamily = generalFont,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.sp
+        ), // title
+        bodySmall = TextStyle(
+            fontFamily = generalFont,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp
+        ) /*description*/,
+        labelSmall = TextStyle(
+            fontFamily = eddaCaps,
+            fontWeight = FontWeight.Normal, fontSize = 16.sp
+        ) // attribute in about page:))
+    )

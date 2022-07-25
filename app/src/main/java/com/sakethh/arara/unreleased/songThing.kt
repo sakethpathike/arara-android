@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -34,7 +35,8 @@ fun SongThing(imageLink: String) {
                 bottom = paddingValue
             )
             .border(width = 3.dp, color = Color.DarkGray)
-            .background(color = Color.Transparent).shadow(elevation = 4.dp)
+            .background(color = Color.Transparent)
+            .shadow(elevation = 4.dp)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
@@ -50,18 +52,24 @@ fun SongThing(imageLink: String) {
                     .border(BorderStroke(width = 2.dp, color = Color.DarkGray)),
                 error = painterResource(R.drawable.image)
             )
-            Spacer(modifier = Modifier.width(7.dp))
-            Spacer(modifier = Modifier.padding(top = 12.dp, bottom = 12.dp).width(4.dp))
+            Spacer(modifier = Modifier.width(5.dp))
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth()
             ) {
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Shelff!",
-                    modifier = Modifier.size(5.dp),
+                    text = "Broken Satellites",
                     style = MaterialTheme.typography.titleMedium
                 )
+                /*Text(
+                    text = "Lyrics",
+                    modifier = Modifier
+                        .border(BorderStroke(1.dp, color = Color.Gray))
+                        .background(color = Color.LightGray),
+                    style = MaterialTheme.typography.titleSmall
+                )*/
             }
         }
 
