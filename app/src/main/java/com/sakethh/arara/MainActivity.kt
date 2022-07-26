@@ -21,36 +21,14 @@ import coil.compose.AsyncImage
 import com.sakethh.arara.ui.theme.AraraTheme
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.unreleased.SongThing
+import com.sakethh.arara.unreleased.UnreleasedScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme(typography = Typography /*(typography varible name from Type.kt)*/) {
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(enabled = true, state = ScrollState(0))) {
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                    SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                }
+            MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
+               UnreleasedScreen()
             }
         }
     }

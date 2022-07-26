@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -37,10 +38,12 @@ fun SongThing(imageLink: String) {
                 end = paddingValue,
                 bottom = paddingValue
             )
-            .border(width = 3.dp, color = Color.DarkGray).shadow(2.dp).background(color = Color.White)
+            .border(width = 3.dp, color = Color.DarkGray)
+            .shadow(2.dp)
+            .background(color = Color.White)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
-            AsyncImage(
+            ImageThing(
                 model = ImageRequest.Builder(LocalContext.current).data(imageLink).crossfade(true)
                     .build(),
                 contentDescription = "Image for unreleased song from a warrior:)",
@@ -51,7 +54,7 @@ fun SongThing(imageLink: String) {
                     .requiredWidth(40.dp) //renders width of the image
                     .shadow(elevation = 1.dp)
                     .border(BorderStroke(width = 2.dp, color = Color.DarkGray)),
-                error = painterResource(R.drawable.image)
+                onError = painterResource(R.drawable.image)
             )
             Spacer(modifier = Modifier.width(5.dp))
             Column(
@@ -81,4 +84,14 @@ fun SongThing(imageLink: String) {
         }
 
     }
+}
+
+@Composable
+fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onError: Painter) {
+    AsyncImage(
+        model = model,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        error = onError
+    )
 }
