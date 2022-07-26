@@ -105,7 +105,7 @@ fun SongThing1(imageLink: String, songName: String) {
         modifier = Modifier
             .background(color = Color.DarkGray)
             .fillMaxWidth()
-            .requiredHeight(60.dp)
+            .requiredHeight(65.dp)
             .background(color = Color.DarkGray)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
@@ -116,19 +116,19 @@ fun SongThing1(imageLink: String, songName: String) {
                 contentDescription = "Image for unreleased song from a warrior:)",
                 modifier = Modifier
                     .padding(top = 10.dp) //gives 10dp padding in top
-                    .requiredHeight(45.dp) // renders height of the image
+                    .requiredHeight(50.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
-                    .requiredWidth(45.dp) //renders width of the image
+                    .requiredWidth(50.dp) //renders width of the image
                 , onError = painterResource(R.drawable.image)
             )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(end = 60.dp)
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.height(13.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 Text(
                     text = songName,
                     style = MaterialTheme.typography.titleMedium,
