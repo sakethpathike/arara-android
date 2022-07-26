@@ -31,44 +31,46 @@ fun SongThing(imageLink: String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .requiredHeight(70.dp)
+            .background(color = Color.DarkGray)
             .padding(
+                top = paddingValue,
                 start = paddingValue,
-                end = paddingValue,
-                bottom = paddingValue
+                end = paddingValue
             )
-            .border(width = 3.dp, color = Color.DarkGray)
+            .fillMaxWidth()
+            .requiredHeight(65.dp)
+            .border(width = 2.dp, color = Color.LightGray)
             .shadow(2.dp)
-            .background(color = Color.White)
+            .background(color = Color.DarkGray)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
-                model = ImageRequest.Builder(LocalContext.current).data(imageLink).crossfade(true)
+                model = ImageRequest.Builder(LocalContext.current).data(imageLink)
+                    .crossfade(true)
                     .build(),
                 contentDescription = "Image for unreleased song from a warrior:)",
                 modifier = Modifier
                     .padding(top = 10.dp) //gives 10dp padding in top
-                    .requiredHeight(40.dp) // renders height of the image
+                    .requiredHeight(45.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
-                    .requiredWidth(40.dp) //renders width of the image
-                    .shadow(elevation = 1.dp)
-                    .border(BorderStroke(width = 2.dp, color = Color.DarkGray)),
+                    .requiredWidth(45.dp) //renders width of the image
+                    .shadow(elevation = 1.dp),
                 onError = painterResource(R.drawable.image)
             )
-            Spacer(modifier = Modifier.width(5.dp))
+            Spacer(modifier = Modifier.width(7.dp))
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(end = 60.dp)
                     .fillMaxWidth()
             ) {
-                Spacer(modifier = Modifier.height(11.dp))
+                Spacer(modifier = Modifier.height(13.dp))
                 Text(
                     text = "Broken Satellites, Wake Up, Architect, The Gods We Can Touch And Many More",
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White
                 )
                 Text(
                     text = "Lyrics",
@@ -78,7 +80,7 @@ fun SongThing(imageLink: String) {
                         .wrapContentSize()
                         .padding(2.dp),
                     style = MaterialTheme.typography.bodySmall,
-                    fontSize = 10.sp, color = Color.DarkGray
+                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = Color.DarkGray
                 )
             }
         }
@@ -94,4 +96,58 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
         modifier = modifier,
         error = onError
     )
+}
+
+@Composable
+fun SongThing1(imageLink: String) {
+    val paddingValue = 10.dp
+    Box(
+        modifier = Modifier
+            .background(color = Color.DarkGray)
+            .fillMaxWidth()
+            .requiredHeight(60.dp)
+            .background(color = Color.DarkGray)
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            ImageThing(
+                model = ImageRequest.Builder(LocalContext.current).data(imageLink)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Image for unreleased song from a warrior:)",
+                modifier = Modifier
+                    .padding(top = 10.dp) //gives 10dp padding in top
+                    .requiredHeight(45.dp) // renders height of the image
+                    .padding(start = 10.dp) //gives 10dp padding in left
+                    .requiredWidth(45.dp) //renders width of the image
+,                onError = painterResource(R.drawable.image)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(end = 60.dp)
+                    .fillMaxWidth()
+            ) {
+                Spacer(modifier = Modifier.height(13.dp))
+                Text(
+                    text = "Broken Satellites, Wake Up, Architect, The Gods We Can Touch And Many More",
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.White
+                )
+                Text(
+                    text = "Lyrics",
+                    modifier = Modifier
+                        .padding(top = 3.dp, bottom = 3.dp)
+                        .background(color = Color.LightGray)
+                        .wrapContentSize()
+                        .padding(2.dp),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = Color.DarkGray
+                )
+            }
+        }
+
+    }
 }
