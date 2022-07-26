@@ -3,17 +3,11 @@ package com.sakethh.arara.unreleased
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -25,6 +19,8 @@ import coil.request.ImageRequest
 import com.germainkevin.collapsingtopbar.CollapsingTopBar
 import com.germainkevin.collapsingtopbar.CollapsingTopBarColors
 import com.germainkevin.collapsingtopbar.rememberCollapsingTopBarScrollBehavior
+import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.json.responseJson
 import com.sakethh.arara.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -72,15 +68,19 @@ fun UnreleasedScreen() {
     )
     {
         LazyColumn(contentPadding = it) {
-            items(20) {
-
-                SongThing(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-
-/*
-                SongThing1(imageLink = "https://ia802505.us.archive.org/30/items/artworks-from-shangela-laquifa-warrior/Wake%20Up.png")
-                */
-           }
+            val apiURL = "https://sample-server-side.herokuapp.com/unreleased"
+            val request = apiURL.httpGet().responseJson { _, _, data ->
+                val fetchArray = data.get().array()
+                items(fetchArray.length()) { it ->
+                    val fetchSongName = fetchArray.getJSONObject(it).getString("songName")
+                    val artwork = fetchArray.getJSONObject(it).getString("specificArtwork")
+                    SongThing1(imageLink = artwork, songName = fetchSongName)
+                }
+            }
+            request.get()
         }
     }
-
 }
+
+
+//    SongThing1(imageLink = "", songName = "")

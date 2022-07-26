@@ -27,7 +27,7 @@ import com.sakethh.arara.R
 import com.sakethh.arara.ui.theme.generalFont
 
 @Composable
-fun SongThing(imageLink: String) {
+fun SongThing(imageLink: String, songName: String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
@@ -66,7 +66,7 @@ fun SongThing(imageLink: String) {
             ) {
                 Spacer(modifier = Modifier.height(13.dp))
                 Text(
-                    text = "Broken Satellites, Wake Up, Architect, The Gods We Can Touch And Many More",
+                    text = songName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -99,7 +99,7 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
 }
 
 @Composable
-fun SongThing1(imageLink: String) {
+fun SongThing1(imageLink: String, songName: String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
@@ -119,7 +119,7 @@ fun SongThing1(imageLink: String) {
                     .requiredHeight(45.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
                     .requiredWidth(45.dp) //renders width of the image
-,                onError = painterResource(R.drawable.image)
+                , onError = painterResource(R.drawable.image)
             )
             Spacer(modifier = Modifier.width(5.dp))
             Column(
@@ -130,7 +130,7 @@ fun SongThing1(imageLink: String) {
             ) {
                 Spacer(modifier = Modifier.height(13.dp))
                 Text(
-                    text = "Broken Satellites, Wake Up, Architect, The Gods We Can Touch And Many More",
+                    text = songName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

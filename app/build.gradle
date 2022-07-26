@@ -63,6 +63,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.1.0")
     implementation "androidx.core:core-ktx:+"
     implementation "com.github.germainkevinbusiness:CollapsingTopBarCompose:1.0.0-rc06"
-    implementation "me.onebone:toolbar-compose:2.0.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.github.kittinunf.fuel:fuel:2.3.1'
+    implementation 'com.github.kittinunf.fuel:fuel-json:2.3.1'
 }
