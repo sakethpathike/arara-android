@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -19,9 +20,11 @@ import coil.request.ImageRequest
 import com.germainkevin.collapsingtopbar.CollapsingTopBar
 import com.germainkevin.collapsingtopbar.CollapsingTopBarColors
 import com.germainkevin.collapsingtopbar.rememberCollapsingTopBarScrollBehavior
+import com.github.kittinunf.fuel.core.await
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.json.responseJson
 import com.sakethh.arara.R
+import kotlinx.coroutines.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,20 +70,19 @@ fun UnreleasedScreen() {
         }
     )
     {
+        val coroutineThing = rememberCoroutineScope()
         LazyColumn(contentPadding = it) {
-            val apiURL = "https://sample-server-side.herokuapp.com/unreleased"
-            val request = apiURL.httpGet().responseJson { _, _, data ->
-                val fetchArray = data.get().array()
-                items(fetchArray.length()) { it ->
-                    val fetchSongName = fetchArray.getJSONObject(it).getString("songName")
-                    val artwork = fetchArray.getJSONObject(it).getString("specificArtwork")
-                    SongThing1(imageLink = artwork, songName = fetchSongName)
+            val apiCall = "https://sample-server-side.herokuapp.com/unreleased".httpGet()
+                .responseJson { request, response, result ->
+                    val doc = result.get().array()
+                    items(doc.length()) {
+                        SongThing1(
+                            imageLink = doc.getJSONObject(it).getString("specificArtwork"),
+                            songName = "songName"
+                        )
+                    }
                 }
-            }
-            request.get()
+            val apiResponse = coroutineThing.async { apiCall.join() }
         }
     }
 }
-
-
-//    SongThing1(imageLink = "", songName = "")
