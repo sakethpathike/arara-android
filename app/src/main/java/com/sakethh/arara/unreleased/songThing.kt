@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
+import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.generalFont
 
 @Composable
@@ -31,7 +32,7 @@ fun SongThing(imageLink: String, songName: String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
-            .background(color = Color.DarkGray)
+            .background(color = backgroundColor)
             .padding(
                 top = paddingValue,
                 start = paddingValue,
@@ -41,7 +42,7 @@ fun SongThing(imageLink: String, songName: String) {
             .requiredHeight(65.dp)
             .border(width = 2.dp, color = Color.LightGray)
             .shadow(2.dp)
-            .background(color = Color.DarkGray)
+            .background(color = backgroundColor)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
@@ -76,11 +77,11 @@ fun SongThing(imageLink: String, songName: String) {
                     text = "Lyrics",
                     modifier = Modifier
                         .padding(top = 3.dp, bottom = 3.dp)
-                        .background(color = Color.LightGray)
+                        .background(color = Color.Gray)
                         .wrapContentSize()
                         .padding(2.dp),
                     style = MaterialTheme.typography.bodySmall,
-                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = Color.DarkGray
+                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = backgroundColor
                 )
             }
         }
@@ -103,10 +104,10 @@ fun SongThing1(imageLink: String, songName: String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
-            .background(color = Color.DarkGray)
+            .background(color = backgroundColor)
             .fillMaxWidth()
             .requiredHeight(65.dp)
-            .background(color = Color.DarkGray)
+            .background(color = backgroundColor)
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
@@ -140,11 +141,11 @@ fun SongThing1(imageLink: String, songName: String) {
                     text = "Lyrics",
                     modifier = Modifier
                         .padding(top = 3.dp, bottom = 3.dp)
-                        .background(color = Color.LightGray)
+                        .background(color = Color.Gray)
                         .wrapContentSize()
                         .padding(2.dp),
                     style = MaterialTheme.typography.bodySmall,
-                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = Color.DarkGray
+                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = backgroundColor
                 )
             }
         }
