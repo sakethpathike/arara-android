@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
@@ -36,75 +37,91 @@ import com.sakethh.arara.ui.theme.secondGradient
 @Composable
 fun UnreleasedScreen() {
     val scrollBehavior = rememberCollapsingTopBarScrollBehavior(
-        isAlwaysCollapsed = true,
-        isExpandedWhenFirstDisplayed = false,
+        isAlwaysCollapsed = false,
+        isExpandedWhenFirstDisplayed = true,
         centeredTitleAndSubtitle = false,
         collapsedTopBarHeight = 50.dp,
-        expandedTopBarMaxHeight = 60.dp,
+        expandedTopBarMaxHeight = 70.dp,
     )
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CollapsingTopBar(
-                scrollBehavior = scrollBehavior,
-                title = {
-                    Text(text = "Unreleased", style = MaterialTheme.typography.bodySmall, color = Color.LightGray)
-                },
-                colors = CollapsingTopBarColors(
-                    backgroundColor = headerColor,
-                    contentColor = Color.LightGray,
-                    backgroundColorWhenCollapsingOrExpanding = headerColor,
-                    onBackgroundColorChange = {}),
+    Box(
+        modifier = Modifier
+            .background(
+                headerColor
             )
+            .fillMaxSize()
+    ) {
 
-        }
-    )
-    {
-        LazyColumn(contentPadding = it)
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                CollapsingTopBar(
+                    scrollBehavior = scrollBehavior  , colors = CollapsingTopBarColors(
+                        backgroundColor = headerColor,
+                        contentColor = headerColor,
+                        backgroundColorWhenCollapsingOrExpanding = headerColor,
+                        onBackgroundColorChange = {}),
+                 title = {
+                        Text(
+                            text = "Unreleased",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.LightGray,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+                )
+            }
+        )
         {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(190.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    firstGradient, secondGradient
+            LazyColumn(
+                contentPadding = it ,modifier = Modifier.background(
+                    headerColor
+                )
+            )
+            {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        firstGradient, secondGradient
+                                    )
                                 )
                             )
-                        )
-                ) {
-                    ImageThing(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("https://ia902501.us.archive.org/9/items/aurora-artworks/unreleaed-artweork.jpg")
-                            .crossfade(true).build(),
-                        contentDescription = "Toolbar Image",
-                        modifier = Modifier
-                            .size(150.dp)
-                            .shadow(2.dp)
-                            .align(Alignment.Center),
-                        onError = painterResource(
-                            R.drawable.image
-                        )
-                    )
-                }
-            }
-
-            val apiCall =
-                "https://sample-server-side.herokuapp.com/unreleased".httpGet()
-                    .responseJson { request, response, result ->
-                        val doc = result.get().array()
-                        items(doc.length()) {
-                            SongThing1(
-                                imageLink = doc.getJSONObject(it)
-                                    .getString("specificArtwork"),
-                                songName = doc.getJSONObject(it).getString("songName")
+                    ) {
+                        ImageThing(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://ia902501.us.archive.org/9/items/aurora-artworks/unreleaed-artweork.jpg")
+                                .crossfade(true).build(),
+                            contentDescription = "Toolbar Image",
+                            modifier = Modifier
+                                .size(150.dp)
+                                .shadow(2.dp)
+                                .align(Alignment.Center),
+                            onError = painterResource(
+                                R.drawable.image
                             )
-                        }
+                        )
                     }
-            apiCall.join()
+                }
+
+                val apiCall =
+                    "https://sample-server-side.herokuapp.com/unreleased".httpGet()
+                        .responseJson { request, response, result ->
+                            val doc = result.get().array()
+                            items(doc.length()) {
+                                SongThing1(
+                                    imageLink = doc.getJSONObject(it)
+                                        .getString("specificArtwork"),
+                                    songName = doc.getJSONObject(it).getString("songName")
+                                )
+                            }
+                        }
+                apiCall.join()
+            }
         }
     }
 }
