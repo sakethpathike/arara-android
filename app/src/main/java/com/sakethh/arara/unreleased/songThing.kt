@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -25,7 +26,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
 import com.sakethh.arara.ui.theme.backgroundColor
+import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.generalFont
+import com.sakethh.arara.ui.theme.secondGradient
 
 @Composable
 fun SongThing(imageLink: String, songName: String) {
@@ -150,5 +153,35 @@ fun SongThing1(imageLink: String, songName: String) {
             }
         }
 
+    }
+}
+
+@Composable
+fun ArtBoard() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        firstGradient, secondGradient
+                    )
+                )
+            )
+    ) {
+        ImageThing(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data("https://ia902501.us.archive.org/9/items/aurora-artworks/unreleaed-artweork.jpg")
+                .crossfade(true).build(),
+            contentDescription = "Toolbar Image",
+            modifier = Modifier
+                .size(150.dp)
+                .shadow(2.dp)
+                .align(Alignment.Center),
+            onError = painterResource(
+                R.drawable.image
+            )
+        )
     }
 }
