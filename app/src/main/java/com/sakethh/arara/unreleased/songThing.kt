@@ -1,8 +1,6 @@
 package com.sakethh.arara.unreleased
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -29,6 +28,7 @@ import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.generalFont
 import com.sakethh.arara.ui.theme.secondGradient
+import kotlinx.coroutines.Job
 
 @Composable
 fun SongThing(imageLink: String, songName: String) {
@@ -70,7 +70,7 @@ fun SongThing(imageLink: String, songName: String) {
             ) {
                 Spacer(modifier = Modifier.height(13.dp))
                 Text(
-                    text = songName,
+                    text = songName.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -103,7 +103,7 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
 }
 
 @Composable
-fun SongThing1(imageLink: String, songName: String) {
+fun SongThing1(imageLink:  String, songName:String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
@@ -134,7 +134,7 @@ fun SongThing1(imageLink: String, songName: String) {
             ) {
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(
-                    text = songName,
+                    text = songName.toString(),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -169,19 +169,22 @@ fun ArtBoard() {
                     )
                 )
             )
+            .verticalScroll(state = rememberScrollState(), enabled = true)
     ) {
-        ImageThing(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://ia902501.us.archive.org/9/items/aurora-artworks/unreleaed-artweork.jpg")
-                .crossfade(true).build(),
-            contentDescription = "Toolbar Image",
-            modifier = Modifier
-                .size(150.dp)
-                .shadow(2.dp)
-                .align(Alignment.Center),
-            onError = painterResource(
-                R.drawable.image
+
+            ImageThing(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://ia902501.us.archive.org/9/items/aurora-artworks/unreleaed-artweork.jpg")
+                    .crossfade(true).build(),
+                contentDescription = "Image",
+                modifier = Modifier
+                    .size(150.dp)
+                    .shadow(2.dp)
+                    .align(Alignment.Center),
+                onError = painterResource(
+                    R.drawable.image
+                )
             )
-        )
+
     }
 }
