@@ -18,6 +18,7 @@ import coil.request.ImageRequest
 import coil.transform.Transformation
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.unreleased.ImageThing
+import kotlinx.coroutines.*
 
 @Composable
 fun FooterThing(decoder: Decoder.Factory) {
@@ -35,9 +36,9 @@ fun FooterThing(decoder: Decoder.Factory) {
 
 @Composable
 fun FooterGIF() {
-    if (SDK_INT >= 28) {
-       FooterThing(decoder = ImageDecoderDecoder.Factory())
-    } else {
-      FooterThing(decoder = GifDecoder.Factory())
-    }
+        if (SDK_INT >= 28) {
+            FooterThing(decoder = ImageDecoderDecoder.Factory())
+        } else {
+            FooterThing(decoder = GifDecoder.Factory())
+        }
 }

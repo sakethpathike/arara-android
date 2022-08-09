@@ -29,6 +29,7 @@ import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.generalFont
 import com.sakethh.arara.ui.theme.secondGradient
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 
 @Composable
 fun SongThing(imageLink: String, songName: String) {
