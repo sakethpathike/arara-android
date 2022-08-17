@@ -6,18 +6,15 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.germainkevin.collapsingtopbar.rememberCollapsingTopBarScrollBehavior
 import com.sakethh.arara.FooterGIF
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.headerColor
@@ -34,6 +31,7 @@ fun UnreleasedScreen() {
         rememberTopAppBarState()
     ) { false }
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
+    val songsData=unreleasedViewModel.rememberData.value
     Scaffold(topBar = {
         SmallTopAppBar(
             title = {
@@ -51,11 +49,11 @@ fun UnreleasedScreen() {
             modifier = Modifier.background(backgroundColor),
             contentPadding = contentPadding,
         ) {
-            item{ ArtBoard()}
-            items(unreleasedViewModel.getSongsData().size) {
+            item { ArtBoard() }
+            items(songsData) {
                 SongThing(
-                    songName = unreleasedViewModel.getSongsData()[it].songName,
-                    specificArtwork = unreleasedViewModel.getSongsData()[it].imgURL
+                    songName = it.songName ,
+                    specificArtwork = it.imgURL
                 )
             }
             item { FooterGIF() }

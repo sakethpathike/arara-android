@@ -65,10 +65,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.1.0")
     implementation("io.coil-kt:coil-gif:2.1.0")
     implementation "androidx.core:core-ktx:1.8.0"
-    implementation "com.github.germainkevinbusiness:CollapsingTopBarCompose:1.0.0-rc06"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-    implementation 'com.valentinilk.shimmer:compose-shimmer:1.0.3'
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

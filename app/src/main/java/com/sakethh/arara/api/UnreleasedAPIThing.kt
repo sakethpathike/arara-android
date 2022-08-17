@@ -8,20 +8,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 class UnreleasedAPIThing {
-   private lateinit var apiData:UnreleasedAPI
+    private lateinit var apiData: UnreleasedAPI
+
     init {
-        val retrofitBuilder=Retrofit.Builder()
+        val retrofitBuilder = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            apiData=retrofitBuilder.create(UnreleasedAPI::class.java)
+        apiData = retrofitBuilder.create(UnreleasedAPI::class.java)
     }
-    fun getSongsData(): Call<UnreleasedListResponse> {
-       return  apiData.getSongsData()
+
+    suspend fun getSongsData(): UnreleasedListResponse {
+        return apiData.getSongsData()
     }
 
     interface UnreleasedAPI {
         @GET(Constants.UNRELEASED)
-        fun getSongsData(): Call<UnreleasedListResponse>
+        suspend fun getSongsData(): UnreleasedListResponse
     }
 }
