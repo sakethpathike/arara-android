@@ -32,7 +32,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 
 @Composable
-fun SongThing(imageLink: String, songName: String) {
+fun SongThing(songName:String,specificArtwork:String) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
@@ -50,7 +50,7 @@ fun SongThing(imageLink: String, songName: String) {
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
-                model = ImageRequest.Builder(LocalContext.current).data(imageLink)
+                model = ImageRequest.Builder(LocalContext.current).data(specificArtwork)
                     .crossfade(true)
                     .build(),
                 contentDescription = "Image for unreleased song from a warrior:)",
@@ -71,7 +71,7 @@ fun SongThing(imageLink: String, songName: String) {
             ) {
                 Spacer(modifier = Modifier.height(13.dp))
                 Text(
-                    text = songName.toString(),
+                    text = songName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -104,8 +104,7 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
 }
 
 @Composable
-fun SongThing1(imageLink:  String, songName:String) {
-    val paddingValue = 10.dp
+fun SongThing1(songName:String,specificArtwork:String) {
     Box(
         modifier = Modifier
             .background(color = backgroundColor)
@@ -115,7 +114,7 @@ fun SongThing1(imageLink:  String, songName:String) {
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
-                model = ImageRequest.Builder(LocalContext.current).data(imageLink)
+                model = ImageRequest.Builder(LocalContext.current).data(specificArtwork)
                     .crossfade(true)
                     .build(),
                 contentDescription = "Image for unreleased song from a warrior:)",
@@ -135,7 +134,7 @@ fun SongThing1(imageLink:  String, songName:String) {
             ) {
                 Spacer(modifier = Modifier.height(15.dp))
                 Text(
-                    text = songName.toString(),
+                    text = songName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

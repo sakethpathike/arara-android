@@ -64,7 +64,7 @@ dependencies {
     implementation 'com.radusalagean:info-bar-compose:1.0.0'
     implementation("io.coil-kt:coil-compose:2.1.0")
     implementation("io.coil-kt:coil-gif:2.1.0")
-    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.core:core-ktx:1.8.0"
     implementation "com.github.germainkevinbusiness:CollapsingTopBarCompose:1.0.0-rc06"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
