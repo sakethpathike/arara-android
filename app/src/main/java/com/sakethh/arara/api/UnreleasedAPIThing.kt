@@ -2,7 +2,6 @@ package com.sakethh.arara.api
 
 import com.sakethh.arara.Constants
 import com.sakethh.arara.unreleased.UnreleasedListResponse
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
