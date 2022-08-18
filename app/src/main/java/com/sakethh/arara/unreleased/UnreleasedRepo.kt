@@ -6,5 +6,11 @@ class UnreleasedRepo(private val unreleasedAPIThing: UnreleasedAPIThing = Unrele
     suspend fun getSongsData():List<UnreleasedResponse> {
         return unreleasedAPIThing.getSongsData()
     }
+    suspend fun getUnreleasedFooterImg():List<UnreleasedFooterImage>{
+        return unreleasedAPIThing.getUnreleasedFooterImg()
+    }
+    suspend fun getUnreleasedHeaderImg():List<UnreleasedArtwork>{
+        return unreleasedAPIThing.getUnreleasedHeaderImg()
+    }
 }
 

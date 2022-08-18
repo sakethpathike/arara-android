@@ -8,3 +8,12 @@ data class UnreleasedResponse(
     @SerializedName("specificArtwork")
     val imgURL:String
 )
+
+data class UnreleasedFooterImage(
+    @SerializedName("footerGifURL")
+    val footerImg:String
+)
+data class UnreleasedArtwork(
+    @SerializedName("unreleasedHeaderURL")
+    val artwork:String
+)

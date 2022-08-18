@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
@@ -158,6 +159,8 @@ fun SongThing1(songName:String,specificArtwork:String) {
 
 @Composable
 fun ArtBoard() {
+   val viewModel:UnreleasedViewModel= viewModel()
+   val data=viewModel.rememberUnreleasedHeaderImg.value[0]
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,7 +177,7 @@ fun ArtBoard() {
 
             ImageThing(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://ia902501.us.archive.org/9/items/aurora-artworks/unreleaed-artweork.jpg")
+                    .data(data.artwork)
                     .crossfade(true).build(),
                 contentDescription = "Image",
                 modifier = Modifier
