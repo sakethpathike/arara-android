@@ -1,6 +1,7 @@
 package com.sakethh.arara
 
 import android.os.Build.VERSION.SDK_INT
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,31 +13,31 @@ import coil.decode.Decoder
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.request.ImageRequest
+import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 
 @Composable
-fun FooterThing(decoder: Decoder.Factory) {
-    val viewModel:UnreleasedViewModel= viewModel()
-    val data=viewModel.rememberUnreleasedFooterImg.value[0]
+fun FooterThing(decoder: Decoder.Factory,imgURL:String) {
         ImageThing (
             model = ImageRequest.Builder(LocalContext.current)
-                .data(data.footerImg)
+                .data(imgURL)
                 .decoderFactory(decoder)
                 .crossfade(true).build(),
             contentDescription = "Khatam!",
             modifier = Modifier
                 .fillMaxWidth()
-                .height(70.dp),
+                .height(70.dp)
+                .background(backgroundColor),
             onError = painterResource(R.drawable.image)
         )
 }
 
 @Composable
-fun FooterGIF() {
+fun FooterGIF(imgURL: String) {
         if (SDK_INT >= 28) {
-            FooterThing(decoder = ImageDecoderDecoder.Factory())
+            FooterThing(decoder = ImageDecoderDecoder.Factory(),imgURL)
         } else {
-            FooterThing(decoder = GifDecoder.Factory())
+            FooterThing(decoder = GifDecoder.Factory(),imgURL)
         }
 }

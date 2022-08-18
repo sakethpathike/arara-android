@@ -22,7 +22,9 @@ fun UnreleasedScreen() {
         rememberTopAppBarState()
     ) { false }
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val songsData=unreleasedViewModel.rememberData.value
+    val songsData = unreleasedViewModel.rememberData.value
+    val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
+    val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
     Scaffold(topBar = {
         SmallTopAppBar(
             title = {
@@ -40,14 +42,18 @@ fun UnreleasedScreen() {
             modifier = Modifier.background(firstGradient),
             contentPadding = contentPadding,
         ) {
-            item { ArtBoard() }
-            items(songsData) {data->
+            items(headerData) { data ->
+                ArtBoard(data.artwork)
+            }
+            items(songsData) { data ->
                 SongThing(
                     songName = data.songName,
                     specificArtwork = data.imgURL
                 )
             }
-            item { FooterGIF() }
+            items(footerData) { data ->
+                FooterGIF(data.footerImg)
+            }
         }
     }
 }

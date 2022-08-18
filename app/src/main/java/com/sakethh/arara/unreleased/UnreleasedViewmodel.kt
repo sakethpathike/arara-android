@@ -21,6 +21,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
             val footerData=getUnreleasedFooterImg()
             rememberUnreleasedFooterImg.value=footerData
         }
+
     }
     private suspend fun getUnreleasedFooterImg():List<UnreleasedFooterImage>{
         return unreleasedRepo.getUnreleasedFooterImg()

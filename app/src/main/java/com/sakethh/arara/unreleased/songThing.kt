@@ -158,9 +158,7 @@ fun SongThing1(songName:String,specificArtwork:String) {
 }
 
 @Composable
-fun ArtBoard() {
-   val viewModel:UnreleasedViewModel= viewModel()
-   val data=viewModel.rememberUnreleasedHeaderImg.value[0]
+fun ArtBoard(imgURL:String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -177,7 +175,7 @@ fun ArtBoard() {
 
             ImageThing(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(data.artwork)
+                    .data(imgURL)
                     .crossfade(true).build(),
                 contentDescription = "Image",
                 modifier = Modifier
