@@ -8,4 +8,3 @@ data class UnreleasedResponse(
     @SerializedName("specificArtwork")
     val imgURL:String
 )
-data class UnreleasedListResponse(val unreleasedResponse:List<UnreleasedResponse>)

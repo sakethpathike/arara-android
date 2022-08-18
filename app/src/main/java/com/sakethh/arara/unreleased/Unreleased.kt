@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sakethh.arara.FooterGIF
 import com.sakethh.arara.ui.theme.backgroundColor
+import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,14 +37,14 @@ fun UnreleasedScreen() {
         )
     }) { contentPadding ->
         LazyColumn(
-            modifier = Modifier.background(backgroundColor),
+            modifier = Modifier.background(firstGradient),
             contentPadding = contentPadding,
         ) {
             item { ArtBoard() }
-            items(songsData) {
+            items(songsData) {data->
                 SongThing(
-                    songName = it.songName ,
-                    specificArtwork = it.imgURL
+                    songName = data.songName,
+                    specificArtwork = data.imgURL
                 )
             }
             item { FooterGIF() }
