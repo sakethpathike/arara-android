@@ -7,33 +7,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
-import com.sakethh.arara.ui.theme.generalFont
 import com.sakethh.arara.ui.theme.secondGradient
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 
 @Composable
-fun SongThing(songName:String,specificArtwork:String) {
+fun SongThing(songName:String,specificArtwork:String,onClick:() -> Any) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
@@ -48,6 +40,7 @@ fun SongThing(songName:String,specificArtwork:String) {
             .border(width = 2.dp, color = Color.LightGray)
             .shadow(2.dp)
             .background(color = backgroundColor)
+            .clickable { onClick() }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
@@ -105,13 +98,14 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
 }
 
 @Composable
-fun SongThing1(songName:String,specificArtwork:String) {
+fun SongThing1(songName:String,specificArtwork:String,onClick:() -> Any ) {
     Box(
         modifier = Modifier
             .background(color = backgroundColor)
             .fillMaxWidth()
             .requiredHeight(65.dp)
             .background(color = backgroundColor)
+            .clickable { onClick() }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(

@@ -9,12 +9,10 @@ import retrofit2.http.GET
 
 class UnreleasedAPIThing {
     private lateinit var apiData: UnreleasedAPI
-
     init {
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(UnreleasedOfflineCacheThing().okHttpClient)
             .build()
         apiData = retrofitBuilder.create(UnreleasedAPI::class.java)
     }

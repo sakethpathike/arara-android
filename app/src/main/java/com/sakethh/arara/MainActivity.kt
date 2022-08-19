@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.unreleased.UnreleasedScreen
@@ -15,16 +14,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
-            UnreleasedScreen()
+            UnreleasedScreen(this)
            }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = false)
 @Composable
 fun DefaultPreview() {
-    MaterialTheme {
-
+    MaterialTheme(typography = Typography) {
+          CustomMessage().NotConnectedToInternet()
     }
 }
