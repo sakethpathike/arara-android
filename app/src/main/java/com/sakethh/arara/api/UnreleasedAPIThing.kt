@@ -1,9 +1,8 @@
 package com.sakethh.arara.api
 
 import com.sakethh.arara.Constants
-import com.sakethh.arara.unreleased.UnreleasedArtwork
-import com.sakethh.arara.unreleased.UnreleasedFooterImage
-import com.sakethh.arara.unreleased.UnreleasedResponse
+import com.sakethh.arara.MainActivity
+import com.sakethh.arara.unreleased.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -15,6 +14,7 @@ class UnreleasedAPIThing {
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(UnreleasedOfflineCacheThing().okHttpClient)
             .build()
         apiData = retrofitBuilder.create(UnreleasedAPI::class.java)
     }
