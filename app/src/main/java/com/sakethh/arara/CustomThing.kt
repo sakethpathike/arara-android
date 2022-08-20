@@ -23,21 +23,19 @@ import com.sakethh.arara.ui.theme.customMessageBG
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.unreleased.ImageThing
 
-class CustomMessage {
+class CustomThing {
     @Composable
     fun NotConnectedToInternet(
         title: String = "Network, where?",
-        description: String = "Uh-oh, it seems mobile-data or wifi is unavailable at this moment. Turn it on"
+        description: String = "Uh-oh, it seems mobile-data or wifi is unavailable at this moment. Turn it on \uD83E\uDEE0"
     ) {
         val paddingValue = 20.dp
         Box(
             modifier = Modifier
-                .padding(start = paddingValue,end=paddingValue)
-                .background(color = customMessageBG)
+                .padding(start=paddingValue,end=paddingValue)
+                .background(color = Color.DarkGray)
                 .fillMaxWidth()
                 .requiredHeight(100.dp)
-
-
         ) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Box(
@@ -64,14 +62,12 @@ class CustomMessage {
                             overflow = TextOverflow.Ellipsis,
                             color = Color.White
                         )
+                        Spacer(modifier = Modifier.height(5.dp))
                         Text(
                             text = description,
-                            modifier = Modifier
-                                .padding(top = 3.dp, bottom = 3.dp)
-                                .wrapContentSize()
-                                .padding(2.dp),
-                            maxLines = 2,
                             style = MaterialTheme.typography.bodySmall,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
                             fontSize = 10.sp,
                             color = Color.White
                         )

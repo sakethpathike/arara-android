@@ -24,6 +24,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
-          CustomMessage().NotConnectedToInternet()
+          CustomThing().NotConnectedToInternet()
     }
 }

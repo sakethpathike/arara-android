@@ -1,17 +1,26 @@
 package com.sakethh.arara.unreleased
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sakethh.arara.CustomThing
 import com.sakethh.arara.FooterGIF
+import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,7 +32,8 @@ fun UnreleasedScreen(activity: Activity) {
     val songsData = unreleasedViewModel.rememberData.value
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
-    Scaffold(topBar = {
+    val bottomMsgState: MutableState<Boolean> = remember{ mutableStateOf(false)}
+    Scaffold(modifier=Modifier.background(backgroundColor),topBar = {
         SmallTopAppBar(
             title = {
                 Text(
@@ -35,6 +45,16 @@ fun UnreleasedScreen(activity: Activity) {
             scrollBehavior = scrollBehavior,
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = headerColor)
         )
+    }, floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+        if (bottomMsgState.value){
+              CustomThing().NotConnectedToInternet()
+              LaunchedEffect(key1 = "Btm_Msg_hide"){
+                  delay(4000L)
+                  bottomMsgState.value=false
+              }
+        }
+
     }) { contentPadding ->
         LazyColumn(
             modifier = Modifier.background(firstGradient),
@@ -48,7 +68,8 @@ fun UnreleasedScreen(activity: Activity) {
                 SongThing1(
                     songName = data.songName,
                     specificArtwork = data.imgURL,
-                    onClick = { }
+                    onClick =
+                    { bottomMsgState.value = true }
                 )
             }
             items(footerData) { data ->

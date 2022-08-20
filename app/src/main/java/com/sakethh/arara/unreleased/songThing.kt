@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -98,7 +99,7 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
 }
 
 @Composable
-fun SongThing1(songName:String,specificArtwork:String,onClick:() -> Any ) {
+fun SongThing1(songName:String,specificArtwork:String,onClick:() -> Unit) {
     Box(
         modifier = Modifier
             .background(color = backgroundColor)
