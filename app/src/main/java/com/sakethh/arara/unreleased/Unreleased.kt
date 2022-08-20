@@ -1,6 +1,7 @@
 package com.sakethh.arara.unreleased
 
 import android.app.Activity
+import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sakethh.arara.CustomThing
 import com.sakethh.arara.FooterGIF
+import com.sakethh.arara.MainActivity
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
@@ -32,7 +34,7 @@ fun UnreleasedScreen(activity: Activity) {
     val songsData = unreleasedViewModel.rememberData.value
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
-    val bottomMsgState: MutableState<Boolean> = remember{ mutableStateOf(false)}
+    val bottomMsgState=unreleasedViewModel.bottomMsgState
     Scaffold(modifier=Modifier.background(backgroundColor),topBar = {
         SmallTopAppBar(
             title = {
@@ -45,16 +47,6 @@ fun UnreleasedScreen(activity: Activity) {
             scrollBehavior = scrollBehavior,
             colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = headerColor)
         )
-    }, floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-        if (bottomMsgState.value){
-              CustomThing().NotConnectedToInternet()
-              LaunchedEffect(key1 = "Btm_Msg_hide"){
-                  delay(4000L)
-                  bottomMsgState.value=false
-              }
-        }
-
     }) { contentPadding ->
         LazyColumn(
             modifier = Modifier.background(firstGradient),
@@ -67,10 +59,8 @@ fun UnreleasedScreen(activity: Activity) {
             items(songsData) { data ->
                 SongThing1(
                     songName = data.songName,
-                    specificArtwork = data.imgURL,
-                    onClick =
-                    { bottomMsgState.value = true }
-                )
+                    specificArtwork = data.imgURL
+                ) { bottomMsgState.value = true }
             }
             items(footerData) { data ->
                 FooterGIF(data.footerImg)

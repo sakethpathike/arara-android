@@ -2,6 +2,7 @@ package com.sakethh.arara.unreleased
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
@@ -11,6 +12,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberData: MutableState<List<UnreleasedResponse>> = mutableStateOf(emptyList())
     val rememberUnreleasedFooterImg:MutableState<List<UnreleasedFooterImage>> = mutableStateOf(emptyList())
     val rememberUnreleasedHeaderImg:MutableState<List<UnreleasedArtwork>> = mutableStateOf(emptyList())
+    val bottomMsgState: MutableState<Boolean> =  mutableStateOf(false)
     private val coroutineExceptionHandler= CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
