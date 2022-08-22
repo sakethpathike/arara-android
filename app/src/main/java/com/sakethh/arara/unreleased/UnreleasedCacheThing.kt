@@ -4,55 +4,47 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import androidx.compose.runtime.currentCompositionLocalContext
-import androidx.compose.ui.tooling.data.ContextCache
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import com.sakethh.arara.Constants
 import com.sakethh.arara.MainActivity
 import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
-import kotlin.coroutines.coroutineContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 
-class UnreleasedOfflineCacheThing : Interceptor {
-    @SuppressLint("ServiceCast")
-    fun isInternetAvailable(context: Context): Boolean {
-         var isConnected: Boolean = false // Initial Value
-         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-         val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-         if (activeNetwork != null && activeNetwork.isConnected)
-            isConnected = true
-         return isConnected
-         }
-    private val cacheSize = (30 * 1024 * 1024).toLong() // 10 MB
-    private val cacheObject = Cache(MainActivity().cacheDir, cacheSize)
-
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        /*  if(!isInternetAvailable(Context)){
-            val maxAvailability = 60 * 60 * 24 * 30 // cache available for 30days
-            request.newBuilder()
-                .header("Cache-Control", "public, only-if-cached, max-stale=$maxAvailability")
-                .removeHeader("Pragma")
-                .build()
-          }*/
-        return chain.proceed(request)
+@SuppressLint("StaticFieldLeak")
+object UnreleasedCache{
+    lateinit var okHttpClient:OkHttpClient
+fun unreleasedCache(context:Context) {
+        val cacheSize = (10 * 1024 * 1024).toLong() // 10 MB
+        val cache= Cache(File(context.cacheDir,"unreleased-cache"),cacheSize)
+        okHttpClient= OkHttpClient.Builder()
+            .cache(cache = cache)
+            .addInterceptor {
+                var request = it.request()
+                request = if (isInternetAvailable(context)) { //online
+                    request.newBuilder().header("Cache-Control", "public, max-age=" + 5)
+                        .removeHeader("Pragma").build()
+                } else { // offline
+                    request.newBuilder().header(
+                        "Cache-Control",
+                        "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7
+                    ).removeHeader("Pragma").build()
+                }
+                it.proceed(request)
+            }
+            .build()}
 }
-    val okHttpClient = OkHttpClient.Builder()
-        .cache(cacheObject)
-      /*  .addInterceptor(UnreleasedOfflineCacheThing()) */ //offline
-     .addNetworkInterceptor(UnreleasedOnlineCacheThing())
-        .build()
+private fun isInternetAvailable(context:Context): Boolean {
+    val isConnected: Boolean?
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+    isConnected = activeNetwork != null && activeNetwork.isConnected
+    return isConnected
 }
 
-
-class UnreleasedOnlineCacheThing: Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request()
-        val maxAvailability = 120 //seconds
-        request.newBuilder()
-            .header("Cache-Control", "public, max-age=$maxAvailability")
-            .removeHeader("Pragma")
-            .build()
-        return chain.proceed(request)
-    }
-}

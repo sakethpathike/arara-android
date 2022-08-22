@@ -1,6 +1,7 @@
 package com.sakethh.arara.unreleased
 
 import android.app.Activity
+import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -23,10 +24,11 @@ import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
 import kotlinx.coroutines.delay
+import okhttp3.Cache
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnreleasedScreen(activity: Activity) {
+fun UnreleasedScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
     ) { false }

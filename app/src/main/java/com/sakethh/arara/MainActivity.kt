@@ -12,11 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sakethh.arara.ui.theme.Typography
+import com.sakethh.arara.unreleased.UnreleasedCache
+import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.UnreleasedScreen
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 import kotlinx.coroutines.delay
 
-class MainActivity : ComponentActivity() {
+class MainActivity() : ComponentActivity(){
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,10 +37,11 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }) {
-                    UnreleasedScreen(this)
+                    UnreleasedScreen()
                 }
             }
         }
+        unreleasedCache(this)
     }
 }
 
@@ -46,6 +49,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
-
+         CustomThing().CustomBottomSnackBar(image = randomLostInternetImg())
     }
 }
