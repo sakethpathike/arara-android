@@ -16,6 +16,7 @@ import com.sakethh.arara.unreleased.UnreleasedCache
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.UnreleasedScreen
 import com.sakethh.arara.unreleased.UnreleasedViewModel
+import com.sakethh.arara.unreleased.isInternetAvailable
 import kotlinx.coroutines.delay
 
 class MainActivity() : ComponentActivity(){
@@ -24,17 +25,11 @@ class MainActivity() : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val unreleasedViewModel: UnreleasedViewModel = viewModel()
-            val bottomMsgState= unreleasedViewModel.bottomMsgState
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
                 Scaffold(floatingActionButtonPosition = FabPosition.Center,
                     floatingActionButton = {
-                        if (bottomMsgState.value) {
+                        if(!isInternetAvailable(this)){
                             CustomThing().CustomBottomSnackBar(image=randomLostInternetImg())
-                            LaunchedEffect(key1 = "Btm_Msg_hide") {
-                                delay(4000L)
-                                bottomMsgState.value = false
-                            }
                         }
                     }) {
                     UnreleasedScreen()

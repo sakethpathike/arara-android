@@ -25,21 +25,23 @@ fun unreleasedCache(context:Context) {
         okHttpClient= OkHttpClient.Builder()
             .cache(cache = cache)
             .addInterceptor {
+                //offline
                 var request = it.request()
-                request = if (isInternetAvailable(context)) { //online
-                    request.newBuilder().header("Cache-Control", "public, max-age=" + 5)
-                        .removeHeader("Pragma").build()
-                } else { // offline
-                    request.newBuilder().header(
+                request=  request.newBuilder().header(
                         "Cache-Control",
                         "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7
                     ).removeHeader("Pragma").build()
-                }
                 it.proceed(request)
             }
-            .build()}
-}
-private fun isInternetAvailable(context:Context): Boolean {
+            .addNetworkInterceptor {
+                //online
+                var request = it.request()
+                request = request.newBuilder().header("Cache-Control", "public, max-age=" + 2000)
+                        .removeHeader("Pragma").build()
+              it.proceed(request)
+            }.build()
+}}
+fun isInternetAvailable(context:Context): Boolean {
     val isConnected: Boolean?
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -47,4 +49,3 @@ private fun isInternetAvailable(context:Context): Boolean {
     isConnected = activeNetwork != null && activeNetwork.isConnected
     return isConnected
 }
-
