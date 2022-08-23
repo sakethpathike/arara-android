@@ -86,7 +86,7 @@ class CustomThing {
     }
 
     @Composable
-    fun MusicPlayerUI(songName: String = "Wake up", imgUrl: String = "", onClick: () -> Unit = {}) {
+    fun MusicPlayerUI(songName: String, imgUrl: String, onClick: () -> Unit) {
         val paddingValue = 20.dp
         Row(
             modifier = Modifier

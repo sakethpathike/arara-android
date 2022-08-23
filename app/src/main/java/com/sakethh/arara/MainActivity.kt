@@ -2,6 +2,7 @@ package com.sakethh.arara
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,17 +26,23 @@ class MainActivity() : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+           val unreleasedViewModel:UnreleasedViewModel= viewModel()
+            val unreleasedSongNameForPlayer=unreleasedViewModel.rememberMusicPlayerTitle
+            val unreleasedImgURLForPlayer=unreleasedViewModel.rememberMusicPlayerImgURL
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
                 Scaffold(floatingActionButtonPosition = FabPosition.Center,
                     floatingActionButton = {
                         if(!isInternetAvailable(this)){
                             CustomThing().CustomBottomSnackBar(image=randomLostInternetImg())
-                        }else if(UnreleasedViewModel().rememberMusicPlayer.value){
-                            if(isInternetAvailable(this)){
-                                CustomThing().MusicPlayerUI()
-                            }
                         }
-                    }) {
+                    },
+                bottomBar = {
+                    if(unreleasedViewModel.rememberMusicPlayer.value){
+                        if(isInternetAvailable(this)){
+                            CustomThing().MusicPlayerUI(songName = unreleasedSongNameForPlayer.value, imgUrl = unreleasedImgURLForPlayer.value, onClick = {})
+                        }
+                    }
+                }) {
                     UnreleasedScreen()
                 }
             }
@@ -48,6 +55,5 @@ class MainActivity() : ComponentActivity(){
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
-        CustomThing().MusicPlayerUI()
     }
 }
