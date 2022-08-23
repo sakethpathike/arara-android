@@ -61,12 +61,14 @@ fun UnreleasedScreen() {
                 ArtBoard(data.artwork)
             }
             items(songsData) { data ->
-                musicPlayerImgURL.value=data.imgURL
-                musicPlayerTitle.value=data.songName
                 SongThing1(
                     songName = data.songName,
                     specificArtwork = data.imgURL
-                ) { musicPlayer.value=true }
+                ) {
+                    musicPlayerImgURL.value=data.imgURL
+                    musicPlayerTitle.value=data.songName
+                    musicPlayer.value=true
+                }
             }
             items(footerData) { data ->
                 FooterGIF(data.footerImg)

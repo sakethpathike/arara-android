@@ -35,14 +35,13 @@ class MainActivity() : ComponentActivity(){
                         if(!isInternetAvailable(this)){
                             CustomThing().CustomBottomSnackBar(image=randomLostInternetImg())
                         }
-                    },
-                bottomBar = {
-                    if(unreleasedViewModel.rememberMusicPlayer.value){
-                        if(isInternetAvailable(this)){
-                            CustomThing().MusicPlayerUI(songName = unreleasedSongNameForPlayer.value, imgUrl = unreleasedImgURLForPlayer.value, onClick = {})
+                        if(unreleasedViewModel.rememberMusicPlayer.value){
+                            if(isInternetAvailable(this)){
+                                CustomThing().MusicPlayerUI(songName = unreleasedSongNameForPlayer.value, imgUrl = unreleasedImgURLForPlayer.value, onClick = {})
+                            }
                         }
                     }
-                }) {
+                ){
                     UnreleasedScreen()
                 }
             }

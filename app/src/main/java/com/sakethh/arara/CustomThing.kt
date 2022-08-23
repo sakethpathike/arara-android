@@ -1,5 +1,6 @@
 package com.sakethh.arara
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,10 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.request.ImageRequest
-import com.sakethh.arara.ui.theme.backgroundColor
-import com.sakethh.arara.ui.theme.customMessageBG
-import com.sakethh.arara.ui.theme.firstGradient
-import com.sakethh.arara.ui.theme.secondGradient
+import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 
 class CustomThing {
@@ -85,16 +83,16 @@ class CustomThing {
         }
     }
 
+    @SuppressLint("ResourceType")
     @Composable
     fun MusicPlayerUI(songName: String, imgUrl: String, onClick: () -> Unit) {
         val paddingValue = 20.dp
         Row(
             modifier = Modifier
                 .padding(start = paddingValue, end = paddingValue)
-                .background(backgroundColor)
                 .requiredHeight(65.dp)
                 .fillMaxWidth()
-                .background(brush = Brush.linearGradient(listOf(firstGradient, secondGradient)))
+                .background(color = musicPlayerColor)
                 .clickable { onClick() }
                 .border(
                     width = 1.dp,
@@ -117,7 +115,6 @@ class CustomThing {
                         .requiredHeight(45.dp) // renders height of the image
                         .padding(start = 10.dp) //gives 10dp padding in left
                         .requiredWidth(45.dp) //renders width of the image
-                        .border(width = 1.dp, color = Color.Gray)
                     , onError = painterResource(randomLostInternetImg())
                 )
             }
@@ -147,6 +144,21 @@ class CustomThing {
                         style = MaterialTheme.typography.bodySmall,
                         fontSize = 10.sp, fontWeight = FontWeight.Normal, color = backgroundColor
                     )
+                }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = 1),
+                            modifier = Modifier
+                                .requiredSize(70.dp)
+                                .border(width = 1.dp, color = Color.Gray),
+                            contentDescription = "No Internet Connection"
+                        )
+                    }
                 }
             }
         }
