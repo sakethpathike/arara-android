@@ -30,6 +30,10 @@ class MainActivity() : ComponentActivity(){
                     floatingActionButton = {
                         if(!isInternetAvailable(this)){
                             CustomThing().CustomBottomSnackBar(image=randomLostInternetImg())
+                        }else if(UnreleasedViewModel().rememberMusicPlayer.value){
+                            if(isInternetAvailable(this)){
+                                CustomThing().MusicPlayerUI()
+                            }
                         }
                     }) {
                     UnreleasedScreen()
@@ -44,6 +48,6 @@ class MainActivity() : ComponentActivity(){
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
-         CustomThing().CustomBottomSnackBar(image = randomLostInternetImg())
+        CustomThing().MusicPlayerUI()
     }
 }

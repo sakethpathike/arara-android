@@ -36,6 +36,7 @@ fun UnreleasedScreen() {
     val songsData = unreleasedViewModel.rememberData.value
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
+    val musicPlayer=unreleasedViewModel.rememberMusicPlayer
     Scaffold(modifier=Modifier.background(backgroundColor),topBar = {
         SmallTopAppBar(
             title = {
@@ -61,7 +62,7 @@ fun UnreleasedScreen() {
                 SongThing1(
                     songName = data.songName,
                     specificArtwork = data.imgURL
-                ) {  }
+                ) { musicPlayer.value=true }
             }
             items(footerData) { data ->
                 FooterGIF(data.footerImg)

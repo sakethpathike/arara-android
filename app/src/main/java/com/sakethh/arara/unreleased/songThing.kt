@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
+import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.secondGradient
@@ -119,7 +120,7 @@ fun SongThing1(songName:String,specificArtwork:String,onClick:() -> Unit) {
                     .requiredHeight(50.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
                     .requiredWidth(50.dp) //renders width of the image
-                , onError = painterResource(R.drawable.image)
+                , onError = painterResource(randomLostInternetImg())
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column(

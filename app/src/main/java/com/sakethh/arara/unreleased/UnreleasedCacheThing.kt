@@ -25,22 +25,21 @@ fun unreleasedCache(context:Context) {
         okHttpClient= OkHttpClient.Builder()
             .cache(cache = cache)
             .addInterceptor {
-                //offline
                 var request = it.request()
-                request=  request.newBuilder().header(
+                if (!isInternetAvailable(context)) {
+                    request= request.newBuilder().header(
                         "Cache-Control",
                         "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7
                     ).removeHeader("Pragma").build()
-                it.proceed(request)
-            }
-            .addNetworkInterceptor {
-                //online
-                var request = it.request()
-                request = request.newBuilder().header("Cache-Control", "public, max-age=" + 2000)
+                    it.proceed(request)
+                }else{
+                     request = it.request()
+                    request = request.newBuilder().header("Cache-Control", "public, max-age=" + 2)
                         .removeHeader("Pragma").build()
-              it.proceed(request)
-            }.build()
-}}
+                   it.proceed(request)
+                }
+
+}.build()}}
 fun isInternetAvailable(context:Context): Boolean {
     val isConnected: Boolean?
     val connectivityManager =
