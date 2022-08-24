@@ -83,7 +83,6 @@ class CustomThing {
         }
     }
 
-    @SuppressLint("ResourceType")
     @Composable
     fun MusicPlayerUI(songName: String, imgUrl: String, onClick: () -> Unit) {
         val paddingValue = 20.dp
@@ -93,7 +92,6 @@ class CustomThing {
                 .requiredHeight(65.dp)
                 .fillMaxWidth()
                 .background(color = musicPlayerColor)
-                .clickable { onClick() }
                 .border(
                     width = 1.dp,
                     shape = RoundedCornerShape(5.dp),
@@ -115,16 +113,21 @@ class CustomThing {
                         .requiredHeight(45.dp) // renders height of the image
                         .padding(start = 10.dp) //gives 10dp padding in left
                         .requiredWidth(45.dp) //renders width of the image
+                        .clickable { onClick() }
                     , onError = painterResource(randomLostInternetImg())
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Box(contentAlignment = Alignment.CenterStart, modifier = Modifier.fillMaxSize()) {
+            Spacer(modifier = Modifier.width(8.dp)
+                .clickable { onClick() })
+            Box(
+                contentAlignment = Alignment.CenterStart, modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentWidth()
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(end = 60.dp)
-                        .fillMaxWidth()
+                        .padding(end = 65.dp).fillMaxWidth().clickable { onClick()}
                 ) {
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
@@ -132,34 +135,28 @@ class CustomThing {
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = Color.White
+                        color = Color.White,
                     )
-                    Text(
-                        text = "Lyrics",
-                        modifier = Modifier
-                            .padding(top = 3.dp, bottom = 3.dp)
-                            .background(color = Color.Gray)
-                            .wrapContentSize()
-                            .padding(2.dp),
-                        style = MaterialTheme.typography.bodySmall,
-                        fontSize = 10.sp, fontWeight = FontWeight.Normal, color = backgroundColor
-                    )
-                }
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(id = 1),
-                            modifier = Modifier
-                                .requiredSize(70.dp)
-                                .border(width = 1.dp, color = Color.Gray),
-                            contentDescription = "No Internet Connection"
+                    Box(modifier = Modifier.size(5.dp)) {
+                        ImageThing(
+                            model = {},
+                            contentDescription = "",
+                            modifier = Modifier.size(2.dp)
+                                .clickable { onClick() },
+                            onError = painterResource(
+                                id = R.drawable.music_playing
+                            )
                         )
                     }
                 }
+               Box(modifier = Modifier.fillMaxSize().padding(end = 10.dp),contentAlignment = Alignment.CenterEnd){
+                   Image(
+                       painter = painterResource(id = R.drawable.pause),
+                       modifier = Modifier
+                           .requiredSize(35.dp),
+                       contentDescription = "Play/Pause Icons"
+                   )
+               }
             }
         }
     }

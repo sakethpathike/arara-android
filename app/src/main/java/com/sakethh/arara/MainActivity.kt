@@ -10,6 +10,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sakethh.arara.ui.theme.Typography
@@ -20,28 +21,37 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.isInternetAvailable
 import kotlinx.coroutines.delay
 
-class MainActivity() : ComponentActivity(){
+class MainActivity() : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-           val unreleasedViewModel:UnreleasedViewModel= viewModel()
-            val unreleasedSongNameForPlayer=unreleasedViewModel.rememberMusicPlayerTitle
-            val unreleasedImgURLForPlayer=unreleasedViewModel.rememberMusicPlayerImgURL
+            val context = LocalContext.current
+            val unreleasedViewModel: UnreleasedViewModel = viewModel()
+            val unreleasedSongNameForPlayer = unreleasedViewModel.rememberMusicPlayerTitle
+            val unreleasedImgURLForPlayer = unreleasedViewModel.rememberMusicPlayerImgURL
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
                 Scaffold(floatingActionButtonPosition = FabPosition.Center,
                     floatingActionButton = {
-                        if(!isInternetAvailable(this)){
-                            CustomThing().CustomBottomSnackBar(image=randomLostInternetImg())
+                        if (!isInternetAvailable(this)) {
+                            CustomThing().CustomBottomSnackBar(image = randomLostInternetImg())
                         }
-                        if(unreleasedViewModel.rememberMusicPlayer.value){
-                            if(isInternetAvailable(this)){
-                                CustomThing().MusicPlayerUI(songName = unreleasedSongNameForPlayer.value, imgUrl = unreleasedImgURLForPlayer.value, onClick = {})
+                        if (unreleasedViewModel.rememberMusicPlayer.value) {
+                            if (isInternetAvailable(this)) {
+                                CustomThing().MusicPlayerUI(songName = unreleasedSongNameForPlayer.value,
+                                    imgUrl = unreleasedImgURLForPlayer.value,
+                                    onClick = {
+                                        Toast.makeText(
+                                            context,
+                                            "Clicked",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    })
                             }
                         }
                     }
-                ){
+                ) {
                     UnreleasedScreen()
                 }
             }
@@ -54,5 +64,9 @@ class MainActivity() : ComponentActivity(){
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
+        CustomThing().MusicPlayerUI(
+            songName = "awefreawfklefkermfklermfkermvergregregrevgerververvrevlkrmevormvkoermvkomervkoermvkomvkoermvkomervkomervmer",
+            imgUrl = "",
+            {})
     }
 }

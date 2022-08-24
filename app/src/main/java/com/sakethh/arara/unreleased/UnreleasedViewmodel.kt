@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sakethh.arara.R
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberMusicPlayer= mutableStateOf(false)
     val rememberMusicPlayerImgURL= mutableStateOf("")
     val rememberMusicPlayerTitle= mutableStateOf("")
+    val rememberMusicPlayerControl= mutableStateOf(listOf(R.drawable.play,R.drawable.pause))
     private val coroutineExceptionHandler= CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
