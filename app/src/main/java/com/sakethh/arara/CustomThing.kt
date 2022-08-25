@@ -126,13 +126,12 @@ class CustomThing {
                 contentAlignment = Alignment.CenterStart, modifier = Modifier
                     .fillMaxHeight()
                     .wrapContentWidth()
+                    .clickable { onClick() }
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(end = 65.dp)
-                        .fillMaxWidth()
-                        .clickable { onClick() }
+                        .width(200.dp)
                 ) {
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
@@ -147,33 +146,35 @@ class CustomThing {
                     val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
                     Box(modifier = Modifier.size(20.dp)) {
                         if (!musicControlBoolean.value) {
-                            GIFThing(imgURL = Constants.MUSIC_PLAYING_GIF, modifier = Modifier
-                                .fillMaxSize()
-                                .clickable { onClick() })
+                            GIFThing(
+                                imgURL = Constants.MUSIC_PLAYING_GIF, modifier = Modifier
+                                    .fillMaxSize()
+                            )
                         }
                     }
                 }
-                val unreleasedViewModel: UnreleasedViewModel = viewModel()
-                val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
-                Box(
+            }
+            val unreleasedViewModel: UnreleasedViewModel = viewModel()
+            val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .clickable { onClick() },
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                Image(
+                    painter = painterResource(id = onControlClickImg),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 10.dp)
-                        .background(Color.Cyan)
-                        .clickable {
+                        .requiredSize(35.dp).clickable {
                             onControlClick()
                             musicControlBoolean.value = !musicControlBoolean.value
                         },
-                    contentAlignment = Alignment.CenterEnd,
-                ) {
-                    Image(
-                        painter = painterResource(id = onControlClickImg),
-                        modifier = Modifier
-                            .requiredSize(35.dp),
-                        contentDescription = "Play/Pause Icons"
-                    )
-                }
+                    contentDescription = "Play/Pause Icons"
+                )
             }
+
         }
     }
 }
