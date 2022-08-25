@@ -14,12 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sakethh.arara.ui.theme.Typography
-import com.sakethh.arara.unreleased.UnreleasedCache
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.UnreleasedScreen
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.isInternetAvailable
-import kotlinx.coroutines.delay
 
 class MainActivity() : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -31,6 +29,16 @@ class MainActivity() : ComponentActivity() {
             val unreleasedViewModel: UnreleasedViewModel = viewModel()
             val unreleasedSongNameForPlayer = unreleasedViewModel.rememberMusicPlayerTitle
             val unreleasedImgURLForPlayer = unreleasedViewModel.rememberMusicPlayerImgURL
+            val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
+            val rememberMusicPlayerControlImg = unreleasedViewModel.rememberMusicPlayerControlImg
+            val currentControlIcon = remember { mutableListOf(0, 1) }
+            if (musicControlBoolean.value) {
+                val playIcon = rememberMusicPlayerControlImg[0]  //play icon
+                currentControlIcon[0] = playIcon
+            } else {
+                val pauseIcon = rememberMusicPlayerControlImg[1] //pause icon
+                currentControlIcon[0] = pauseIcon
+            }
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
                 Scaffold(floatingActionButtonPosition = FabPosition.Center,
                     floatingActionButton = {
@@ -39,15 +47,19 @@ class MainActivity() : ComponentActivity() {
                         }
                         if (unreleasedViewModel.rememberMusicPlayer.value) {
                             if (isInternetAvailable(this)) {
-                                CustomThing().MusicPlayerUI(songName = unreleasedSongNameForPlayer.value,
+                                CustomThing().MusicPlayerUI(
+                                    songName = unreleasedSongNameForPlayer.value,
                                     imgUrl = unreleasedImgURLForPlayer.value,
-                                    onClick = {
-                                        Toast.makeText(
-                                            context,
-                                            "Clicked",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    })
+                                    onClick = { Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show() },
+                                    onControlClick = {
+                                        if (!musicControlBoolean.value) { //pause music if value is false
+                                             Toast.makeText(context, "--Paused--", Toast.LENGTH_SHORT).show()
+                                        } else { //play music if value is true
+                                            Toast.makeText(context, "--Playing--", Toast.LENGTH_SHORT).show()
+                                        }
+                                    },
+                                    onControlClickImg = currentControlIcon[0]
+                                )
                             }
                         }
                     }
@@ -64,9 +76,6 @@ class MainActivity() : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
-        CustomThing().MusicPlayerUI(
-            songName = "awefreawfklefkermfklermfkermvergregregrevgerververvrevlkrmevormvkoermvkomervkoermvkomvkoermvkomervkomervmer",
-            imgUrl = "",
-            {})
+    CustomThing().MusicPlayerUI("sdrgrgerghtrghrthtrhtyhydthjytjjukikill,,.k,k,k,","",{},{},0)
     }
 }

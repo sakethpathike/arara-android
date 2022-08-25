@@ -1,5 +1,6 @@
 package com.sakethh.arara
 
+import android.annotation.SuppressLint
 import android.os.Build.VERSION.SDK_INT
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,26 +19,14 @@ import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 
 @Composable
-fun FooterThing(decoder: Decoder.Factory,imgURL:String) {
+fun GIFThing(imgURL:String, modifier:Modifier) {
         ImageThing (
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imgURL)
-                .decoderFactory(decoder)
+                .decoderFactory(GifDecoder.Factory())
                 .crossfade(true).build(),
             contentDescription = "Khatam!",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
-                .background(backgroundColor),
-            onError = painterResource(R.drawable.image)
+            modifier = modifier,
+            onError = painterResource(randomLostInternetImg())
         )
-}
-
-@Composable
-fun FooterGIF(imgURL: String) {
-        if (SDK_INT >= 28) {
-            FooterThing(decoder = ImageDecoderDecoder.Factory(),imgURL)
-        } else {
-            FooterThing(decoder = GifDecoder.Factory(),imgURL)
-        }
 }

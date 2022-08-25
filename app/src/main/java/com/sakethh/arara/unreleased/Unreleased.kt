@@ -8,6 +8,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -16,9 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sakethh.arara.CustomThing
-import com.sakethh.arara.FooterGIF
+import com.sakethh.arara.GIFThing
 import com.sakethh.arara.MainActivity
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
@@ -71,7 +74,10 @@ fun UnreleasedScreen() {
                 }
             }
             items(footerData) { data ->
-                FooterGIF(data.footerImg)
+                GIFThing(imgURL = data.footerImg, modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
+                    .background(backgroundColor))
             }
         }
     }

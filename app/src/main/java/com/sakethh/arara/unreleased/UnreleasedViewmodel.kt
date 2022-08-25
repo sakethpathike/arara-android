@@ -19,7 +19,8 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberMusicPlayer= mutableStateOf(false)
     val rememberMusicPlayerImgURL= mutableStateOf("")
     val rememberMusicPlayerTitle= mutableStateOf("")
-    val rememberMusicPlayerControl= mutableStateOf(listOf(R.drawable.play,R.drawable.pause))
+    val rememberMusicPlayerControlImg= listOf(R.drawable.play,R.drawable.pause)
+    val rememberMusicPlayerControl= mutableStateOf(false)
     private val coroutineExceptionHandler= CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

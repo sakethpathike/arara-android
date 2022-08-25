@@ -1,6 +1,5 @@
 package com.sakethh.arara
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -8,24 +7,22 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.request.ImageRequest
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 
 class CustomThing {
     @Composable
@@ -84,7 +81,13 @@ class CustomThing {
     }
 
     @Composable
-    fun MusicPlayerUI(songName: String, imgUrl: String, onClick: () -> Unit) {
+    fun MusicPlayerUI(
+        songName: String,
+        imgUrl: String,
+        onClick: () -> Unit,
+        onControlClick: () -> Unit = {},
+        onControlClickImg: Int
+    ) {
         val paddingValue = 20.dp
         Row(
             modifier = Modifier
@@ -113,11 +116,11 @@ class CustomThing {
                         .requiredHeight(45.dp) // renders height of the image
                         .padding(start = 10.dp) //gives 10dp padding in left
                         .requiredWidth(45.dp) //renders width of the image
-                        .clickable { onClick() }
-                    , onError = painterResource(randomLostInternetImg())
+                        .clickable { onClick() }, onError = painterResource(randomLostInternetImg())
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp)
+            Spacer(modifier = Modifier
+                .width(8.dp)
                 .clickable { onClick() })
             Box(
                 contentAlignment = Alignment.CenterStart, modifier = Modifier
@@ -127,7 +130,9 @@ class CustomThing {
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(end = 65.dp).fillMaxWidth().clickable { onClick()}
+                        .padding(end = 65.dp)
+                        .fillMaxWidth()
+                        .clickable { onClick() }
                 ) {
                     Spacer(modifier = Modifier.height(15.dp))
                     Text(
@@ -137,26 +142,37 @@ class CustomThing {
                         overflow = TextOverflow.Ellipsis,
                         color = Color.White,
                     )
-                    Box(modifier = Modifier.size(5.dp)) {
-                        ImageThing(
-                            model = {},
-                            contentDescription = "",
-                            modifier = Modifier.size(2.dp)
-                                .clickable { onClick() },
-                            onError = painterResource(
-                                id = R.drawable.music_playing
-                            )
-                        )
+                    Spacer(modifier = Modifier.height(3.dp))
+                    val unreleasedViewModel: UnreleasedViewModel = viewModel()
+                    val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
+                    Box(modifier = Modifier.size(20.dp)) {
+                        if (!musicControlBoolean.value) {
+                            GIFThing(imgURL = Constants.MUSIC_PLAYING_GIF, modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { onClick() })
+                        }
                     }
                 }
-               Box(modifier = Modifier.fillMaxSize().padding(end = 10.dp),contentAlignment = Alignment.CenterEnd){
-                   Image(
-                       painter = painterResource(id = R.drawable.pause),
-                       modifier = Modifier
-                           .requiredSize(35.dp),
-                       contentDescription = "Play/Pause Icons"
-                   )
-               }
+                val unreleasedViewModel: UnreleasedViewModel = viewModel()
+                val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 10.dp)
+                        .background(Color.Cyan)
+                        .clickable {
+                            onControlClick()
+                            musicControlBoolean.value = !musicControlBoolean.value
+                        },
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    Image(
+                        painter = painterResource(id = onControlClickImg),
+                        modifier = Modifier
+                            .requiredSize(35.dp),
+                        contentDescription = "Play/Pause Icons"
+                    )
+                }
             }
         }
     }
