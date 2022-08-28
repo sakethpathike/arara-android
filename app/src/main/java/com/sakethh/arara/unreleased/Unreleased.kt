@@ -31,7 +31,7 @@ import okhttp3.Cache
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnreleasedScreen() {
+fun UnreleasedScreen(musicPlayerOnClick:()->Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
     ) { false }
@@ -39,7 +39,6 @@ fun UnreleasedScreen() {
     val songsData = unreleasedViewModel.rememberData.value
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
-    val musicPlayer=unreleasedViewModel.rememberMusicPlayer
     val musicPlayerImgURL=unreleasedViewModel.rememberMusicPlayerImgURL
     val musicPlayerTitle=unreleasedViewModel.rememberMusicPlayerTitle
     Scaffold(modifier=Modifier.background(backgroundColor),topBar = {
@@ -70,7 +69,7 @@ fun UnreleasedScreen() {
                 ) {
                     musicPlayerImgURL.value=data.imgURL
                     musicPlayerTitle.value=data.songName
-                    musicPlayer.value=true
+                    musicPlayerOnClick()
                 }
             }
             items(footerData) { data ->

@@ -16,7 +16,6 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberData: MutableState<List<UnreleasedResponse>> = mutableStateOf(emptyList())
     val rememberUnreleasedFooterImg:MutableState<List<UnreleasedFooterImage>> = mutableStateOf(emptyList())
     val rememberUnreleasedHeaderImg:MutableState<List<UnreleasedArtwork>> = mutableStateOf(emptyList())
-    val rememberMusicPlayer= mutableStateOf(false)
     val rememberMusicPlayerImgURL= mutableStateOf("")
     val rememberMusicPlayerTitle= mutableStateOf("")
     val rememberMusicPlayerControlImg= listOf(R.drawable.play,R.drawable.pause)

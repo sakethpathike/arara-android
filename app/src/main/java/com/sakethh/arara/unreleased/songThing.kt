@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
@@ -27,7 +29,7 @@ import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.secondGradient
 
 @Composable
-fun SongThing(songName:String,specificArtwork:String,onClick:() -> Any) {
+fun SongThing(songName: String, specificArtwork: String, onClick: () -> Any) {
     val paddingValue = 10.dp
     Box(
         modifier = Modifier
@@ -100,14 +102,17 @@ fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onEr
 }
 
 @Composable
-fun SongThing1(songName:String,specificArtwork:String,onClick:() -> Unit) {
+fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
+
     Box(
         modifier = Modifier
             .background(color = backgroundColor)
             .fillMaxWidth()
             .requiredHeight(65.dp)
             .background(color = backgroundColor)
-            .clickable { onClick() }
+            .clickable {
+                onClick()
+            }
     ) {
         Row(modifier = Modifier.fillMaxSize()) {
             ImageThing(
@@ -154,7 +159,7 @@ fun SongThing1(songName:String,specificArtwork:String,onClick:() -> Unit) {
 }
 
 @Composable
-fun ArtBoard(imgURL:String) {
+fun ArtBoard(imgURL: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -169,19 +174,19 @@ fun ArtBoard(imgURL:String) {
             .verticalScroll(state = rememberScrollState(), enabled = true)
     ) {
 
-            ImageThing(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imgURL)
-                    .crossfade(true).build(),
-                contentDescription = "Image",
-                modifier = Modifier
-                    .size(150.dp)
-                    .shadow(2.dp)
-                    .align(Alignment.Center),
-                onError = painterResource(
-                    R.drawable.image
-                )
+        ImageThing(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imgURL)
+                .crossfade(true).build(),
+            contentDescription = "Image",
+            modifier = Modifier
+                .size(150.dp)
+                .shadow(2.dp)
+                .align(Alignment.Center),
+            onError = painterResource(
+                R.drawable.image
             )
+        )
 
     }
 }

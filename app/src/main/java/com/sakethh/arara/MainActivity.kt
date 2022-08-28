@@ -20,11 +20,13 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.isInternetAvailable
 
 class MainActivity() : ComponentActivity() {
+
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val musicPlayerActivate = remember { mutableStateOf(false) }
             val context = LocalContext.current
             val unreleasedViewModel: UnreleasedViewModel = viewModel()
             val unreleasedSongNameForPlayer = unreleasedViewModel.rememberMusicPlayerTitle
@@ -45,26 +47,26 @@ class MainActivity() : ComponentActivity() {
                         if (!isInternetAvailable(this)) {
                             CustomThing().CustomBottomSnackBar(image = randomLostInternetImg())
                         }
-                        if (unreleasedViewModel.rememberMusicPlayer.value) {
-                            if (isInternetAvailable(this)) {
-                                CustomThing().MusicPlayerUI(
-                                    songName = unreleasedSongNameForPlayer.value,
-                                    imgUrl = unreleasedImgURLForPlayer.value,
-                                    onClick = { Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show() },
-                                    onControlClick = {
-                                        if (!musicControlBoolean.value) { //pause music if value is false
+                         if(musicPlayerActivate.value){
+                             if (isInternetAvailable(this)) {
+                                 CustomThing().MusicPlayerUI(
+                                     songName = unreleasedSongNameForPlayer.value,
+                                     imgUrl = unreleasedImgURLForPlayer.value,
+                                     onClick = { Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show() },
+                                     onControlClick = {
+                                         if (!musicControlBoolean.value) { //pause music if value is false
                                              Toast.makeText(context, "--Paused--", Toast.LENGTH_SHORT).show()
-                                        } else { //play music if value is true
-                                            Toast.makeText(context, "--Playing--", Toast.LENGTH_SHORT).show()
-                                        }
-                                    },
-                                    onControlClickImg = currentControlIcon[0]
-                                )
-                            }
-                        }
+                                         } else { //play music if value is true
+                                             Toast.makeText(context, "--Playing--", Toast.LENGTH_SHORT).show()
+                                         }
+                                     },
+                                     onControlClickImg = currentControlIcon[0]
+                                 )
+                             }
+                         }
                     }
                 ) {
-                    UnreleasedScreen()
+                    UnreleasedScreen(musicPlayerOnClick = { musicPlayerActivate.value=true ;  musicControlBoolean.value=false})
                 }
             }
         }
