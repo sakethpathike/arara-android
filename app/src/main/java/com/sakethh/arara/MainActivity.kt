@@ -47,26 +47,42 @@ class MainActivity() : ComponentActivity() {
                         if (!isInternetAvailable(this)) {
                             CustomThing().CustomBottomSnackBar(image = randomLostInternetImg())
                         }
-                         if(musicPlayerActivate.value){
-                             if (isInternetAvailable(this)) {
-                                 CustomThing().MusicPlayerUI(
-                                     songName = unreleasedSongNameForPlayer.value,
-                                     imgUrl = unreleasedImgURLForPlayer.value,
-                                     onClick = { Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show() },
-                                     onControlClick = {
-                                         if (!musicControlBoolean.value) { //pause music if value is false
-                                             Toast.makeText(context, "--Paused--", Toast.LENGTH_SHORT).show()
-                                         } else { //play music if value is true
-                                             Toast.makeText(context, "--Playing--", Toast.LENGTH_SHORT).show()
-                                         }
-                                     },
-                                     onControlClickImg = currentControlIcon[0]
-                                 )
-                             }
-                         }
+                        if (musicPlayerActivate.value) {
+                            if (isInternetAvailable(this)) {
+                                CustomThing().MusicPlayerUI(
+                                    songName = unreleasedSongNameForPlayer.value,
+                                    imgUrl = unreleasedImgURLForPlayer.value,
+                                    onClick = {
+                                        Toast.makeText(
+                                            context,
+                                            "Clicked",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    },
+                                    onControlClick = {
+                                        if (!musicControlBoolean.value) { //pause music if value is false
+                                            Toast.makeText(
+                                                context,
+                                                "--Paused--",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else { //play music if value is true
+                                            Toast.makeText(
+                                                context,
+                                                "--Playing--",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    },
+                                    onControlClickImg = currentControlIcon[0]
+                                )
+                            }
+                        }
                     }
                 ) {
-                    UnreleasedScreen(musicPlayerOnClick = { musicPlayerActivate.value=true ;  musicControlBoolean.value=false})
+                    UnreleasedScreen(musicPlayerOnClick = {
+                        musicPlayerActivate.value = true; musicControlBoolean.value = false
+                    })
                 }
             }
         }
@@ -78,6 +94,12 @@ class MainActivity() : ComponentActivity() {
 @Composable
 fun DefaultPreview() {
     MaterialTheme(typography = Typography) {
-    CustomThing().MusicPlayerUI("sdrgrgerghtrghrthtrhtyhydthjytjjukikill,,.k,k,k,","",{},{},0)
+        CustomThing().MusicPlayerUI(
+            "sdrgrgerghtrghrthtrhtyhydthjytjjukikill,,.k,k,k,",
+            "",
+            {},
+            {},
+            0
+        )
     }
 }
