@@ -6,5 +6,5 @@ import com.sakethh.arara.R
 
 class CurrentMusicScreenViewModel:ViewModel() {
     val currentIsPauseIcon= mutableStateOf(true) // defines what icon is current
-    val currentPlayPauseIcons= mutableListOf(R.drawable.play,R.drawable.pause)  // defines icon sources
+    val currentPlayPauseIcons= mutableListOf(R.drawable.play_icon_current_music_screen,R.drawable.pause_icon_current_music_screen)  // defines icon sources
 }

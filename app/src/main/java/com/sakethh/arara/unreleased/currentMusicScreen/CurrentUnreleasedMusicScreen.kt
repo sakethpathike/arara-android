@@ -3,7 +3,6 @@ package com.sakethh.arara.unreleased.currentMusicScreen
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -47,6 +46,9 @@ fun CurrentMusicScreen(
             val progressBar = createRefFor("progressBar")
             val spacerAfterProgressBar = createRefFor("spacerAfterProgressBar")
             val mediaController = createRefFor("mediaController")
+            val mediaControllerPlayPauseButton = createRefFor("mediaControllerPlayPauseButton")
+            val mediaControllerPreviousButton = createRefFor("mediaControllerPreviousButton")
+            val mediaControllerNextButton = createRefFor("mediaControllerNextButton")
             constrain(topSpaceHeader) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
@@ -81,6 +83,21 @@ fun CurrentMusicScreen(
                 top.linkTo(spacerAfterProgressBar.bottom)
                 start.linkTo(spacerAfterProgressBar.start)
                 end.linkTo(spacerAfterProgressBar.end)
+            }
+            constrain(mediaControllerPlayPauseButton) {
+                top.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+            constrain(mediaControllerPreviousButton) {
+                top.linkTo(mediaControllerPlayPauseButton.top)
+                bottom.linkTo(mediaControllerPlayPauseButton.bottom)
+                end.linkTo(mediaControllerPlayPauseButton.start)
+            }
+            constrain(mediaControllerNextButton) {
+                top.linkTo(mediaControllerPlayPauseButton.top)
+                bottom.linkTo(mediaControllerPlayPauseButton.bottom)
+                start.linkTo(mediaControllerPlayPauseButton.end)
             }
 
         }
@@ -159,7 +176,7 @@ fun CurrentMusicScreen(
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(10.dp)
+                    .height(15.dp)
                     .layoutId("spacerAfterProgressBar")
             )
             Row(
@@ -178,16 +195,38 @@ fun CurrentMusicScreen(
                     val pauseIcon = currentPlayPauseIcons[1]
                     currentImageState[0] = pauseIcon
                 }
-                IconButton(
+
+                IconButton( //previous button
+                    onClick = {
+
+                    }, modifier = Modifier.requiredSize(35.dp).layoutId("mediaControllerPreviousButton")
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.previoustrack),
+                        modifier = Modifier
+                            .requiredSize(35.dp),
+                        contentDescription = "Play/Pause Icons"
+                    )
+                }
+                IconButton(  // play||pause buttons
                     onClick = {
                         currentIconState.value = !currentIconState.value
-                    }, modifier = Modifier
-                        .requiredSize(35.dp)
-                        .border(shape = CircleShape,width=1.dp,color=Color.Transparent)
-                        .background(Color.White)
+                    }, modifier = Modifier.requiredSize(55.dp).background(color=Color.White, shape = CircleShape).layoutId("mediaControllerPlayPauseButton")
                 ) {
                     Image(
                         painter = painterResource(id = currentImageState[0]),
+                        modifier = Modifier
+                            .requiredSize(35.dp),
+                        contentDescription = "Play/Pause Icons"
+                    )
+                }
+                IconButton(  // next button
+                    onClick = {
+
+                    }, modifier = Modifier.layoutId("mediaControllerNextButton")
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.nexttrack),
                         modifier = Modifier
                             .requiredSize(35.dp),
                         contentDescription = "Play/Pause Icons"
