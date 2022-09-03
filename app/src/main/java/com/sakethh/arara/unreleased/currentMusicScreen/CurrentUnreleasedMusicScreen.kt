@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,12 +31,13 @@ import com.sakethh.arara.R
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.unreleased.ImageThing
+import com.valentinilk.shimmer.shimmer
 
 @SuppressLint("ResourceType")
 @Preview
 @Composable
 fun CurrentMusicScreen(
-    currentSongTitle: String = "Wake Up",
+    currentSongTitle: String = "Meow",
     currentMusicImg: String = ""
 ) {
     MaterialTheme(typography = Typography) {
@@ -133,14 +135,14 @@ fun CurrentMusicScreen(
                 )
                 Row(
                     modifier = Modifier
-                        .padding(start=startAndEndPadding,end=startAndEndPadding)
+                        .padding(start = startAndEndPadding, end = startAndEndPadding)
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .layoutId("titleAndIcon")
                 ) {
                     Box(
                         modifier = Modifier
-                            .requiredWidthIn(min=250.dp)
+                            .requiredWidthIn(min = 250.dp)
                             .wrapContentHeight(),
                         contentAlignment = Alignment.CenterStart
                     ) {
@@ -175,7 +177,7 @@ fun CurrentMusicScreen(
                 )
                 LinearProgressIndicator(
                     modifier = Modifier
-                        .padding(start=startAndEndPadding,end=startAndEndPadding)
+                        .padding(start = startAndEndPadding, end = startAndEndPadding)
                         .fillMaxWidth()
                         .height(5.dp)
                         .layoutId("progressBar")
@@ -192,7 +194,7 @@ fun CurrentMusicScreen(
                 }
                 BoxWithConstraints(
                     modifier = Modifier
-                        .padding(top = 15.dp,start=startAndEndPadding,end=startAndEndPadding)
+                        .padding(top = 20.dp, start = startAndEndPadding, end = startAndEndPadding)
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .layoutId("boxAfterProgressBar")
@@ -240,11 +242,53 @@ fun CurrentMusicScreen(
                     }
                 }
                 // lyrics thing:
-                BoxWithConstraints(modifier = Modifier.padding(top=20.dp, bottom = 20.dp,start = startAndEndPadding,end=startAndEndPadding)
-                    .fillMaxWidth().height(400.dp)
-                    .background(Color.White,shape= RoundedCornerShape(10.dp))
+                Box(modifier = Modifier
+                    .padding(
+                        top = 35.dp,
+                        bottom = startAndEndPadding,
+                        start = startAndEndPadding,
+                        end = startAndEndPadding
+                    )
+                    .fillMaxWidth()
+                    .height(475.dp)
+                    .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .layoutId("lyricsBox")) {
-                    
+                    Text(modifier = Modifier.padding(start=15.dp,top=15.dp), text = "LYRICS", textAlign = TextAlign.Start,style = MaterialTheme.typography.titleMedium, color = Color.Black)
+                    Column(modifier = Modifier
+                        .padding(start = 15.dp, end = 25.dp, bottom = 20.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(top = 45.dp)
+                        .verticalScroll(
+                            rememberScrollState()
+                        )) {
+                        Text( fontSize = 30.sp,text = "Meow meow meow meow meow\n\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\nMeow meow meow meow meow\n" +
+                                "\n", textAlign = TextAlign.Start,style = MaterialTheme.typography.titleMedium, color = Color.Black)
+                    }
                 }
             }
         }
