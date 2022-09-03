@@ -5,6 +5,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -38,7 +39,7 @@ fun CurrentMusicScreen(
     currentMusicImg: String = ""
 ) {
     MaterialTheme(typography = Typography) {
-        val context = LocalContext.current
+       val startAndEndPadding=20.dp
         val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
         val constraintsSet = ConstraintSet {
             val artWork = createRefFor("artWork")
@@ -60,7 +61,6 @@ fun CurrentMusicScreen(
                 top.linkTo(topSpaceHeader.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                bottom.linkTo(titleAndIcon.top)
             }
             constrain(titleAndIcon) {
                 top.linkTo(artWork.bottom)
@@ -133,13 +133,14 @@ fun CurrentMusicScreen(
                 )
                 Row(
                     modifier = Modifier
-                        .width(300.dp)
+                        .padding(start=startAndEndPadding,end=startAndEndPadding)
+                        .fillMaxWidth()
                         .wrapContentHeight()
                         .layoutId("titleAndIcon")
                 ) {
                     Box(
                         modifier = Modifier
-                            .width(250.dp)
+                            .requiredWidthIn(min=250.dp)
                             .wrapContentHeight(),
                         contentAlignment = Alignment.CenterStart
                     ) {
@@ -154,7 +155,7 @@ fun CurrentMusicScreen(
                     }
                     Box(
                         modifier = Modifier
-                            .width(50.dp)
+                            .fillMaxWidth()
                             .wrapContentHeight(),
                         contentAlignment = Alignment.CenterEnd
                     ) {
@@ -174,7 +175,8 @@ fun CurrentMusicScreen(
                 )
                 LinearProgressIndicator(
                     modifier = Modifier
-                        .width(300.dp)
+                        .padding(start=startAndEndPadding,end=startAndEndPadding)
+                        .fillMaxWidth()
                         .height(5.dp)
                         .layoutId("progressBar")
                 )
@@ -190,13 +192,13 @@ fun CurrentMusicScreen(
                 }
                 BoxWithConstraints(
                     modifier = Modifier
-                        .padding(top = 15.dp)
-                        .width(300.dp)
+                        .padding(top = 15.dp,start=startAndEndPadding,end=startAndEndPadding)
+                        .fillMaxWidth()
                         .wrapContentHeight()
                         .layoutId("boxAfterProgressBar")
                 ) {
                     ConstraintLayout( modifier = Modifier
-                        .width(300.dp)
+                        .fillMaxWidth()
                         .wrapContentHeight(),constraintSet = constraintsSet ) {
                         IconButton(modifier = Modifier
                             .layoutId("mediaControllerPreviousButton"),onClick={}){
@@ -214,7 +216,7 @@ fun CurrentMusicScreen(
                                 currentIconState.value = !currentIconState.value
                             },
                             modifier = Modifier
-                                .requiredSize(60.dp)
+                                .requiredSize(50.dp)
                                 .background(color = Color.White, shape = CircleShape)
 
                                 .layoutId("mediaControllerPlayPauseButton"),
@@ -238,7 +240,10 @@ fun CurrentMusicScreen(
                     }
                 }
                 // lyrics thing:
-                BoxWithConstraints(modifier = Modifier.width(300.dp).height(300.dp).background(Color.White).border(border=BorderStroke(10.dp,Color.Transparent),shape= RectangleShape).layoutId("lyricsBox")) {
+                BoxWithConstraints(modifier = Modifier.padding(top=20.dp, bottom = 20.dp,start = startAndEndPadding,end=startAndEndPadding)
+                    .fillMaxWidth().height(400.dp)
+                    .background(Color.White,shape= RoundedCornerShape(10.dp))
+                    .layoutId("lyricsBox")) {
                     
                 }
             }
