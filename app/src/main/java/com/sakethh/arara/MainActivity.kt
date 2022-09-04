@@ -14,14 +14,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
+import com.sakethh.arara.unreleased.UnreleasedNavigation
 import com.sakethh.arara.unreleased.UnreleasedScreen
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.isInternetAvailable
 
 class MainActivity() : ComponentActivity() {
-
+    lateinit var navController:NavHostController
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +45,7 @@ class MainActivity() : ComponentActivity() {
                 val pauseIcon = rememberMusicPlayerControlImg[1] //pause icon
                 currentControlIcon[0] = pauseIcon
             }
+
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
                 Scaffold(floatingActionButtonPosition = FabPosition.Center,
                     floatingActionButton = {
@@ -54,11 +58,7 @@ class MainActivity() : ComponentActivity() {
                                     songName = unreleasedSongNameForPlayer.value,
                                     imgUrl = unreleasedImgURLForPlayer.value,
                                     onClick = {
-                                        Toast.makeText(
-                                            context,
-                                            "Clicked",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        navController.navigate("unreleasedCurrentMusicScreen")
                                     },
                                     onControlClick = {
                                         if (!musicControlBoolean.value) { //pause music if value is false
@@ -81,7 +81,12 @@ class MainActivity() : ComponentActivity() {
                         }
                     }
                 ) {
-
+                    UnreleasedNavigation(
+                        unreleasedMusicPlayerOnClick = { musicPlayerActivate.value = true; musicControlBoolean.value = false },
+                        currentSongTitleForCurrentMusicScreen = unreleasedSongNameForPlayer.value,
+                        currentMusicImgForCurrentMusicScreen = unreleasedImgURLForPlayer.value,
+                        currentSongLyricsForCurrentMusicScreen = ""
+                    )
                 }
             }
         }

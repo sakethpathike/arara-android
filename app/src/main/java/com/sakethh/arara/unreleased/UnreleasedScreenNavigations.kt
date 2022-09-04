@@ -8,19 +8,14 @@ import androidx.navigation.compose.rememberNavController
 import com.sakethh.arara.unreleased.currentMusicScreen.UnreleasedCurrentMusicScreen
 
 @Composable
-fun UnreleasedNavigation() {
+fun UnreleasedNavigation(unreleasedMusicPlayerOnClick:()->Unit, currentSongTitleForCurrentMusicScreen:String, currentMusicImgForCurrentMusicScreen:String, currentSongLyricsForCurrentMusicScreen:String) {
     val navController = rememberNavController()
-    val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
-    val musicPlayerActivate = unreleasedViewModel.musicPlayerActivate
-    NavHost(navController = navController, startDestination = "") {
+    NavHost(navController = navController, startDestination = "unreleasedScreen") {
         composable("unreleasedScreen") {
-            UnreleasedScreen(musicPlayerOnClick = {
-                musicPlayerActivate.value = true; musicControlBoolean.value = false
-            })
+            UnreleasedScreen(musicPlayerOnClick = unreleasedMusicPlayerOnClick)
         }
         composable("unreleasedCurrentMusicScreen"){
-             UnreleasedCurrentMusicScreen("","","")
+             UnreleasedCurrentMusicScreen(currentSongTitleForCurrentMusicScreen,currentMusicImgForCurrentMusicScreen,currentSongLyricsForCurrentMusicScreen)
         }
     }
 }

@@ -116,17 +116,17 @@ class CustomThing {
                         .requiredHeight(45.dp) // renders height of the image
                         .padding(start = 10.dp) //gives 10dp padding in left
                         .requiredWidth(45.dp) //renders width of the image
-                        .clickable { onClick() }, onError = painterResource(randomLostInternetImg())
+                        .clickable { onClick.invoke() }, onError = painterResource(randomLostInternetImg())
                 )
             }
             Spacer(modifier = Modifier
                 .width(8.dp)
-                .clickable { onClick() })
+                .clickable { onClick.invoke() })
             Box(
                 contentAlignment = Alignment.CenterStart, modifier = Modifier
                     .fillMaxHeight()
                     .wrapContentWidth()
-                    .clickable { onClick() }
+                    .clickable { onClick.invoke() }
             ) {
                 Column(
                     modifier = Modifier
@@ -161,7 +161,7 @@ class CustomThing {
                     .fillMaxHeight()
                     .fillMaxWidth()
                     .padding(10.dp)
-                    .clickable { onClick() },
+                    .clickable { onClick.invoke() },
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Image(
