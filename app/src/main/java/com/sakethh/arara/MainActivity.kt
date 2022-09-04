@@ -27,13 +27,13 @@ class MainActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val musicPlayerActivate = remember { mutableStateOf(false) }
             val context = LocalContext.current
             val unreleasedViewModel: UnreleasedViewModel = viewModel()
             val unreleasedSongNameForPlayer = unreleasedViewModel.rememberMusicPlayerTitle
             val unreleasedImgURLForPlayer = unreleasedViewModel.rememberMusicPlayerImgURL
             val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
             val rememberMusicPlayerControlImg = unreleasedViewModel.rememberMusicPlayerControlImg
+            val musicPlayerActivate = unreleasedViewModel.musicPlayerActivate
             val currentControlIcon = remember { mutableListOf(0, 1) }
             if (musicControlBoolean.value) {
                 val playIcon = rememberMusicPlayerControlImg[0]  //play icon
@@ -81,15 +81,14 @@ class MainActivity() : ComponentActivity() {
                         }
                     }
                 ) {
-                    UnreleasedScreen(musicPlayerOnClick = {
-                        musicPlayerActivate.value = true; musicControlBoolean.value = false
-                    })
+
                 }
             }
         }
         unreleasedCache(this)
     }
 }
+
 
 @Preview(showBackground = false)
 @Composable

@@ -31,14 +31,12 @@ import com.sakethh.arara.R
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.unreleased.ImageThing
-import com.valentinilk.shimmer.shimmer
 
-@SuppressLint("ResourceType")
-@Preview
 @Composable
-fun CurrentMusicScreen(
-    currentSongTitle: String = "Meow",
-    currentMusicImg: String = ""
+fun UnreleasedCurrentMusicScreen(
+    currentSongTitle: String,
+    currentMusicImg: String,
+    currentSongLyrics:String
 ) {
     MaterialTheme(typography = Typography) {
        val startAndEndPadding=20.dp
@@ -262,32 +260,7 @@ fun CurrentMusicScreen(
                         .verticalScroll(
                             rememberScrollState()
                         )) {
-                        Text( fontSize = 30.sp,text = "Meow meow meow meow meow\n\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\nMeow meow meow meow meow\n" +
-                                "\n", textAlign = TextAlign.Start,style = MaterialTheme.typography.titleMedium, color = Color.Black)
+                        Text( fontSize = 28.sp,text = currentSongLyrics, textAlign = TextAlign.Start,style = MaterialTheme.typography.titleMedium, color = Color.Black)
                     }
                 }
             }

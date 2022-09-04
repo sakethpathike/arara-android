@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sakethh.arara.R
@@ -20,6 +21,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberMusicPlayerTitle= mutableStateOf("")
     val rememberMusicPlayerControlImg= listOf(R.drawable.play,R.drawable.pause)
     val rememberMusicPlayerControl= mutableStateOf(false)
+    val musicPlayerActivate =  mutableStateOf(false)
     private val coroutineExceptionHandler= CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
