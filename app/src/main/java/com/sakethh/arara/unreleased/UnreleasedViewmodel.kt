@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.sakethh.arara.R
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +24,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberMusicPlayerControlImg= listOf(R.drawable.play,R.drawable.pause)
     val rememberMusicPlayerControl= mutableStateOf(false)
     val musicPlayerActivate =  mutableStateOf(false)
+    val rememberNavController:MutableState<NavHostController> = mutableStateOf(NavHostController)
     private val coroutineExceptionHandler= CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {

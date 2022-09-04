@@ -24,7 +24,6 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.isInternetAvailable
 
 class MainActivity() : ComponentActivity() {
-    lateinit var navController:NavHostController
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +36,7 @@ class MainActivity() : ComponentActivity() {
             val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
             val rememberMusicPlayerControlImg = unreleasedViewModel.rememberMusicPlayerControlImg
             val musicPlayerActivate = unreleasedViewModel.musicPlayerActivate
+            val navController=unreleasedViewModel.rememberNavController
             val currentControlIcon = remember { mutableListOf(0, 1) }
             if (musicControlBoolean.value) {
                 val playIcon = rememberMusicPlayerControlImg[0]  //play icon
@@ -58,7 +58,7 @@ class MainActivity() : ComponentActivity() {
                                     songName = unreleasedSongNameForPlayer.value,
                                     imgUrl = unreleasedImgURLForPlayer.value,
                                     onClick = {
-                                        navController.navigate("unreleasedCurrentMusicScreen")
+                                        navController.value.navigate("unreleasedCurrentMusicScreen")
                                     },
                                     onControlClick = {
                                         if (!musicControlBoolean.value) { //pause music if value is false
