@@ -27,11 +27,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.request.ImageRequest
+import com.ramcosta.composedestinations.annotation.Destination
 import com.sakethh.arara.R
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.unreleased.ImageThing
 
+@Destination
 @Composable
 fun UnreleasedCurrentMusicScreen(
     currentSongTitle: String,

@@ -2,6 +2,7 @@ package com.sakethh.arara.unreleased
 
 import android.app.Activity
 import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -17,12 +18,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.sakethh.arara.CustomThing
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.MainActivity
 import com.sakethh.arara.ui.theme.backgroundColor
@@ -32,8 +35,9 @@ import kotlinx.coroutines.delay
 import okhttp3.Cache
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Destination
 @Composable
-fun UnreleasedScreen(musicPlayerOnClick:()->Unit) {
+fun UnreleasedScreen(itemOnClick:()->Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
     ) { false }
@@ -71,7 +75,7 @@ fun UnreleasedScreen(musicPlayerOnClick:()->Unit) {
                 ) {
                     musicPlayerImgURL.value=data.imgURL
                     musicPlayerTitle.value=data.songName
-                    musicPlayerOnClick()
+                    itemOnClick()
                 }
             }
             items(footerData) { data ->

@@ -15,17 +15,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.request.ImageRequest
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.sakethh.arara.destinations.UnreleasedCurrentMusicScreenDestination
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 
-class CustomThing {
-    @Composable
+
+@Composable
     fun CustomBottomSnackBar(
         title: String = "Network, where?",
         description: String = "Uh-oh, it seems mobile-data or wifi is unavailable at this moment.",
@@ -80,11 +82,13 @@ class CustomThing {
         }
     }
 
-    @Composable
+   @Destination
+   @Composable
     fun MusicPlayerUI(
         songName: String,
         imgUrl: String,
-        onClick: () -> Unit,
+        onClick:()->Unit,
+        navigator:DestinationsNavigator?=null,
         onControlClick: () -> Unit = {},
         onControlClickImg: Int
     ) {
@@ -116,17 +120,17 @@ class CustomThing {
                         .requiredHeight(45.dp) // renders height of the image
                         .padding(start = 10.dp) //gives 10dp padding in left
                         .requiredWidth(45.dp) //renders width of the image
-                        .clickable { onClick.invoke() }, onError = painterResource(randomLostInternetImg())
+                        .clickable {onClick.invoke() }, onError = painterResource(randomLostInternetImg())
                 )
             }
             Spacer(modifier = Modifier
                 .width(8.dp)
-                .clickable { onClick.invoke() })
+                .clickable {onClick.invoke()  })
             Box(
                 contentAlignment = Alignment.CenterStart, modifier = Modifier
                     .fillMaxHeight()
                     .wrapContentWidth()
-                    .clickable { onClick.invoke() }
+                    .clickable {onClick.invoke()   }
             ) {
                 Column(
                     modifier = Modifier
@@ -161,7 +165,7 @@ class CustomThing {
                     .fillMaxHeight()
                     .fillMaxWidth()
                     .padding(10.dp)
-                    .clickable { onClick.invoke() },
+                    .clickable {onClick.invoke() },
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Image(
@@ -176,9 +180,22 @@ class CustomThing {
             }
 
         }
-    }
 }
 
+fun musicPlayerOnClick(
+    navigator: DestinationsNavigator,
+    currentSongTitle: String,
+    currentMusicImg: String,
+    currentSongLyrics: String
+){
+    return navigator.navigate(
+        UnreleasedCurrentMusicScreenDestination(
+            currentSongTitle = currentSongTitle,
+            currentMusicImg = currentMusicImg,
+            currentSongLyrics = currentSongLyrics
+        )
+    )
+}
 fun randomLostInternetImg(): Int {
     return listOf(
         R.drawable.one_no_internet,
