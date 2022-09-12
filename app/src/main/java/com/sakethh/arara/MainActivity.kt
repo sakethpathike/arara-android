@@ -1,7 +1,6 @@
 package com.sakethh.arara
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -13,14 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.UnreleasedScreen
@@ -33,7 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
          MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/){
-             DestinationsNavHost(navGraph = NavGraphs.root)
+             NavController()
          }
         }
         unreleasedCache(this)
@@ -42,16 +35,15 @@ class MainActivity : ComponentActivity() {
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination(start = true)
 @Composable
-fun MainScreen(navigator: DestinationsNavigator){
+fun MainScreen(navHostController: NavHostController){
     val context = LocalContext.current
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val unreleasedSongNameForPlayer = unreleasedViewModel.rememberMusicPlayerTitle
-    val unreleasedImgURLForPlayer = unreleasedViewModel.rememberMusicPlayerImgURL
-    val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
-    val rememberMusicPlayerControlImg = unreleasedViewModel.rememberMusicPlayerControlImg
-    val musicPlayerActivate = unreleasedViewModel.musicPlayerActivate
+    val unreleasedSongNameForPlayer = remember {unreleasedViewModel.rememberMusicPlayerTitle }
+    val unreleasedImgURLForPlayer =  remember {unreleasedViewModel.rememberMusicPlayerImgURL}
+    val musicControlBoolean =  remember {unreleasedViewModel.rememberMusicPlayerControl}
+    val rememberMusicPlayerControlImg =  remember {unreleasedViewModel.rememberMusicPlayerControlImg}
+    val musicPlayerActivate =  remember {unreleasedViewModel.musicPlayerActivate}
     val currentControlIcon = remember { mutableListOf(0, 1) }
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
@@ -70,7 +62,9 @@ fun MainScreen(navigator: DestinationsNavigator){
                         MusicPlayerUI(
                             songName = unreleasedSongNameForPlayer.value,
                             imgUrl = unreleasedImgURLForPlayer.value,
-                            onClick = { musicPlayerOnClick(navigator = navigator,"Title","","Lyrics")},
+                            onClick = {
+                               navHostController.navigate("currentPlayingUnreleasedMusicScreen")
+                            },
                             onControlClick = {
                                 if (!musicControlBoolean.value) { //pause music if value is false
                                     Toast.makeText(

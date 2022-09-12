@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,10 +19,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import coil.request.ImageRequest
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.sakethh.arara.destinations.UnreleasedCurrentMusicScreenDestination
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.UnreleasedViewModel
@@ -82,13 +81,12 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
         }
     }
 
-   @Destination
+
    @Composable
     fun MusicPlayerUI(
         songName: String,
         imgUrl: String,
         onClick:()->Unit,
-        navigator:DestinationsNavigator?=null,
         onControlClick: () -> Unit = {},
         onControlClickImg: Int
     ) {
@@ -147,7 +145,7 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-                    val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
+                    val musicControlBoolean =remember { unreleasedViewModel.rememberMusicPlayerControl}
                     Box(modifier = Modifier.size(20.dp)) {
                         if (!musicControlBoolean.value) {
                             GIFThing(
@@ -159,7 +157,7 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
                 }
             }
             val unreleasedViewModel: UnreleasedViewModel = viewModel()
-            val musicControlBoolean = unreleasedViewModel.rememberMusicPlayerControl
+            val musicControlBoolean = remember { unreleasedViewModel.rememberMusicPlayerControl}
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -182,20 +180,8 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
         }
 }
 
-fun musicPlayerOnClick(
-    navigator: DestinationsNavigator,
-    currentSongTitle: String,
-    currentMusicImg: String,
-    currentSongLyrics: String
-){
-    return navigator.navigate(
-        UnreleasedCurrentMusicScreenDestination(
-            currentSongTitle = currentSongTitle,
-            currentMusicImg = currentMusicImg,
-            currentSongLyrics = currentSongLyrics
-        )
-    )
-}
+
+
 fun randomLostInternetImg(): Int {
     return listOf(
         R.drawable.one_no_internet,

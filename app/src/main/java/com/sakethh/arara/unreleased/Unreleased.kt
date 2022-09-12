@@ -24,8 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.MainActivity
 import com.sakethh.arara.ui.theme.backgroundColor
@@ -35,7 +33,6 @@ import kotlinx.coroutines.delay
 import okhttp3.Cache
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination
 @Composable
 fun UnreleasedScreen(itemOnClick:()->Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
