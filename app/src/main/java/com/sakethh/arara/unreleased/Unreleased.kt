@@ -29,22 +29,24 @@ import com.sakethh.arara.MainActivity
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
 import kotlinx.coroutines.delay
 import okhttp3.Cache
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnreleasedScreen(itemOnClick:()->Unit) {
+fun UnreleasedScreen(itemOnClick: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
     ) { false }
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val songsData = unreleasedViewModel.rememberData.value
+    val songsData =  unreleasedViewModel.rememberData.value
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
-    val musicPlayerImgURL=unreleasedViewModel.rememberMusicPlayerImgURL
-    val musicPlayerTitle=unreleasedViewModel.rememberMusicPlayerTitle
-    Scaffold(modifier=Modifier.background(backgroundColor),topBar = {
+    val musicPlayerImgURL = unreleasedViewModel.rememberMusicPlayerImgURL
+    val musicPlayerTitle = unreleasedViewModel.rememberMusicPlayerTitle
+    val unreleasedLyricsForPlayer = unreleasedViewModel.rememberMusicPlayerLyrics
+    Scaffold(modifier = Modifier.background(backgroundColor), topBar = {
         SmallTopAppBar(
             title = {
                 Text(
@@ -70,16 +72,19 @@ fun UnreleasedScreen(itemOnClick:()->Unit) {
                     songName = data.songName,
                     specificArtwork = data.imgURL
                 ) {
-                    musicPlayerImgURL.value=data.imgURL
-                    musicPlayerTitle.value=data.songName
+                    musicPlayerImgURL.value = data.imgURL
+                    musicPlayerTitle.value = data.songName
+                    unreleasedLyricsForPlayer.value=data.lyrics
                     itemOnClick()
                 }
             }
             items(footerData) { data ->
-                GIFThing(imgURL = data.footerImg, modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .background(backgroundColor))
+                GIFThing(
+                    imgURL = data.footerImg, modifier = Modifier
+                        .fillMaxWidth()
+                        .height(70.dp)
+                        .background(backgroundColor)
+                )
             }
         }
     }

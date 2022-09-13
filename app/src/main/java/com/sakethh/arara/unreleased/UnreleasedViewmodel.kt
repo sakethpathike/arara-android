@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.sakethh.arara.R
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +21,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberUnreleasedHeaderImg:MutableState<List<UnreleasedArtwork>> = mutableStateOf(emptyList())
     val rememberMusicPlayerImgURL= mutableStateOf("")
     val rememberMusicPlayerTitle= mutableStateOf("")
+    val rememberMusicPlayerLyrics= mutableStateOf("")
     val rememberMusicPlayerControlImg= listOf(R.drawable.play,R.drawable.pause)
     val rememberMusicPlayerControl= mutableStateOf(false)
     val musicPlayerActivate =  mutableStateOf(false)

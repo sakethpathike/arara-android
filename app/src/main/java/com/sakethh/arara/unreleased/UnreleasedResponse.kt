@@ -6,7 +6,11 @@ data class UnreleasedResponse(
     @SerializedName("songName")
     val songName:String,
     @SerializedName("specificArtwork")
-    val imgURL:String
+    val imgURL:String,
+    @SerializedName("audioLink_70K")
+    val audioLink:String,
+    @SerializedName("lyrics")
+    val lyrics:String
 )
 
 data class UnreleasedFooterImage(
