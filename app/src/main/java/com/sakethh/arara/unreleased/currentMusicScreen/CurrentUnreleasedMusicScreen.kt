@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -254,7 +255,7 @@ fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
                         end = startAndEndPadding
                     )
                     .fillMaxWidth()
-                    .height(475.dp)
+                    .height(350.dp)
                     .background(Color.White, shape = RoundedCornerShape(10.dp))
                     .layoutId("lyricsBox")
             ) {
@@ -280,6 +281,7 @@ fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
                         fontSize = 25.sp,
                         text = sharedViewModel.dataForCurrentMusicScreen.value?.currentLyrics!!.toString(),
                         textAlign = TextAlign.Start,
+                        lineHeight = 30.sp,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.Black
                     )
