@@ -15,10 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.sakethh.arara.ui.theme.Typography
+import com.sakethh.arara.unreleased.*
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
-import com.sakethh.arara.unreleased.UnreleasedScreen
-import com.sakethh.arara.unreleased.UnreleasedViewModel
-import com.sakethh.arara.unreleased.isInternetAvailable
 import com.sakethh.arara.unreleased.musicPlayer.MusicPlayerUI
 import com.sakethh.arara.unreleased.musicPlayer.MusicPlayerViewModel
 
@@ -38,7 +36,7 @@ class MainActivity() : ComponentActivity() {
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navHostController: NavHostController) {
+fun MainScreen(navHostController: NavHostController,sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val unreleasedSongNameForPlayer = remember { unreleasedViewModel.rememberMusicPlayerTitle }
@@ -67,7 +65,13 @@ fun MainScreen(navHostController: NavHostController) {
                         songName = unreleasedSongNameForPlayer.value,
                         imgUrl = unreleasedImgURLForPlayer.value,
                         onClick = {
-                            navHostController.navigate("currentPlayingUnreleasedMusicScreen/${unreleasedSongNameForPlayer.value}/${unreleasedLyricsForPlayer.value}/${unreleasedImgURLForPlayer.value}")
+                            val dataForCurrentMusicScreen= UnreleasedScreenCurrentData(
+                                currentSongName = unreleasedSongNameForPlayer.value,
+                                currentImgUrl = unreleasedImgURLForPlayer.value,
+                                currentLyrics = unreleasedLyricsForPlayer.value
+                            )
+                            sharedViewModel.data(data = dataForCurrentMusicScreen)
+                            navHostController.navigate("currentPlayingUnreleasedMusicScreen")
                         },
                         onControlClick = {
                             if (!musicControlBoolean.value) { //pause music if value is false

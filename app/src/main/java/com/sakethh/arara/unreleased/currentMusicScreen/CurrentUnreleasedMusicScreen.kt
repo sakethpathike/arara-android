@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,10 +33,11 @@ import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.unreleased.ImageThing
+import com.sakethh.arara.unreleased.SharedViewModel
 
 
 @Composable
-fun UnreleasedCurrentMusicScreen(songName:String,imgURL:String,lyrics:String) {
+fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
     MaterialTheme(typography = Typography) {
         val startAndEndPadding = 20.dp
         val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
@@ -119,7 +121,7 @@ fun UnreleasedCurrentMusicScreen(songName:String,imgURL:String,lyrics:String) {
             )
             ImageThing(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(imgURL)
+                    .data(sharedViewModel.dataForCurrentMusicScreen.value?.currentImgUrl)
                     .crossfade(true)
                     .build(),
                 contentDescription = "Image Of Current Music Which is Playing",
@@ -143,7 +145,7 @@ fun UnreleasedCurrentMusicScreen(songName:String,imgURL:String,lyrics:String) {
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Text(
-                        text = songName,
+                        text = sharedViewModel.dataForCurrentMusicScreen.value?.currentSongName!!,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.White,
                         maxLines = 1,
@@ -273,9 +275,10 @@ fun UnreleasedCurrentMusicScreen(songName:String,imgURL:String,lyrics:String) {
                             rememberScrollState()
                         )
                 ) {
+
                     Text(
                         fontSize = 25.sp,
-                        text = lyrics,
+                        text = sharedViewModel.dataForCurrentMusicScreen.value?.currentLyrics!!.toString(),
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color.Black

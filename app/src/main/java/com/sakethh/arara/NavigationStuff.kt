@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.sakethh.arara.unreleased.SharedViewModel
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.currentMusicScreen.UnreleasedCurrentMusicScreen
 
@@ -18,26 +19,21 @@ import com.sakethh.arara.unreleased.currentMusicScreen.UnreleasedCurrentMusicScr
 @Composable
 fun NavController() {
     val navController = rememberAnimatedNavController()
+    val sharedViewModel:SharedViewModel= viewModel()
     AnimatedNavHost(navController = navController, startDestination = "unreleasedMusicScreen") {
         composable("unreleasedMusicScreen", popEnterTransition = {
             slideInVertically(initialOffsetY = { -1000 }) + fadeIn(
                 tween(100)
             )
         }) {
-            MainScreen(navHostController = navController)
+            MainScreen(navHostController = navController, sharedViewModel = sharedViewModel)
         }
-        composable(route = "currentPlayingUnreleasedMusicScreen/{songName}/{lyrics}/{imgURL}",
-            arguments = listOf(
-                navArgument("songName") { type = NavType.StringType },
-                navArgument("imgURL") { type = NavType.StringType },
-                navArgument("lyrics") { type = NavType.StringType }),
+        composable(route = "currentPlayingUnreleasedMusicScreen",
             enterTransition = {
                 slideInVertically(initialOffsetY = { 100000 }) + fadeIn(tween(100))
             }) {
             UnreleasedCurrentMusicScreen(
-                songName = it.arguments?.getString("songName")!!,
-                imgURL = it.arguments?.getString("imgURL")!!,
-                lyrics = it.arguments?.getString("lyrics")!!
+                sharedViewModel=sharedViewModel
             )
         }
     }
