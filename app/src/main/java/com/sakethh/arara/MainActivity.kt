@@ -47,6 +47,10 @@ fun MainScreen(navHostController: NavHostController,sharedViewModel: SharedViewM
         remember { unreleasedViewModel.rememberMusicPlayerControlImg }
     val musicPlayerActivate = remember { unreleasedViewModel.musicPlayerActivate }
     val currentControlIcon = remember { mutableListOf(0, 1) }
+    val rememberMusicPlayerDescription= unreleasedViewModel.rememberMusicPlayerDescription
+    val rememberMusicPlayerDescriptionBy= unreleasedViewModel.rememberMusicPlayerDescriptionBy
+    val rememberMusicPlayerDescriptionOrigin= unreleasedViewModel.rememberMusicPlayerDescriptionOrigin
+    val rememberMusicPlayerArtworkBy= unreleasedViewModel.rememberMusicPlayerArtworkBy
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -68,7 +72,11 @@ fun MainScreen(navHostController: NavHostController,sharedViewModel: SharedViewM
                             val dataForCurrentMusicScreen= UnreleasedScreenCurrentData(
                                 currentSongName = unreleasedSongNameForPlayer.value,
                                 currentImgUrl = unreleasedImgURLForPlayer.value,
-                                currentLyrics = unreleasedLyricsForPlayer.value
+                                currentLyrics = unreleasedLyricsForPlayer.value,
+                                songDescription = rememberMusicPlayerDescription.value,
+                                descriptionBy = rememberMusicPlayerDescriptionBy.value,
+                                descriptionOrigin = rememberMusicPlayerDescriptionOrigin.value,
+                                artworkBy = rememberMusicPlayerArtworkBy.value
                             )
                             sharedViewModel.data(data = dataForCurrentMusicScreen)
                             navHostController.navigate("currentPlayingUnreleasedMusicScreen")

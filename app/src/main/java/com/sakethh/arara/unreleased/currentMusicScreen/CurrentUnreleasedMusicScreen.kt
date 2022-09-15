@@ -1,6 +1,7 @@
 package com.sakethh.arara.unreleased.currentMusicScreen
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -44,7 +46,9 @@ fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
         val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
         val constraintsSet = ConstraintSet {
             val artWork = createRefFor("artWork")
+            val titleAndIconAndDescription = createRefFor("titleAndIconAndDescription")
             val titleAndIcon = createRefFor("titleAndIcon")
+            val descriptionText = createRefFor("descriptionText")
             val topSpaceHeader = createRefFor("topSpaceHeader")
             val progressBarSpacer = createRefFor("progressBarSpacer")
             val progressBar = createRefFor("progressBar")
@@ -63,16 +67,27 @@ fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-            constrain(titleAndIcon) {
+            constrain(titleAndIconAndDescription) {
                 top.linkTo(artWork.bottom)
                 bottom.linkTo(lyricsBox.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-            constrain(progressBarSpacer) {
+            constrain(titleAndIcon) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
+            constrain(descriptionText) {
                 top.linkTo(titleAndIcon.bottom)
-                start.linkTo(titleAndIcon.start)
-                end.linkTo(titleAndIcon.end)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            }
+            constrain(progressBarSpacer) {
+                top.linkTo(titleAndIconAndDescription.bottom)
+                start.linkTo(titleAndIconAndDescription.start)
+                end.linkTo(titleAndIconAndDescription.end)
             }
             constrain(progressBar) {
                 top.linkTo(progressBarSpacer.bottom)
@@ -113,6 +128,7 @@ fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
                 .fillMaxSize()
                 .background(backgroundColor)
                 .verticalScroll(state = rememberScrollState(), enabled = true)
+                .animateContentSize()
         ) {
             Spacer(
                 Modifier
@@ -132,38 +148,70 @@ fun UnreleasedCurrentMusicScreen(sharedViewModel: SharedViewModel) {
                     .shadow(2.dp),
                 onError = painterResource(id = randomLostInternetImg())
             )
-            Row(
+            BoxWithConstraints(
                 modifier = Modifier
                     .padding(start = startAndEndPadding, end = startAndEndPadding)
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .layoutId("titleAndIcon")
+                    .layoutId("titleAndIconAndDescription")
+                    .animateContentSize()
             ) {
-                Box(
-                    modifier = Modifier
-                        .requiredWidthIn(min = 250.dp)
-                        .wrapContentHeight(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        text = sharedViewModel.dataForCurrentMusicScreen.value?.currentSongName!!,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                        maxLines = 1,
-                        fontSize = 20.sp,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    contentAlignment = Alignment.CenterEnd
-                ) {
-                    IconButton(onClick = { }, modifier = Modifier.size(25.dp)) {
-                        Image(
-                            painter = painterResource(id = R.drawable.dropdown),
-                            contentDescription = "Description"
+                ConstraintLayout(constraintSet = constraintsSet) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .layoutId("titleAndIcon")
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .requiredWidthIn(min = 250.dp)
+                                .wrapContentHeight(),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            Text(
+                                text = sharedViewModel.dataForCurrentMusicScreen.value?.currentSongName!!,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White,
+                                maxLines = 1,
+                                fontSize = 20.sp,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            IconButton(onClick = {
+                                currentMusicScreenViewModel.descriptionButtonClicked.value =
+                                    !currentMusicScreenViewModel.descriptionButtonClicked.value
+                            }, modifier = Modifier.size(25.dp)) {
+                               if(currentMusicScreenViewModel.descriptionButtonClicked.value){
+                                   Image(
+                                       painter = painterResource(id = R.drawable.dropdown),
+                                       contentDescription = "Description",
+                                       modifier = Modifier.rotate(180f).animateContentSize()
+                                   )
+                               }else{
+                                   Image(
+                                       painter = painterResource(id = R.drawable.dropdown),
+                                       contentDescription = "Description"
+                                   )
+                               }
+                            }
+                        }
+                    }
+                    if(currentMusicScreenViewModel.descriptionButtonClicked.value){
+                        Text(
+                            text = "${sharedViewModel.dataForCurrentMusicScreen.value?.songDescription}\n\nDescription Via:- ${sharedViewModel.dataForCurrentMusicScreen.value?.descriptionBy} from ${sharedViewModel.dataForCurrentMusicScreen.value?.descriptionOrigin}.\nArtwork stolen from ${sharedViewModel.dataForCurrentMusicScreen.value?.artworkBy}:)",
+                            fontSize = 16.sp,
+                             lineHeight = 20.sp ,
+                            color = Color.White,
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.padding(top=5.dp).layoutId("descriptionText")
                         )
                     }
                 }

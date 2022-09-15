@@ -46,6 +46,10 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
     val musicPlayerImgURL = unreleasedViewModel.rememberMusicPlayerImgURL
     val musicPlayerTitle = unreleasedViewModel.rememberMusicPlayerTitle
     val unreleasedLyricsForPlayer = unreleasedViewModel.rememberMusicPlayerLyrics
+    val rememberMusicPlayerDescription= unreleasedViewModel.rememberMusicPlayerDescription
+    val rememberMusicPlayerDescriptionBy= unreleasedViewModel.rememberMusicPlayerDescriptionBy
+    val rememberMusicPlayerArtworkBy= unreleasedViewModel.rememberMusicPlayerArtworkBy
+    val rememberMusicPlayerDescriptionOrigin= unreleasedViewModel.rememberMusicPlayerDescriptionOrigin
     Scaffold(modifier = Modifier.background(backgroundColor), topBar = {
         SmallTopAppBar(
             title = {
@@ -75,6 +79,10 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                     musicPlayerImgURL.value = data.imgURL
                     musicPlayerTitle.value = data.songName
                     unreleasedLyricsForPlayer.value=data.lyrics
+                    rememberMusicPlayerDescription.value=data.songDescription
+                    rememberMusicPlayerDescriptionBy.value=data.descriptionBy
+                    rememberMusicPlayerDescriptionOrigin.value=data.descriptionOrigin
+                    rememberMusicPlayerArtworkBy.value=data.specificArtworkBy
                     itemOnClick()
                 }
             }

@@ -70,9 +70,10 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
                         Text(
                             text = description,
                             style = MaterialTheme.typography.titleMedium,
-                            maxLines = 3,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
+                            lineHeight = 13.sp,
                             color = Color.White
                         )
                     }

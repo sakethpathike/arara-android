@@ -10,7 +10,15 @@ data class UnreleasedResponse(
     @SerializedName("audioLink_70K")
     val audioLink:String,
     @SerializedName("lyrics")
-    val lyrics:String
+    val lyrics:String,
+    @SerializedName("songDescription")
+    val songDescription:String,
+    @SerializedName("descriptionBi")
+    val descriptionBy:String,
+    @SerializedName("descriptionOrigin")
+    val descriptionOrigin:String,
+    @SerializedName("specificArtworkBi")
+    val specificArtworkBy:String,
 )
 
 data class UnreleasedFooterImage(
