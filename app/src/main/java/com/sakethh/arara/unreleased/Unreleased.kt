@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +31,6 @@ import com.sakethh.arara.ui.theme.backgroundColor
 import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
 import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
-import kotlinx.coroutines.delay
 import okhttp3.Cache
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,16 +40,18 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
         rememberTopAppBarState()
     ) { false }
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val songsData =  unreleasedViewModel.rememberData.value
+    val songsData = remember { derivedStateOf { unreleasedViewModel.rememberData } }
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
     val musicPlayerImgURL = unreleasedViewModel.rememberMusicPlayerImgURL
     val musicPlayerTitle = unreleasedViewModel.rememberMusicPlayerTitle
     val unreleasedLyricsForPlayer = unreleasedViewModel.rememberMusicPlayerLyrics
-    val rememberMusicPlayerDescription= unreleasedViewModel.rememberMusicPlayerDescription
-    val rememberMusicPlayerDescriptionBy= unreleasedViewModel.rememberMusicPlayerDescriptionBy
-    val rememberMusicPlayerArtworkBy= unreleasedViewModel.rememberMusicPlayerArtworkBy
-    val rememberMusicPlayerDescriptionOrigin= unreleasedViewModel.rememberMusicPlayerDescriptionOrigin
+    val rememberMusicPlayerDescription = unreleasedViewModel.rememberMusicPlayerDescription
+    val rememberMusicPlayerDescriptionBy = unreleasedViewModel.rememberMusicPlayerDescriptionBy
+    val rememberMusicPlayerArtworkBy = unreleasedViewModel.rememberMusicPlayerArtworkBy
+    val rememberMusicPlayerDescriptionOrigin =
+        unreleasedViewModel.rememberMusicPlayerDescriptionOrigin
+    val audioUrl=unreleasedViewModel.musicAudioURL
     Scaffold(modifier = Modifier.background(backgroundColor), topBar = {
         SmallTopAppBar(
             title = {
@@ -71,18 +73,20 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
             items(headerData) { data ->
                 ArtBoard(data.artwork)
             }
-            items(songsData) { data ->
+
+            items(songsData.value.value) { data ->
                 SongThing1(
                     songName = data.songName,
                     specificArtwork = data.imgURL
                 ) {
                     musicPlayerImgURL.value = data.imgURL
                     musicPlayerTitle.value = data.songName
-                    unreleasedLyricsForPlayer.value=data.lyrics
-                    rememberMusicPlayerDescription.value=data.songDescription
-                    rememberMusicPlayerDescriptionBy.value=data.descriptionBy
-                    rememberMusicPlayerDescriptionOrigin.value=data.descriptionOrigin
-                    rememberMusicPlayerArtworkBy.value=data.specificArtworkBy
+                    unreleasedLyricsForPlayer.value = data.lyrics
+                    rememberMusicPlayerDescription.value = data.songDescription
+                    rememberMusicPlayerDescriptionBy.value = data.descriptionBy
+                    rememberMusicPlayerDescriptionOrigin.value = data.descriptionOrigin
+                    rememberMusicPlayerArtworkBy.value = data.specificArtworkBy
+                    audioUrl.value=data.audioLink
                     itemOnClick()
                 }
             }
