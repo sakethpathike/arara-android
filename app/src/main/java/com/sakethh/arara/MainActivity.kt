@@ -124,17 +124,11 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
             if (mediaPlayer.isPlaying || !mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
                 mediaPlayer.reset().also {
-                    mediaPlayer.setDataSource("https://ia601509.us.archive.org/25/items/auroraunreleased_202207/AURORA%20-%20Broken%20Satellites%28MP3_70K%29.mp3")
+                    mediaPlayer.setDataSource(currentAudioURL.value)
                     mediaPlayer.prepareAsync()
                     mediaPlayer.setOnPreparedListener {
                         it.start()
                     }
-                }
-            } else {
-                mediaPlayer.setDataSource("https://ia601509.us.archive.org/25/items/auroraunreleased_202207/AURORA%20-%20Broken%20Satellites%28MP3_70K%29.mp3")
-                mediaPlayer.prepareAsync()
-                mediaPlayer.setOnPreparedListener { player ->
-                    player.start()
                 }
             }
         }
