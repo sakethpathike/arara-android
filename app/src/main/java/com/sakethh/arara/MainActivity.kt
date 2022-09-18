@@ -23,6 +23,9 @@ import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.unreleased.*
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.musicPlayer.MusicPlayerUI
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity() : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -42,7 +45,7 @@ class MainActivity() : ComponentActivity() {
 @Composable
 fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
-    val mediaPlayer = MediaPlayer()
+    val mediaPlayer =UnreleasedViewModel.MediaPlayer.mediaPlayer
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val unreleasedSongNameForPlayer = remember { unreleasedViewModel.rememberMusicPlayerTitle }
     val unreleasedImgURLForPlayer = remember { unreleasedViewModel.rememberMusicPlayerImgURL }
@@ -90,6 +93,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                             )
                             sharedViewModel.data(data = dataForCurrentMusicScreen)
                             navHostController.navigate("currentPlayingUnreleasedMusicScreen")
+
                         },
                         onControlClick = {
                             if (!musicControlBoolean.value) { //pause music if value is false
@@ -113,6 +117,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
         UnreleasedScreen {
             unreleasedViewModel.musicPlayerActivate.value = true
             unreleasedViewModel.rememberMusicPlayerControl.value = false
+
             if (Build.VERSION.SDK_INT <= 26) {
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
             } else {
@@ -122,14 +127,23 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                 )
             }
             if (mediaPlayer.isPlaying || !mediaPlayer.isPlaying) {
+               Log.d("ARARA LOG","Before Resting")
                 mediaPlayer.stop()
                 mediaPlayer.reset().also {
+                    Log.d("ARARA LOG","After Resting")
                     mediaPlayer.setDataSource(currentAudioURL.value)
                     mediaPlayer.prepareAsync()
                     mediaPlayer.setOnPreparedListener {
                         it.start()
                     }
                 }
+            }else{
+                Toast.makeText(context,"Else Is Triggered",Toast.LENGTH_SHORT).show()
+                /*mediaPlayer.setDataSource(currentAudioURL.value)
+                mediaPlayer.prepareAsync()
+                mediaPlayer.setOnPreparedListener {
+                    it.start()
+                }*/
             }
         }
     }
