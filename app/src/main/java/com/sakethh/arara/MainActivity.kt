@@ -6,6 +6,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore.Audio.Media
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -45,7 +46,7 @@ class MainActivity() : ComponentActivity() {
 @Composable
 fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
-    val mediaPlayer =UnreleasedViewModel.MediaPlayer.mediaPlayer
+    val mediaPlayer = UnreleasedViewModel.MediaPlayer.mediaPlayer
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val unreleasedSongNameForPlayer = remember { unreleasedViewModel.rememberMusicPlayerTitle }
     val unreleasedImgURLForPlayer = remember { unreleasedViewModel.rememberMusicPlayerImgURL }
@@ -63,7 +64,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
     val rememberMusicPlayerDescriptionOrigin =
         remember { unreleasedViewModel.rememberMusicPlayerDescriptionOrigin }
     val rememberMusicPlayerArtworkBy = unreleasedViewModel.rememberMusicPlayerArtworkBy
-
+    val currentGIFURL=unreleasedViewModel.currentLoadingStatusGIFURL
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -84,7 +85,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                         onClick = {
                             val dataForCurrentMusicScreen = UnreleasedScreenCurrentData(
                                 currentSongName = unreleasedSongNameForPlayer.value,
-                                currentImgUrl = unreleasedImgURLForPlayer.value,
+                                currentImgUrl = unreleasedViewModel.rememberMusicPlayerHDImgURL.value,
                                 currentLyrics = unreleasedLyricsForPlayer.value,
                                 songDescription = rememberMusicPlayerDescription.value,
                                 descriptionBy = rememberMusicPlayerDescriptionBy.value,
@@ -117,7 +118,8 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
         UnreleasedScreen {
             unreleasedViewModel.musicPlayerActivate.value = true
             unreleasedViewModel.rememberMusicPlayerControl.value = false
-
+            currentGIFURL.value =
+                Constants.MUSIC_LOADING_GIF
             if (Build.VERSION.SDK_INT <= 26) {
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
             } else {
@@ -127,23 +129,24 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                 )
             }
             if (mediaPlayer.isPlaying || !mediaPlayer.isPlaying) {
-               Log.d("ARARA LOG","Before Resting")
                 mediaPlayer.stop()
                 mediaPlayer.reset().also {
-                    Log.d("ARARA LOG","After Resting")
                     mediaPlayer.setDataSource(currentAudioURL.value)
                     mediaPlayer.prepareAsync()
                     mediaPlayer.setOnPreparedListener {
-                        it.start()
+                        try {
+                            it.start()
+                        } catch (e: Exception) {
+                            currentGIFURL.value =
+                                Constants.MUSIC_ERROR_GIF
+                            e.printStackTrace()
+                        }
+                        if (it.isPlaying) {
+                            currentGIFURL.value =
+                                Constants.MUSIC_PLAYING_GIF
+                        }
                     }
                 }
-            }else{
-                Toast.makeText(context,"Else Is Triggered",Toast.LENGTH_SHORT).show()
-                /*mediaPlayer.setDataSource(currentAudioURL.value)
-                mediaPlayer.prepareAsync()
-                mediaPlayer.setOnPreparedListener {
-                    it.start()
-                }*/
             }
         }
     }

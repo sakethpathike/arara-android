@@ -20,6 +20,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberUnreleasedFooterImg:MutableState<List<UnreleasedFooterImage>> = mutableStateOf(emptyList())
     val rememberUnreleasedHeaderImg:MutableState<List<UnreleasedArtwork>> = mutableStateOf(emptyList())
     val rememberMusicPlayerImgURL= mutableStateOf("")
+    val rememberMusicPlayerHDImgURL= mutableStateOf("")
     val rememberMusicPlayerTitle= mutableStateOf("")
     val rememberMusicPlayerLyrics= mutableStateOf("")
     val rememberMusicPlayerDescription= mutableStateOf("")
@@ -30,6 +31,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberMusicPlayerControl= mutableStateOf(false)
     val musicPlayerActivate =  mutableStateOf(false)
     val musicAudioURL= mutableStateOf("")
+    val currentLoadingStatusGIFURL= mutableStateOf("")
     object MediaPlayer{
         val mediaPlayer=android.media.MediaPlayer()
     }

@@ -63,17 +63,17 @@ fun MusicPlayerUI(
                     .requiredHeight(45.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
                     .requiredWidth(45.dp) //renders width of the image
-                    .clickable {onClick.invoke() }, onError = painterResource(randomLostInternetImg())
+                    .clickable { onClick.invoke() }, onError = painterResource(randomLostInternetImg())
             )
         }
         Spacer(modifier = Modifier
             .width(8.dp)
-            .clickable {onClick.invoke()  })
+            .clickable { onClick.invoke() })
         Box(
             contentAlignment = Alignment.CenterStart, modifier = Modifier
                 .fillMaxHeight()
                 .wrapContentWidth()
-                .clickable {onClick.invoke()   }
+                .clickable { onClick.invoke() }
         ) {
             Column(
                 modifier = Modifier
@@ -94,7 +94,7 @@ fun MusicPlayerUI(
                 Box(modifier = Modifier.size(20.dp)) {
                     if (!musicControlBoolean.value) {
                         GIFThing(
-                            imgURL = Constants.MUSIC_PLAYING_GIF, modifier = Modifier
+                            imgURL = unreleasedViewModel.currentLoadingStatusGIFURL.value, modifier = Modifier
                                 .fillMaxSize()
                         )
                     }
@@ -108,13 +108,14 @@ fun MusicPlayerUI(
                 .fillMaxHeight()
                 .fillMaxWidth()
                 .padding(10.dp)
-                .clickable {onClick.invoke() },
+                .clickable { onClick.invoke() },
             contentAlignment = Alignment.CenterEnd,
         ) {
             Image(
                 painter = painterResource(id = onControlClickImg),
                 modifier = Modifier
-                    .requiredSize(35.dp).clickable {
+                    .requiredSize(35.dp)
+                    .clickable {
                         onControlClick()
                         musicControlBoolean.value = !musicControlBoolean.value
                     },

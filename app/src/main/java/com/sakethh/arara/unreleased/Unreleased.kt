@@ -44,6 +44,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
     val musicPlayerImgURL = unreleasedViewModel.rememberMusicPlayerImgURL
+    val musicPlayerHDImgURL = unreleasedViewModel.rememberMusicPlayerHDImgURL
     val musicPlayerTitle = unreleasedViewModel.rememberMusicPlayerTitle
     val unreleasedLyricsForPlayer = unreleasedViewModel.rememberMusicPlayerLyrics
     val rememberMusicPlayerDescription = unreleasedViewModel.rememberMusicPlayerDescription
@@ -87,6 +88,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                     rememberMusicPlayerDescriptionOrigin.value = data.descriptionOrigin
                     rememberMusicPlayerArtworkBy.value = data.specificArtworkBy
                     audioUrl.value=data.audioLink
+                    musicPlayerHDImgURL.value=data.imgURLHD
                     itemOnClick()
                 }
             }

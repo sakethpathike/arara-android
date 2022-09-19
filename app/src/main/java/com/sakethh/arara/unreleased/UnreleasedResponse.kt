@@ -19,6 +19,8 @@ data class UnreleasedResponse(
     val descriptionOrigin:String,
     @SerializedName("specificArtworkBi")
     val specificArtworkBy:String,
+    @SerializedName("artWorkHDURL")
+    val imgURLHD:String
 )
 
 data class UnreleasedFooterImage(
