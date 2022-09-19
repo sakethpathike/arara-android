@@ -33,7 +33,6 @@ import com.sakethh.arara.ui.theme.firstGradient
 import com.sakethh.arara.ui.theme.headerColor
 import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
 import okhttp3.Cache
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnreleasedScreen(itemOnClick: () -> Unit) {
@@ -41,7 +40,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
         rememberTopAppBarState()
     ) { false }
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val songsData = remember { derivedStateOf { unreleasedViewModel.rememberData } }
+    val unreleasedData=unreleasedViewModel.rememberData
     val headerData = unreleasedViewModel.rememberUnreleasedHeaderImg.value
     val footerData = unreleasedViewModel.rememberUnreleasedFooterImg.value
     val musicPlayerImgURL = unreleasedViewModel.rememberMusicPlayerImgURL
@@ -76,7 +75,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                 ArtBoard(data.artwork)
             }
 
-            items(songsData.value.value) { data ->
+            items(unreleasedData.value) { data ->
                 SongThing1(
                     songName = data.songName,
                     specificArtwork = data.imgURL
@@ -94,13 +93,22 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                 }
             }
             items(footerData) { data ->
-                GIFThing(
-                    imgURL = data.footerImg, modifier = Modifier
-                        .background(backgroundColor)
-                        .padding(bottom = 100.dp)
-                        .fillMaxWidth()
-                        .height(70.dp)
-                )
+                if(unreleasedViewModel.musicPlayerActivate.value){
+                    GIFThing(
+                        imgURL = data.footerImg, modifier = Modifier
+                            .background(backgroundColor)
+                            .padding(bottom = 100.dp)
+                            .fillMaxWidth()
+                            .height(70.dp)
+                    )
+                }else{
+                    GIFThing(
+                        imgURL = data.footerImg, modifier = Modifier
+                            .background(backgroundColor)
+                            .fillMaxWidth()
+                            .height(70.dp)
+                    )
+                }
             }
         }
     }

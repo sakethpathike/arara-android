@@ -39,7 +39,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val songsData = getSongsData()
-            rememberData.value = songsData
+            rememberData.value = songsData.component1()
             val headerData=getUnreleasedHeaderImg()
             rememberUnreleasedHeaderImg.value=headerData
             val footerData=getUnreleasedFooterImg()
@@ -53,7 +53,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     private suspend fun getUnreleasedHeaderImg():List<UnreleasedArtwork>{
         return unreleasedRepo.getUnreleasedHeaderImg()
     }
-    private suspend fun getSongsData(): List<UnreleasedResponse> {
+    private suspend fun getSongsData(): List<List<UnreleasedResponse>> {
         return unreleasedRepo.getSongsData()
     }
 }
