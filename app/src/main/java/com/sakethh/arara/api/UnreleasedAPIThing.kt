@@ -8,14 +8,21 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 class UnreleasedAPIThing() {
-    private var apiData: UnreleasedAPI
-    init {
+    private lateinit var apiData: UnreleasedAPI
+    private fun connectToNetwork(){
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(UnreleasedCache.okHttpClient)
             .build()
         apiData = retrofitBuilder.create(UnreleasedAPI::class.java)
+    }
+    init {
+        try {
+            connectToNetwork()
+        }catch (_:Exception){
+            connectToNetwork()
+        }
     }
     suspend fun getSongsData(): List<UnreleasedResponse> {
         return apiData.getSongsData()

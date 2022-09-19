@@ -11,6 +11,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
@@ -95,9 +96,10 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
             items(footerData) { data ->
                 GIFThing(
                     imgURL = data.footerImg, modifier = Modifier
+                        .background(backgroundColor)
+                        .padding(bottom = 100.dp)
                         .fillMaxWidth()
                         .height(70.dp)
-                        .background(backgroundColor)
                 )
             }
         }

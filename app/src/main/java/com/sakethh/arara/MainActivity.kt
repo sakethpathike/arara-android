@@ -103,9 +103,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                                 }
                             } else { //play music if value is true
                                 if (!mediaPlayer.isPlaying) {
-                                    mediaPlayer.setOnPreparedListener {
-                                        it.start()
-                                    }
+                                    mediaPlayer.start()
                                 }
                             }
                         },
@@ -136,6 +134,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                     mediaPlayer.setOnPreparedListener {
                         try {
                             it.start()
+                            Log.d("AURORA LOG",it.duration.toString())
                         } catch (e: Exception) {
                             currentGIFURL.value =
                                 Constants.MUSIC_ERROR_GIF
@@ -144,6 +143,9 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                         if (it.isPlaying) {
                             currentGIFURL.value =
                                 Constants.MUSIC_PLAYING_GIF
+                        }
+                        it.setOnCompletionListener {
+                            unreleasedViewModel.currentLoadingStatusGIFURL.value=Constants.MUSIC_ERROR_GIF
                         }
                     }
                 }
