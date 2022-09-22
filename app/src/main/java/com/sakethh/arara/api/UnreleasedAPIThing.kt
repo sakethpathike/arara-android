@@ -24,11 +24,7 @@ class UnreleasedAPIThing() {
     }
 
     init {
-        try {
-            connectToNetwork()
-        } catch (_: Exception) {
-            connectToNetwork()
-        }
+        connectToNetwork()
     }
 
     suspend fun getSongsData(): List<List<UnreleasedResponse>> {

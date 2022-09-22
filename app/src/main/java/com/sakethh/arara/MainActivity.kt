@@ -3,10 +3,9 @@ package com.sakethh.arara
 import android.annotation.SuppressLint
 import android.media.AudioAttributes
 import android.media.AudioManager
-import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore.Audio.Media
+import android.text.format.DateUtils
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -24,9 +23,9 @@ import com.sakethh.arara.ui.theme.Typography
 import com.sakethh.arara.unreleased.*
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.musicPlayer.MusicPlayerUI
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class MainActivity() : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -48,6 +47,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
     val context = LocalContext.current
     val mediaPlayer = UnreleasedViewModel.MediaPlayer.mediaPlayer
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
+    val coroutineScope = rememberCoroutineScope()
     val unreleasedSongNameForPlayer = remember { unreleasedViewModel.rememberMusicPlayerTitle }
     val unreleasedImgURLForPlayer = remember { unreleasedViewModel.rememberMusicPlayerImgURL }
     val unreleasedLyricsForPlayer = remember { unreleasedViewModel.rememberMusicPlayerLyrics }
@@ -64,7 +64,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
     val rememberMusicPlayerDescriptionOrigin =
         remember { unreleasedViewModel.rememberMusicPlayerDescriptionOrigin }
     val rememberMusicPlayerArtworkBy = unreleasedViewModel.rememberMusicPlayerArtworkBy
-    val currentGIFURL=unreleasedViewModel.currentLoadingStatusGIFURL
+    val currentGIFURL = unreleasedViewModel.currentLoadingStatusGIFURL
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -97,15 +97,11 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
 
                         },
                         onControlClick = {
-                            if (!musicControlBoolean.value) { //pause music if value is false
-                                if (mediaPlayer.isPlaying) {
-                                    mediaPlayer.pause()
-                                }
-                            } else { //play music if value is true
-                                if (!mediaPlayer.isPlaying) {
-                                    mediaPlayer.start()
-                                }
-                            }
+                                 if(mediaPlayer.isPlaying){
+                                     mediaPlayer.pause()
+                                 }else{
+                                     mediaPlayer.start()
+                                 }
                         },
                         onControlClickImg = currentControlIcon[0]
                     )
@@ -118,6 +114,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
             unreleasedViewModel.rememberMusicPlayerControl.value = false
             currentGIFURL.value =
                 Constants.MUSIC_LOADING_GIF
+            unreleasedViewModel.musicPlayerVisibility.value=false
             if (Build.VERSION.SDK_INT <= 26) {
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
             } else {
@@ -134,18 +131,20 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                     mediaPlayer.setOnPreparedListener {
                         try {
                             it.start()
-                            Log.d("AURORA LOG",it.duration.toString())
                         } catch (e: Exception) {
                             currentGIFURL.value =
                                 Constants.MUSIC_ERROR_GIF
-                            e.printStackTrace()
                         }
                         if (it.isPlaying) {
                             currentGIFURL.value =
                                 Constants.MUSIC_PLAYING_GIF
+                            unreleasedViewModel.musicPlayerVisibility.value=true
                         }
                         it.setOnCompletionListener {
-                            unreleasedViewModel.currentLoadingStatusGIFURL.value=Constants.MUSIC_ERROR_GIF
+                            UnreleasedViewModel.MediaPlayer.musicCompleted.value = true
+                            unreleasedViewModel.musicPlayerVisibility.value=false
+                            unreleasedViewModel.currentLoadingStatusGIFURL.value =
+                                Constants.MUSIC_ERROR_GIF
                         }
                     }
                 }
@@ -153,6 +152,7 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
         }
     }
 }
+
 
 @Preview(showBackground = false)
 @Composable

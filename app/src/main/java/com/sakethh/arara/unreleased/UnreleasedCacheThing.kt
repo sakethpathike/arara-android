@@ -4,43 +4,54 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import com.sakethh.arara.Constants
-import com.sakethh.arara.MainActivity
-import okhttp3.Cache
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import android.util.Log
+import okhttp3.*
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("StaticFieldLeak")
-object UnreleasedCache{
-    lateinit var okHttpClient:OkHttpClient
-fun unreleasedCache(context:Context) {
-        val cacheSize = (10 * 1024 * 1024).toLong() // 10 MB
-        val cache= Cache(File(context.cacheDir,"unreleased-cache"),cacheSize)
-        okHttpClient= OkHttpClient.Builder()
-            .cache(cache = cache)
-            .addInterceptor {
-                var request = it.request()
-                if (!isInternetAvailable(context)) {
-                    request= request.newBuilder().header(
-                        "Cache-Control",
-                        "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7
-                    ).removeHeader("Pragma").build()
-                    it.proceed(request)
-                }else{
-                     request = it.request()
-                    request = request.newBuilder().header("Cache-Control", "public, max-age=" + 2)
-                        .removeHeader("Pragma").build()
-                   it.proceed(request)
-                }
+object UnreleasedCache {
 
-}.build()}}
-fun isInternetAvailable(context:Context): Boolean {
+    class OnlineInterceptor() : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            var request = chain.request()
+            val cacheControl = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
+            request = request.newBuilder().cacheControl(cacheControl).removeHeader("Pragma")
+                .build()
+            return chain.proceed(request)
+        }
+    }
+
+    lateinit var okHttpClient: OkHttpClient
+    fun unreleasedCache(context: Context) {
+        class OfflineInterceptor() : Interceptor {
+            override fun intercept(chain: Interceptor.Chain): Response {
+                var request = chain.request()
+                if (!isInternetAvailable(context)) {
+                    val maxStale = CacheControl.Builder().maxStale(7, TimeUnit.DAYS).build()
+                    request =
+                        request.newBuilder().cacheControl(maxStale).removeHeader("Pragma").build()
+                }
+                Log.d("AURORA LOG", "Triggered Offline Interceptor")
+                return chain.proceed(request)
+            }
+        }
+
+        val cacheSize = (10 * 1024 * 1024).toLong() // 20 MiB
+        val cache = Cache(File(context.cacheDir, "unreleased-cache"), cacheSize)
+        okHttpClient = OkHttpClient.Builder()
+            .cache(cache = cache)
+           .addInterceptor(
+               if(isInternetAvailable(context = context)){
+                   OnlineInterceptor()
+               }else{
+                   OfflineInterceptor()
+               }
+        ).build()
+    }
+}
+
+fun isInternetAvailable(context: Context): Boolean {
     val isConnected: Boolean?
     val connectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -48,3 +59,22 @@ fun isInternetAvailable(context:Context): Boolean {
     isConnected = activeNetwork != null && activeNetwork.isConnected
     return isConnected
 }
+/*
+
+{
+    UnreleasedCache.request = it.request()
+    if (!isInternetAvailable(context)) {
+        UnreleasedCache.request = UnreleasedCache.request.newBuilder().header(
+            "Cache-Control",
+            "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7
+        ).removeHeader("Pragma").build()
+    }
+    it.proceed(UnreleasedCache.request)
+}.addNetworkInterceptor {
+    UnreleasedCache.request = it.request()
+    val cacheControl=CacheControl.Builder().maxAge(7,TimeUnit.DAYS).build() // cache's for 7 days
+    UnreleasedCache.request = UnreleasedCache.request.newBuilder()
+        .header("Cache-Control","public, max-age=$cacheControl" )
+        .removeHeader("Pragma").build()
+    it.proceed(UnreleasedCache.request)
+}*/

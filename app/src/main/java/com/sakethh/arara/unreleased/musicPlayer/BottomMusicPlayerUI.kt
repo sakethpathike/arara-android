@@ -111,17 +111,18 @@ fun MusicPlayerUI(
                 .clickable { onClick.invoke() },
             contentAlignment = Alignment.CenterEnd,
         ) {
-            Image(
-                painter = painterResource(id = onControlClickImg),
-                modifier = Modifier
-                    .requiredSize(35.dp)
-                    .clickable {
-                        onControlClick()
-                        musicControlBoolean.value = !musicControlBoolean.value
-                    },
-                contentDescription = "Play/Pause Icons"
-            )
+           if(unreleasedViewModel.musicPlayerVisibility.value){
+               Image(  // play || pause button exists
+                   painter = painterResource(id = onControlClickImg),
+                   modifier = Modifier
+                       .requiredSize(35.dp)
+                       .clickable {
+                           onControlClick()
+                           musicControlBoolean.value = !musicControlBoolean.value
+                       },
+                   contentDescription = "Play/Pause Icons"
+               )
+           }
         }
-
     }
 }

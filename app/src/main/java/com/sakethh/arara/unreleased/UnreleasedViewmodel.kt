@@ -2,6 +2,7 @@ package com.sakethh.arara.unreleased
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.text.format.DateUtils
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,42 +18,60 @@ import kotlinx.coroutines.launch
 class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()) :
     ViewModel() {
     val rememberData: MutableState<List<UnreleasedResponse>> = mutableStateOf(emptyList())
-    val rememberUnreleasedFooterImg:MutableState<List<UnreleasedFooterImage>> = mutableStateOf(emptyList())
-    val rememberUnreleasedHeaderImg:MutableState<List<UnreleasedArtwork>> = mutableStateOf(emptyList())
-    val rememberMusicPlayerImgURL= mutableStateOf("")
-    val rememberMusicPlayerHDImgURL= mutableStateOf("")
-    val rememberMusicPlayerTitle= mutableStateOf("")
-    val rememberMusicPlayerLyrics= mutableStateOf("")
-    val rememberMusicPlayerDescription= mutableStateOf("")
-    val rememberMusicPlayerDescriptionBy= mutableStateOf("")
-    val rememberMusicPlayerDescriptionOrigin= mutableStateOf("")
-    val rememberMusicPlayerArtworkBy= mutableStateOf("")
-    val rememberMusicPlayerControlImg= listOf(R.drawable.play,R.drawable.pause)
-    val rememberMusicPlayerControl= mutableStateOf(false)
-    val musicPlayerActivate =  mutableStateOf(false)
-    val musicAudioURL= mutableStateOf("")
-    val currentLoadingStatusGIFURL= mutableStateOf("")
-    object MediaPlayer{
-        val mediaPlayer=android.media.MediaPlayer()
+    val rememberUnreleasedFooterImg: MutableState<List<UnreleasedFooterImage>> =
+        mutableStateOf(emptyList())
+    val rememberUnreleasedHeaderImg: MutableState<List<UnreleasedArtwork>> =
+        mutableStateOf(emptyList())
+    val rememberMusicPlayerImgURL = mutableStateOf("")
+    val rememberMusicPlayerHDImgURL = mutableStateOf("")
+    val rememberMusicPlayerTitle = mutableStateOf("")
+    val rememberMusicPlayerLyrics = mutableStateOf("")
+    val rememberMusicPlayerDescription = mutableStateOf("")
+    val rememberMusicPlayerDescriptionBy = mutableStateOf("")
+    val rememberMusicPlayerDescriptionOrigin = mutableStateOf("")
+    val rememberMusicPlayerArtworkBy = mutableStateOf("")
+    val rememberMusicPlayerControlImg = listOf(R.drawable.play, R.drawable.pause)
+    val rememberMusicPlayerControl = mutableStateOf(false)
+    val musicPlayerActivate = mutableStateOf(false)
+    val musicAudioURL = mutableStateOf("")
+    val musicPlayerVisibility= mutableStateOf(false)
+    val currentLoadingStatusGIFURL = mutableStateOf("")
+
+    object MediaPlayer {
+        val mediaPlayer = android.media.MediaPlayer()
+        val musicCompleted = mutableStateOf(false)
     }
-    private val coroutineExceptionHandler= CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
+    fun musicDuration(ms:Long): MutableState<String> {
+        val duration= mutableStateOf("")
+        viewModelScope.launch {
+            val conversion=DateUtils.formatElapsedTime(ms/1000)
+            duration.value=conversion.toString()
+        }
+        return duration
+    }
+    private val coroutineExceptionHandler =
+        CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
+
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val songsData = getSongsData()
             rememberData.value = songsData.component1()
-            val headerData=getUnreleasedHeaderImg()
-            rememberUnreleasedHeaderImg.value=headerData
-            val footerData=getUnreleasedFooterImg()
-            rememberUnreleasedFooterImg.value=footerData
+            val headerData = getUnreleasedHeaderImg()
+            rememberUnreleasedHeaderImg.value = headerData
+            val footerData = getUnreleasedFooterImg()
+            rememberUnreleasedFooterImg.value = footerData
         }
 
     }
-    private suspend fun getUnreleasedFooterImg():List<UnreleasedFooterImage>{
+
+    private suspend fun getUnreleasedFooterImg(): List<UnreleasedFooterImage> {
         return unreleasedRepo.getUnreleasedFooterImg()
     }
-    private suspend fun getUnreleasedHeaderImg():List<UnreleasedArtwork>{
+
+    private suspend fun getUnreleasedHeaderImg(): List<UnreleasedArtwork> {
         return unreleasedRepo.getUnreleasedHeaderImg()
     }
+
     private suspend fun getSongsData(): List<List<UnreleasedResponse>> {
         return unreleasedRepo.getSongsData()
     }
