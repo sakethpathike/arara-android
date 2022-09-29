@@ -1,9 +1,9 @@
 package com.sakethh.arara.unreleased
 
+import android.media.MediaPlayer
 import android.os.Parcelable
-import androidx.compose.runtime.MutableState
-import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Parcelize
 class UnreleasedScreenCurrentData(
@@ -13,5 +13,9 @@ class UnreleasedScreenCurrentData(
     val songDescription: String,
     val descriptionBy: String,
     val descriptionOrigin: String,
-    val artworkBy:String
+    val artworkBy:String,
+    val currentSongMaxDuration: String,
+    val currentDuration:String,
+    val currentDurationFloat:Float,
+    val isPlaying:Boolean
 ) : Parcelable

@@ -5,9 +5,6 @@ import android.media.AudioAttributes
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.text.format.DateUtils
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,56 +12,74 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sakethh.arara.home.HomeScreen
 import com.sakethh.arara.ui.theme.Typography
+import com.sakethh.arara.ui.theme.md_theme_dark_onPrimary
+import com.sakethh.arara.ui.theme.md_theme_dark_onTertiary
 import com.sakethh.arara.unreleased.*
 import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
-import com.sakethh.arara.unreleased.musicPlayer.MusicPlayerUI
-import kotlinx.coroutines.coroutineScope
+import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.mediaPlayer
+import com.sakethh.arara.unreleased.bottomMusicPlayer.BottomMusicPlayerUI
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class MainActivity() : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launchWhenCreated{
+            window.setBackgroundDrawableResource(android.R.color.transparent)
+        }
         setContent {
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
-                NavController()
+               HomeScreen()
+            /*NavController()*/
             }
         }
-        unreleasedCache(this)
+        /*unreleasedCache(this)*/
     }
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+fun MainUnreleasedScreen(navHostController: NavHostController, sharedViewModel: SharedViewModel) {
+    val systemUIController=rememberSystemUiController()
+    val coroutineScope= rememberCoroutineScope()
+     LaunchedEffect(key1 = coroutineScope){
+         coroutineScope.launch {
+             systemUIController.setStatusBarColor(color = md_theme_dark_onTertiary)
+         }
+     }
     val context = LocalContext.current
-    val mediaPlayer = UnreleasedViewModel.MediaPlayer.mediaPlayer
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
-    val coroutineScope = rememberCoroutineScope()
-    val unreleasedSongNameForPlayer = remember { unreleasedViewModel.rememberMusicPlayerTitle }
-    val unreleasedImgURLForPlayer = remember { unreleasedViewModel.rememberMusicPlayerImgURL }
-    val unreleasedLyricsForPlayer = remember { unreleasedViewModel.rememberMusicPlayerLyrics }
-    val musicControlBoolean = remember { unreleasedViewModel.rememberMusicPlayerControl }
+    val unreleasedSongNameForPlayer = rememberSaveable { unreleasedViewModel.rememberMusicPlayerTitle }
+    val unreleasedImgURLForPlayer = rememberSaveable { unreleasedViewModel.rememberMusicPlayerImgURL }
+    val unreleasedLyricsForPlayer = rememberSaveable { unreleasedViewModel.rememberMusicPlayerLyrics }
+    val musicControlBoolean = rememberSaveable { unreleasedViewModel.rememberMusicPlayerControl }
     val rememberMusicPlayerControlImg =
-        remember { unreleasedViewModel.rememberMusicPlayerControlImg }
-    val musicPlayerActivate = remember { unreleasedViewModel.musicPlayerActivate }
-    val currentControlIcon = remember { mutableListOf(0, 1) }
+        rememberSaveable { unreleasedViewModel.rememberMusicPlayerControlImg }
+    val musicPlayerActivate = rememberSaveable { unreleasedViewModel.musicPlayerActivate }
+    val currentControlIcon = rememberSaveable { mutableListOf(0, 1) }
     val currentAudioURL = unreleasedViewModel.musicAudioURL
     val rememberMusicPlayerDescription =
-        remember { unreleasedViewModel.rememberMusicPlayerDescription }
+        rememberSaveable { unreleasedViewModel.rememberMusicPlayerDescription }
     val rememberMusicPlayerDescriptionBy =
-        remember { unreleasedViewModel.rememberMusicPlayerDescriptionBy }
+        rememberSaveable { unreleasedViewModel.rememberMusicPlayerDescriptionBy }
     val rememberMusicPlayerDescriptionOrigin =
-        remember { unreleasedViewModel.rememberMusicPlayerDescriptionOrigin }
+        rememberSaveable { unreleasedViewModel.rememberMusicPlayerDescriptionOrigin }
     val rememberMusicPlayerArtworkBy = unreleasedViewModel.rememberMusicPlayerArtworkBy
-    val currentGIFURL = unreleasedViewModel.currentLoadingStatusGIFURL
+    val currentGIFURL = rememberSaveable { unreleasedViewModel.currentLoadingStatusGIFURL }
+    val currentSongMaxDuration = rememberSaveable { unreleasedViewModel.currentSongMaxDuration }
+    val currentSongCurrentDuration= rememberSaveable{unreleasedViewModel.currentSongCurrentDuration}
+    val currentSongIsPlaying = rememberSaveable { unreleasedViewModel.currentSongIsPlaying }
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -77,9 +92,9 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
             if (!isInternetAvailable(context = context)) {
                 CustomBottomSnackBar(image = randomLostInternetImg())
             }
-            if (musicPlayerActivate.value) {
+            if (musicPlayerActivate.value && !UnreleasedViewModel.MediaPlayer.musicCompleted.value) {
                 if (isInternetAvailable(context = context)) {
-                    MusicPlayerUI(
+                     BottomMusicPlayerUI(
                         songName = unreleasedSongNameForPlayer.value,
                         imgUrl = unreleasedImgURLForPlayer.value,
                         onClick = {
@@ -90,18 +105,22 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                                 songDescription = rememberMusicPlayerDescription.value,
                                 descriptionBy = rememberMusicPlayerDescriptionBy.value,
                                 descriptionOrigin = rememberMusicPlayerDescriptionOrigin.value,
-                                artworkBy = rememberMusicPlayerArtworkBy.value
+                                artworkBy = rememberMusicPlayerArtworkBy.value,
+                                currentSongMaxDuration = unreleasedViewModel.musicDuration(currentSongMaxDuration.value.toLong()).value,
+                                currentDuration = unreleasedViewModel.musicDuration(currentSongCurrentDuration.value.toLong()).value,
+                                currentDurationFloat = currentSongCurrentDuration.value.toFloat(),
+                                isPlaying = currentSongIsPlaying.value
                             )
                             sharedViewModel.data(data = dataForCurrentMusicScreen)
                             navHostController.navigate("currentPlayingUnreleasedMusicScreen")
 
                         },
                         onControlClick = {
-                                 if(mediaPlayer.isPlaying){
-                                     mediaPlayer.pause()
-                                 }else{
-                                     mediaPlayer.start()
-                                 }
+                            if (mediaPlayer.isPlaying) {
+                                mediaPlayer.pause()
+                            } else {
+                                mediaPlayer.start()
+                            }
                         },
                         onControlClickImg = currentControlIcon[0]
                     )
@@ -111,10 +130,11 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
     ) {
         UnreleasedScreen {
             unreleasedViewModel.musicPlayerActivate.value = true
+            UnreleasedViewModel.MediaPlayer.musicCompleted.value = false
             unreleasedViewModel.rememberMusicPlayerControl.value = false
-            currentGIFURL.value =
-                Constants.MUSIC_LOADING_GIF
-            unreleasedViewModel.musicPlayerVisibility.value=false
+            unreleasedViewModel.currentSongIsPlaying.value=false
+            currentGIFURL.value = unreleasedViewModel.rememberMusicPlayerLoadingGIF.component1()[0].gifURL
+            unreleasedViewModel.musicPlayerVisibility.value = false
             if (Build.VERSION.SDK_INT <= 26) {
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
             } else {
@@ -131,20 +151,23 @@ fun MainScreen(navHostController: NavHostController, sharedViewModel: SharedView
                     mediaPlayer.setOnPreparedListener {
                         try {
                             it.start()
+                            currentSongMaxDuration.value = it.duration
+                            currentSongCurrentDuration.value=it.currentPosition
                         } catch (e: Exception) {
                             currentGIFURL.value =
                                 Constants.MUSIC_ERROR_GIF
                         }
                         if (it.isPlaying) {
-                            currentGIFURL.value =
-                                Constants.MUSIC_PLAYING_GIF
-                            unreleasedViewModel.musicPlayerVisibility.value=true
+                            currentGIFURL.value = unreleasedViewModel.rememberMusicPlayerPlayingGIF.component1()[0].gifURL
+                            unreleasedViewModel.musicPlayerVisibility.value = true
+                            unreleasedViewModel.currentSongIsPlaying.value=true
                         }
                         it.setOnCompletionListener {
                             UnreleasedViewModel.MediaPlayer.musicCompleted.value = true
-                            unreleasedViewModel.musicPlayerVisibility.value=false
+                            unreleasedViewModel.musicPlayerVisibility.value = false
                             unreleasedViewModel.currentLoadingStatusGIFURL.value =
                                 Constants.MUSIC_ERROR_GIF
+                            unreleasedViewModel.currentSongIsPlaying.value=false
                         }
                     }
                 }

@@ -2,6 +2,7 @@ package com.sakethh.arara.unreleased
 
 import android.app.Activity
 import android.content.Context
+import android.view.Window
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -28,9 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.MainActivity
-import com.sakethh.arara.ui.theme.backgroundColor
-import com.sakethh.arara.ui.theme.firstGradient
-import com.sakethh.arara.ui.theme.headerColor
+import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
 import okhttp3.Cache
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,21 +52,21 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
     val rememberMusicPlayerDescriptionOrigin =
         unreleasedViewModel.rememberMusicPlayerDescriptionOrigin
     val audioUrl=unreleasedViewModel.musicAudioURL
-    Scaffold(modifier = Modifier.background(backgroundColor), topBar = {
+    Scaffold(topBar = {
         SmallTopAppBar(
             title = {
                 Text(
                     text = "Unreleased",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.LightGray
+                    style = MaterialTheme.typography.titleMedium,
+                    color = md_theme_dark_onTertiaryContainer
                 )
             },
             scrollBehavior = scrollBehavior,
-            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = headerColor)
+            colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = md_theme_dark_onTertiary)
         )
     }) { contentPadding ->
         LazyColumn(
-            modifier = Modifier.background(firstGradient),
+            modifier = Modifier.background(md_theme_dark_onTertiary),
             contentPadding = contentPadding,
         ) {
 
@@ -96,7 +95,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                 if(unreleasedViewModel.musicPlayerActivate.value){
                     GIFThing(
                         imgURL = data.footerImg, modifier = Modifier
-                            .background(backgroundColor)
+                            .background(md_theme_dark_surface)
                             .padding(bottom = 100.dp)
                             .fillMaxWidth()
                             .height(70.dp)
@@ -104,7 +103,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                 }else{
                     GIFThing(
                         imgURL = data.footerImg, modifier = Modifier
-                            .background(backgroundColor)
+                            .background(md_theme_dark_surface)
                             .fillMaxWidth()
                             .height(70.dp)
                     )

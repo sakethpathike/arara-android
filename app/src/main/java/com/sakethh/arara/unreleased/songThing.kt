@@ -2,6 +2,7 @@ package com.sakethh.arara.unreleased
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,9 +25,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
 import com.sakethh.arara.randomLostInternetImg
-import com.sakethh.arara.ui.theme.backgroundColor
-import com.sakethh.arara.ui.theme.firstGradient
-import com.sakethh.arara.ui.theme.secondGradient
+import com.sakethh.arara.ui.theme.*
 
 @Composable
 fun SongThing(songName: String, specificArtwork: String, onClick: () -> Any) {
@@ -106,10 +105,10 @@ fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
 
     Box(
         modifier = Modifier
-            .background(color = backgroundColor)
+            .background(color = md_theme_dark_surface)
             .fillMaxWidth()
             .requiredHeight(65.dp)
-            .background(color = backgroundColor)
+            .background(color = md_theme_dark_surface)
             .clickable {
                 onClick()
             }
@@ -140,17 +139,17 @@ fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.White
+                    color = md_theme_dark_onSurface
                 )
                 Text(
                     text = "Lyrics",
                     modifier = Modifier
                         .padding(top = 3.dp, bottom = 3.dp)
-                        .background(color = Color.Gray)
+                        .background(color = md_theme_light_outline)
                         .wrapContentSize()
                         .padding(2.dp),
                     style = MaterialTheme.typography.bodySmall,
-                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = backgroundColor
+                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = md_theme_light_onSurface
                 )
             }
         }
@@ -167,7 +166,7 @@ fun ArtBoard(imgURL: String) {
             .background(
                 Brush.verticalGradient(
                     listOf(
-                        firstGradient, secondGradient
+                        md_theme_dark_onTertiary, md_theme_dark_surface
                     )
                 )
             )

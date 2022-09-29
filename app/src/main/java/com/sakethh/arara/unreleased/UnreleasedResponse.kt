@@ -31,3 +31,11 @@ data class UnreleasedArtwork(
     @SerializedName("unreleasedHeaderURL")
     val artwork:String
 )
+data class MusicLoadingGIF(
+    @SerializedName("url")
+    val gifURL:String
+)
+data class MusicPlayingGIF(
+    @SerializedName("url")
+    val gifURL:String
+)

@@ -18,7 +18,12 @@ object UnreleasedCache {
             val cacheControl = CacheControl.Builder().maxStale(1, TimeUnit.DAYS).build()
             request = request.newBuilder().cacheControl(cacheControl).removeHeader("Pragma")
                 .build()
-            return chain.proceed(request)
+            return try{
+                chain.proceed(request)
+            }catch (_:Exception){ // java.net.SocketTimeoutException: timeout
+                chain.proceed(request)
+            }
+
         }
     }
 

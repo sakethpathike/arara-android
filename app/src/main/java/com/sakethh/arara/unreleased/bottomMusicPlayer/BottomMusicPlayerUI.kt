@@ -1,10 +1,11 @@
-package com.sakethh.arara.unreleased.musicPlayer
+package com.sakethh.arara.unreleased.bottomMusicPlayer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,23 +13,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.request.ImageRequest
-import com.sakethh.arara.Constants
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.randomLostInternetImg
-import com.sakethh.arara.ui.theme.musicPlayerColor
+import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 
 
 @Composable
-fun MusicPlayerUI(
+fun BottomMusicPlayerUI(
     songName: String,
     imgUrl: String,
     onClick:()->Unit,
@@ -41,11 +40,11 @@ fun MusicPlayerUI(
             .padding(start = paddingValue, end = paddingValue)
             .requiredHeight(65.dp)
             .fillMaxWidth()
-            .background(color = musicPlayerColor)
+            .background(color = (md_theme_dark_onSecondary))
             .border(
                 width = 1.dp,
                 shape = RoundedCornerShape(5.dp),
-                color = Color.White
+                color = md_theme_dark_secondary
             )
     ) {
         Box(
@@ -86,7 +85,7 @@ fun MusicPlayerUI(
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color.White,
+                    color = md_theme_dark_onSurface,
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 val unreleasedViewModel: UnreleasedViewModel = viewModel()

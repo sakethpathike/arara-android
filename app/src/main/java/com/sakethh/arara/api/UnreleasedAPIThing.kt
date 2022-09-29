@@ -1,8 +1,6 @@
 package com.sakethh.arara.api
 
-import androidx.compose.runtime.mutableStateOf
 import com.sakethh.arara.Constants
-import com.sakethh.arara.MainActivity
 import com.sakethh.arara.unreleased.*
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -43,6 +41,12 @@ class UnreleasedAPIThing() {
     suspend fun getUnreleasedHeaderImg(): List<UnreleasedArtwork> {
         return apiData.getUnreleasedHeaderImg()
     }
+    suspend fun getMusicLoadingGIF(): List<MusicLoadingGIF> {
+        return apiData.getMusicLoadingGIF()
+    }
+    suspend fun getMusicPlayingGIF(): List<MusicPlayingGIF> {
+        return apiData.getMusicPlayingGIF()
+    }
 
     interface UnreleasedAPI {
         @GET(Constants.UNRELEASED)
@@ -53,5 +57,11 @@ class UnreleasedAPIThing() {
 
         @GET(Constants.UNRELEASED_HEADER_IMG_URL)
         suspend fun getUnreleasedHeaderImg(): List<UnreleasedArtwork>
+
+        @GET(Constants.MUSIC_LOADING_GIF)
+        suspend fun getMusicLoadingGIF(): List<MusicLoadingGIF>
+
+        @GET(Constants.MUSIC_PLAYING_GIF)
+        suspend fun getMusicPlayingGIF(): List<MusicPlayingGIF>
     }
 }

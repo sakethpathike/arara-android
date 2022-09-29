@@ -1,16 +1,11 @@
 package com.sakethh.arara.unreleased
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.text.format.DateUtils
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.sakethh.arara.R
-import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,13 +25,17 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberMusicPlayerDescriptionBy = mutableStateOf("")
     val rememberMusicPlayerDescriptionOrigin = mutableStateOf("")
     val rememberMusicPlayerArtworkBy = mutableStateOf("")
+    val rememberMusicPlayerLoadingGIF: MutableState< List<MusicLoadingGIF>> = mutableStateOf(emptyList())
+    val rememberMusicPlayerPlayingGIF : MutableState<  List<MusicPlayingGIF>> = mutableStateOf(emptyList())
     val rememberMusicPlayerControlImg = listOf(R.drawable.play, R.drawable.pause)
     val rememberMusicPlayerControl = mutableStateOf(false)
     val musicPlayerActivate = mutableStateOf(false)
     val musicAudioURL = mutableStateOf("")
     val musicPlayerVisibility= mutableStateOf(false)
     val currentLoadingStatusGIFURL = mutableStateOf("")
-
+    val currentSongMaxDuration= mutableStateOf(0)
+    val currentSongCurrentDuration= mutableStateOf(0)
+    val currentSongIsPlaying= mutableStateOf(false)
     object MediaPlayer {
         val mediaPlayer = android.media.MediaPlayer()
         val musicCompleted = mutableStateOf(false)
@@ -60,6 +59,10 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
             rememberUnreleasedHeaderImg.value = headerData
             val footerData = getUnreleasedFooterImg()
             rememberUnreleasedFooterImg.value = footerData
+            val loadingGIF = getMusicLoadingGIF()
+            rememberMusicPlayerLoadingGIF.value=loadingGIF
+            val playingGIF = getMusicPlayingGIF()
+            rememberMusicPlayerPlayingGIF.value=playingGIF
         }
 
     }
@@ -74,5 +77,12 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
 
     private suspend fun getSongsData(): List<List<UnreleasedResponse>> {
         return unreleasedRepo.getSongsData()
+    }
+    suspend fun getMusicLoadingGIF(): List<MusicLoadingGIF> {
+        return unreleasedRepo.getMusicLoadingGIF()
+    }
+
+    suspend fun getMusicPlayingGIF(): List<MusicPlayingGIF> {
+        return unreleasedRepo.getMusicPlayingGIF()
     }
 }
