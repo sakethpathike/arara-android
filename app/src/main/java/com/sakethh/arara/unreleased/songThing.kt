@@ -2,25 +2,22 @@ package com.sakethh.arara.unreleased
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sakethh.arara.R
@@ -91,12 +88,23 @@ fun SongThing(songName: String, specificArtwork: String, onClick: () -> Any) {
 }
 
 @Composable
-fun ImageThing(model: Any?, contentDescription: String, modifier: Modifier, onError: Painter) {
+fun ImageThing(
+    model: Any?,
+    contentDescription: String,
+    modifier: Modifier,
+    onError: Painter,
+    contentScale: ContentScale = ContentScale.Fit,
+    onSuccess: (() -> Unit)? = null,
+    onLoading: (() -> Unit)? = null,
+) {
     AsyncImage(
         model = model,
         contentDescription = contentDescription,
         modifier = modifier,
-        error = onError
+        error = onError,
+        contentScale = contentScale,
+        onSuccess = {onSuccess?.invoke()},
+        onLoading = {onLoading?.invoke()}
     )
 }
 
@@ -149,7 +157,9 @@ fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
                         .wrapContentSize()
                         .padding(2.dp),
                     style = MaterialTheme.typography.bodySmall,
-                    fontSize = 10.sp, fontWeight = FontWeight.Normal, color = md_theme_light_onSurface
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = md_theme_light_onSurface
                 )
             }
         }

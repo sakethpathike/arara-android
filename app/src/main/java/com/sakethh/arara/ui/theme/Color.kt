@@ -1,4 +1,5 @@
 package com.sakethh.arara.ui.theme
+import android.annotation.SuppressLint
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFF006B5A)
@@ -49,6 +50,8 @@ val md_theme_dark_onErrorContainer = Color(0xFFFFDAD6)
 val md_theme_dark_background = Color(0xFF191C1B)
 val md_theme_dark_onBackground = Color(0xFFE1E3E0)
 val md_theme_dark_surface = Color(0xFF191C1B)
+@SuppressLint("InvalidColorHexValue")
+val transparentColor = Color(0x0)
 val md_theme_dark_onSurface = Color(0xFFE1E3E0)
 val md_theme_dark_surfaceVariant = Color(0xFF3F4945)
 val md_theme_dark_onSurfaceVariant = Color(0xFFBFC9C4)

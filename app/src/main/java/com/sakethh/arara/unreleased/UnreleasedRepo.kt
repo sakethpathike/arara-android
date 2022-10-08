@@ -1,26 +1,26 @@
 package com.sakethh.arara.unreleased
 
-import com.sakethh.arara.api.UnreleasedAPIThing
+import com.sakethh.arara.api.FetchingAPIDATA
 
-class UnreleasedRepo(private val unreleasedAPIThing: UnreleasedAPIThing = UnreleasedAPIThing()) {
+class UnreleasedRepo(private val fetchingAPIDATA: FetchingAPIDATA = FetchingAPIDATA()) {
     suspend fun getSongsData(): List<List<UnreleasedResponse>> {
-        return unreleasedAPIThing.getSongsData()
+        return fetchingAPIDATA.getSongsData()
     }
 
     suspend fun getUnreleasedFooterImg(): List<UnreleasedFooterImage> {
-        return unreleasedAPIThing.getUnreleasedFooterImg()
+        return fetchingAPIDATA.getUnreleasedFooterImg()
     }
 
     suspend fun getUnreleasedHeaderImg(): List<UnreleasedArtwork> {
-        return unreleasedAPIThing.getUnreleasedHeaderImg()
+        return fetchingAPIDATA.getUnreleasedHeaderImg()
     }
 
     suspend fun getMusicLoadingGIF(): List<MusicLoadingGIF> {
-        return unreleasedAPIThing.getMusicLoadingGIF()
+        return fetchingAPIDATA.getMusicLoadingGIF()
     }
 
     suspend fun getMusicPlayingGIF(): List<MusicPlayingGIF> {
-        return unreleasedAPIThing.getMusicPlayingGIF()
+        return fetchingAPIDATA.getMusicPlayingGIF()
     }
 }
 
