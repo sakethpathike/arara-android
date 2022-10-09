@@ -197,7 +197,7 @@ fun HomeScreen() {
                             SelectedChipComposable(
                                 imgLink = item.data.url,
                                 title = item.data.title,
-                                author = "Via :- ${item.data.author}",
+                                author = "Art by :- ${item.data.author}",
                                 index = index,
                                 indexedValue = nonIndexedValue.value,
                                 indexOnClick = {

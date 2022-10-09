@@ -3,13 +3,13 @@ package com.sakethh.arara.home
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sakethh.arara.home.selectedChipStuff.SelectedChipScreenRepo
+import com.sakethh.arara.home.selectedChipStuff.SelectedChipScreenAPIRepo
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
 import kotlinx.coroutines.*
 import java.util.Calendar
 
 @Suppress("LocalVariableName", "PropertyName")
-class HomeScreenViewModel(private val selectedChipScreenRepo: SelectedChipScreenRepo = SelectedChipScreenRepo()) :
+class HomeScreenViewModel(private val selectedChipScreenRepo: SelectedChipScreenAPIRepo = SelectedChipScreenAPIRepo()) :
     ViewModel() {
     val currentTime = mutableStateOf("")
     val listForHeader = mutableListOf<String>("Warrior-arts", "News", "Images")

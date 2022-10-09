@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
+    id 'io.realm.kotlin'
 }
 apply plugin: 'kotlin-android'
 android {
@@ -88,4 +89,6 @@ dependencies {
     implementation "androidx.media3:media3-ui:1.0.0-alpha03"
     implementation 'com.google.accompanist:accompanist-placeholder:0.26.3-beta'
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.26.3-beta'
+
+    implementation 'io.realm.kotlin:library-base:1.2.0'
 }

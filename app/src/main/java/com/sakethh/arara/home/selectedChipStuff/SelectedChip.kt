@@ -2,16 +2,21 @@
 
 package com.sakethh.arara.home.selectedChipStuff
 
+import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -28,10 +33,13 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.placeholder
 import com.sakethh.arara.R
+import com.sakethh.arara.RealmDBObject
 import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
+import io.realm.kotlin.ext.query
+import kotlinx.coroutines.launch
 
 @Composable
 fun SelectedChipComposable(
@@ -40,21 +48,43 @@ fun SelectedChipComposable(
     author: String,
     index: Int,
     indexedValue: Int,
-    indexOnClick: (Int) -> Unit
+    indexOnClick: (Int) -> Unit,
+    bookMarkText:String = "Bookmark",
+    bookMarkIcon:Int = R.drawable.bookmark_icon,
+    inBookMarkScreen:Boolean = false,
+    inBookMarkScreenOnClick:(()->Unit)? = null
 ) {
     val context = LocalContext.current
     val _index = remember { mutableStateOf(index) }
+    val coroutineScope = rememberCoroutineScope()
     val selectedChipScreenViewModel: SelectedChipScreenViewModel = viewModel()
     val imageIsLoading = remember { selectedChipScreenViewModel.imageIsLoading }
+    val dropDownMenuEnabled = remember { mutableStateOf(false) }
     val constraintSet = ConstraintSet {
         val titleForCard = createRefFor("titleForCard")
         val descriptionIcon = createRefFor("descriptionIcon")
+        val dropDownIcon = createRefFor("dropDownIcon")
+        val dropDownComposable = createRefFor("dropDownComposable")
+        val image = createRefFor("image")
         constrain(titleForCard) {
-            top.linkTo(parent.top)
+            top.linkTo(image.bottom)
             start.linkTo(parent.start)
         }
         constrain(descriptionIcon) {
+            top.linkTo(image.bottom)
+            end.linkTo(parent.end)
+        }
+        constrain(dropDownIcon) {
             top.linkTo(parent.top)
+            end.linkTo(parent.end)
+        }
+        constrain(image) {
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+        constrain(dropDownComposable) {
+            top.linkTo(dropDownIcon.bottom)
             end.linkTo(parent.end)
         }
     }
@@ -65,23 +95,6 @@ fun SelectedChipComposable(
             .wrapContentHeight(),
         colors = CardDefaults.cardColors(containerColor = md_theme_dark_onPrimary)
     ) {
-        ImageThing(
-            model = ImageRequest.Builder(context).data(imgLink)
-                .crossfade(true).build(),
-            contentDescription = "",
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .placeholder(
-                    visible = false,
-                    color = md_theme_dark_onTertiary,
-                    highlight = PlaceholderHighlight.fade(highlightColor = md_theme_dark_primaryContainer)
-                ),
-            onError = painterResource(id = randomLostInternetImg()),
-            contentScale = ContentScale.Crop,
-            onLoading = { imageIsLoading.value = true },
-            onSuccess = { imageIsLoading.value = false }
-        )
         ConstraintLayout(
             constraintSet = constraintSet,
             modifier = Modifier
@@ -89,6 +102,135 @@ fun SelectedChipComposable(
                 .wrapContentHeight()
                 .animateContentSize()
         ) {
+            ImageThing(
+                model = ImageRequest.Builder(context).data(imgLink)
+                    .crossfade(true).build(),
+                contentDescription = "",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp)
+                    .layoutId("image")
+                    .placeholder(
+                        visible = false,
+                        color = md_theme_dark_onTertiary,
+                        highlight = PlaceholderHighlight.fade(highlightColor = md_theme_dark_primaryContainer)
+                    ),
+                onError = painterResource(id = randomLostInternetImg()),
+                contentScale = ContentScale.Crop,
+                onLoading = { imageIsLoading.value = true },
+                onSuccess = { imageIsLoading.value = false }
+            )
+            IconButton(onClick = {
+                dropDownMenuEnabled.value = !dropDownMenuEnabled.value
+            }, modifier = Modifier.layoutId("dropDownIcon")) {
+                Image(
+                    painter = painterResource(id = R.drawable.more_icon),
+                    contentDescription = "more_icon",
+                    modifier = Modifier
+                        .size(24.dp)
+                        .shadow(24.dp)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .layoutId("dropDownComposable")
+                    .padding(end = 10.dp)
+                    .wrapContentSize()
+            ) {
+                DropdownMenu(
+                    modifier = Modifier
+                        .background(md_theme_dark_onTertiary),
+                    expanded = dropDownMenuEnabled.value,
+                    onDismissRequest = { dropDownMenuEnabled.value = false }) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = bookMarkText,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = md_theme_dark_tertiary
+                            )
+                        },
+                        onClick = {
+                            if(inBookMarkScreen){
+                                inBookMarkScreenOnClick?.invoke()
+                            }else{
+                                selectedChipScreenViewModel.bookMarkedImgUrl.value = imgLink
+                                selectedChipScreenViewModel.bookMarkedAuthor.value = author
+                                selectedChipScreenViewModel.bookMarkedTitle.value = title.also {
+                                    selectedChipScreenViewModel.writeToDB().also {
+                                        Toast.makeText(context, "Done:)", Toast.LENGTH_LONG)
+                                            .show()
+                                    }
+                                }
+                            }
+
+                            dropDownMenuEnabled.value = false
+                        },
+                        leadingIcon = {
+                            Image(
+                                painter = painterResource(id = bookMarkIcon),
+                                contentDescription = "bookmark_icon",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        })
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "Download",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = md_theme_dark_tertiary
+                            )
+                        },
+                        onClick = {
+                            val log =
+                                selectedChipScreenViewModel.selectedChipScreenRealmDB.realm.query<RealmDBObject>(
+                                    "bookMarked == true"
+                                ).asFlow()
+                            coroutineScope.launch {
+                                log.collect {
+                                    for (data in it.list) {
+                                        Log.d("REALM_LOG", data.author!!)
+                                    }
+                                }.also {
+                                    selectedChipScreenViewModel.selectedChipScreenRealmDB.realm.close()
+                                }
+                            }
+                            dropDownMenuEnabled.value = false
+                        },
+                        leadingIcon = {
+                            Image(
+                                painter = painterResource(id = R.drawable.download_icon),
+                                contentDescription = "download_icon",
+                                modifier = Modifier.size(24.dp)
+                            )
+                        })
+                    DropdownMenuItem(text = {
+                        Text(
+                            text = "Share",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = md_theme_dark_tertiary
+                        )
+                    }, onClick = {
+                        val intent = Intent()
+                        intent.action = Intent.ACTION_SEND
+                        intent.type = "text/plain"
+                        intent.putExtra(
+                            Intent.EXTRA_TEXT,
+                            "Yo! Sharing \"$title\" by \"$author\" from reddit; img url :- \"$imgLink\""
+                        )
+                        val shareIntent = Intent.createChooser(intent, "Share using :-")
+                        context.startActivity(shareIntent)
+                        dropDownMenuEnabled.value = false
+                    }, leadingIcon = {
+                        Image(
+                            painter = painterResource(id = R.drawable.share_icon),
+                            contentDescription = "share_icon",
+                            modifier = Modifier.size(24.dp)
+                        )
+                    })
+
+                }
+            }
             if (_index.value != indexedValue) {
                 Text(
                     text = title,
@@ -99,7 +241,9 @@ fun SelectedChipComposable(
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Start,
                     lineHeight = 22.sp,
-                    modifier = Modifier.padding(start = 10.dp, top = 10.dp, end = 30.dp)
+                    modifier = Modifier
+                        .padding(start = 10.dp, top = 10.dp, end = 30.dp)
+                        .layoutId("titleForCard")
                 )
             } else {
                 Text(
