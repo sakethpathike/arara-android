@@ -22,6 +22,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.sakethh.arara.bookmarks.BookMarkScreen
 import com.sakethh.arara.home.HomeScreen
+import com.sakethh.arara.home.subHomeScreen.SubHomeScreen
 import com.sakethh.arara.ui.theme.md_theme_dark_onSecondary
 import com.sakethh.arara.ui.theme.md_theme_dark_onSecondaryContainer
 import com.sakethh.arara.ui.theme.md_theme_dark_primaryContainer
@@ -38,7 +39,13 @@ data class BottomNavigationItem(
 fun Navigation(navController: NavHostController,sharedViewModel: SharedViewModel) {
     AnimatedNavHost(navController = navController, startDestination = "homeScreen") {
         composable(route = "homeScreen", exitTransition = { ExitTransition.None }) {
-            HomeScreen()
+            HomeScreen(navController = navController)
+        }
+        composable(route = "subHomeScreen",
+            enterTransition = {
+                slideInHorizontally { 1000 } + fadeIn(tween(300))
+            }, exitTransition = { slideOutHorizontally { 1000 } + fadeOut(tween(300)) }) {
+            SubHomeScreen()
         }
         composable(route = "bookmarks", exitTransition = { ExitTransition.None }) {
             BookMarkScreen()

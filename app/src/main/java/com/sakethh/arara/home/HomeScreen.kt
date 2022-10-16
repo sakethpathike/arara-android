@@ -1,6 +1,8 @@
 package com.sakethh.arara.home
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -10,8 +12,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -24,6 +26,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.sakethh.arara.R
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
@@ -33,8 +36,8 @@ import com.sakethh.arara.GIFThing
 import com.sakethh.arara.home.HomeScreenViewModel.Utils.nonIndexedValue
 import com.sakethh.arara.home.HomeScreenViewModel.Utils.selectedTextForHomeScreen
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipComposable
+import com.sakethh.arara.home.selectedChipStuff.SelectedChipScreenViewModel
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
-import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditDataItem
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
@@ -43,7 +46,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val context = LocalContext.current
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
@@ -263,12 +266,18 @@ fun HomeScreen() {
                     item {
                         MainHomeScreen(
                             headingName = "Warrior-arts",
-                            dataList = fanArtsHotData.value.take(8)
+                            dataList = fanArtsHotData.value.take(8),
+                            navController = navController,
+                            navigationRoute = "subHomeScreen"
                         )
-                        MainHomeScreen(headingName = "News", dataList = newsHotData.value.take(8))
+                        MainHomeScreen(headingName = "News", dataList = newsHotData.value.take(8),
+                            navController = navController,
+                            navigationRoute = "subHomeScreen")
                         MainHomeScreen(
                             headingName = "Images",
-                            dataList = imagesHotData.value.take(8)
+                            dataList = imagesHotData.value.take(8),
+                            navController = navController,
+                            navigationRoute = "subHomeScreen"
                         )
                     }
                 }
@@ -288,42 +297,84 @@ fun HomeScreen() {
 // relevance  https://i.redd.it/rby73oyg9eq91.jpg
 
 @Composable
-fun MainHomeScreen(headingName: String, dataList: List<SubRedditData>) {
-        val context = LocalContext.current
-        Box {
-            Text(
-                text = headingName,
-                color = md_theme_dark_onSurface,
-                fontSize = 23.sp,
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 10.dp, bottom = 10.dp),
-                style = MaterialTheme.typography.titleMedium
-            )
-
+fun MainHomeScreen(headingName: String, dataList: List<SubRedditData>,navController: NavController,navigationRoute:String) {
+    val context = LocalContext.current
+    val selectedChipScreenViewModel:SelectedChipScreenViewModel = viewModel()
+    val constraintSet = ConstraintSet {
+        val dropDownIcon = createRefFor("dropDownIcon")
+        val dropDownComposable = createRefFor("dropDownComposable")
+        val cardData = createRefFor("cardData")
+        constrain(dropDownIcon) {
+            top.linkTo(parent.top)
+            end.linkTo(parent.end)
         }
-        LazyRow(
+        constrain(dropDownComposable) {
+            top.linkTo(dropDownIcon.bottom)
+            end.linkTo(parent.end)
+        }
+        constrain(cardData) {
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            bottom.linkTo(parent.bottom)
+        }
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 25.dp, bottom = 15.dp)
+            .wrapContentHeight(), horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = headingName,
+            color = md_theme_dark_onSurface,
+            fontSize = 23.sp,
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
+                .padding(start = 10.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
+        IconButton(
+            onClick = { navController.navigate(navigationRoute) }, modifier = Modifier
+                .padding(end = 10.dp)
+                .size(28.dp)
         ) {
-            items(dataList.component1()) {
-                Card(
-                    modifier = Modifier
-                        .padding(start = 10.dp)
-                        .requiredWidth(250.dp)
-                        .requiredHeight(250.dp),
-                    colors = CardDefaults.cardColors(containerColor = md_theme_dark_onPrimary)
-                ) {
+            Image(
+                painter = painterResource(id = R.drawable.arrow_right),
+                contentDescription = "home detailed screen",
+                modifier = Modifier.size(28.dp)
+            )
+        }
+    }
+    LazyRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        items(dataList.component1()) {
+            if (!it.data.is_video && it.data.url.contains(
+                    regex = Regex(
+                        "/i.redd.it"
+                    )
+                )
+            ) {
+            Card(
+                modifier = Modifier
+                    .padding(start = 10.dp)
+                    .requiredWidth(250.dp)
+                    .requiredHeight(235.dp),
+                colors = CardDefaults.cardColors(containerColor = md_theme_dark_onPrimary)
+            ) {
+                ConstraintLayout(constraintSet = constraintSet) {
 
-                    Column {
+                    val dropDownMenuEnabled = remember{ mutableStateOf(false) }
+                    Column(modifier = Modifier.layoutId("cardData")) {
                         ImageThing(
                             model = ImageRequest.Builder(context).data(it.data.url)
                                 .crossfade(true).build(),
                             contentDescription = "",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(150.dp)
-                                .layoutId("image"),
+                                .height(150.dp),
                             onError = painterResource(id = randomLostInternetImg()),
                             contentScale = ContentScale.Crop
                         )
@@ -338,7 +389,6 @@ fun MainHomeScreen(headingName: String, dataList: List<SubRedditData>) {
                             lineHeight = 22.sp,
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 30.dp)
-                                .layoutId("titleForCard")
                         )
                         Text(
                             text = it.data.author,
@@ -351,11 +401,107 @@ fun MainHomeScreen(headingName: String, dataList: List<SubRedditData>) {
                             lineHeight = 10.sp,
                             modifier = Modifier
                                 .padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 10.dp)
-                                .layoutId("author")
                         )
                     }
-                }
-            }
-        }
+                    IconButton(onClick = {dropDownMenuEnabled.value = !dropDownMenuEnabled.value
+                    }, modifier = Modifier.layoutId("dropDownIcon")) {
+                        Image(
+                            painter = painterResource(id = R.drawable.more_icon),
+                            contentDescription = "more_icon",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .shadow(24.dp)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .layoutId(layoutId = "dropDownComposable")
+                            .padding(end = 10.dp)
+                            .wrapContentSize()
+                    ) {
+                        DropdownMenu(
+                            modifier = Modifier
+                                .background(md_theme_dark_onTertiary),
+                            expanded = dropDownMenuEnabled.value,
+                            onDismissRequest = { dropDownMenuEnabled.value = false }) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = "Bookmark",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = md_theme_dark_tertiary
+                                    )
+                                },
+                                onClick = {
+                                    SelectedChipScreenViewModel.BookMarkedDataUtils.realmDBObject.apply {
+                                        this.objectKey = it.data.url
+                                        this.imgURL = it.data.url
+                                        this.bookMarked = true
+                                        this.title = it.data.title
+                                        this.author = it.data.author
+                                    }.also {
+                                        selectedChipScreenViewModel.addToDB()
+                                    }
+                                    Toast.makeText(context, SelectedChipScreenViewModel.BookMarkedDataUtils.toastMessage.value, Toast.LENGTH_SHORT).show()
+                                    dropDownMenuEnabled.value = false
+                                },
+                                leadingIcon = {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.bookmark_icon),
+                                        contentDescription = "bookmark_icon",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                })
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = "Download",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = md_theme_dark_tertiary
+                                    )
+                                },
+                                onClick = {
+                                    dropDownMenuEnabled.value = false
+                                },
+                                leadingIcon = {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.download_icon),
+                                        contentDescription = "download_icon",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                })
+                            DropdownMenuItem(text = {
+                                Text(
+                                    text = "Share",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = md_theme_dark_tertiary
+                                )
+                            }, onClick = {
+                                val intent = Intent()
+                                intent.action = Intent.ACTION_SEND
+                                intent.type = "text/plain"
+                                intent.putExtra(
+                                    Intent.EXTRA_TEXT,
+                                    "Yo! Sharing \"${it.data.title}\" by \"${it.data.author}\" from reddit; img url :- \"${it.data.url}\""
+                                )
+                                val shareIntent = Intent.createChooser(intent, "Share using :-")
+                                context.startActivity(shareIntent)
+                                dropDownMenuEnabled.value = false
+                            }, leadingIcon = {
+                                Image(
+                                    painter = painterResource(id = R.drawable.share_icon),
+                                    contentDescription = "share_icon",
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            })
 
+                        }
+                    }
+                }
+            }}
+        }
+        item {
+            Spacer(modifier = Modifier.width(10.dp))
+        }
+    }
 }
