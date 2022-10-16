@@ -4,32 +4,40 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintSet
 import com.sakethh.arara.R
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sakethh.arara.GIFThing
 import com.sakethh.arara.home.HomeScreenViewModel.Utils.nonIndexedValue
 import com.sakethh.arara.home.HomeScreenViewModel.Utils.selectedTextForHomeScreen
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipComposable
+import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
+import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditDataItem
+import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
+import com.sakethh.arara.unreleased.ImageThing
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -39,7 +47,7 @@ fun HomeScreen() {
     val context = LocalContext.current
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
-    systemUIController.setNavigationBarColor(md_theme_dark_surface)
+    val bottomPaddingForGIF = 90.dp
     val homeScreenViewModel: HomeScreenViewModel = viewModel()
     val headerList = remember { homeScreenViewModel.listForHeader }
     val currentTime = remember { homeScreenViewModel.currentTime }
@@ -56,8 +64,8 @@ fun HomeScreen() {
     @Suppress("LocalVariableName")
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .background(md_theme_dark_surface),
+            .background(md_theme_dark_surface)
+            .fillMaxSize(),
         state = lazyState
     ) {
         item {
@@ -95,13 +103,13 @@ fun HomeScreen() {
                     .horizontalScroll(state = scrollState)
                     .animateContentSize()
             ) {
-                val isCloseButtonPressed = rememberSaveable { mutableStateOf(false) }
-                if (isCloseButtonPressed.value) {
+                if (HomeScreenViewModel.CloseButtonUtils.isCloseButtonPressed.value) {
                     IconButton(onClick = {
-                        isCloseButtonPressed.value = false;selectedTextForHomeScreen.value = ""
+                        HomeScreenViewModel.CloseButtonUtils.isCloseButtonPressed.value =
+                            false;selectedTextForHomeScreen.value = ""
                     }) {
                         Image(
-                            painter = painterResource(id = R.drawable.close_icon),
+                            painter = painterResource(id = HomeScreenViewModel.CloseButtonUtils.closeButtonIcon[0]),
                             contentDescription = "close icon",
                             modifier = Modifier
                                 .padding(start = 10.dp)
@@ -140,7 +148,8 @@ fun HomeScreen() {
                     AssistChip(
                         onClick = {
                             if (currentTimeIsLoaded.value) {
-                                selectedTextForHomeScreen.value = it;isCloseButtonPressed.value =
+                                selectedTextForHomeScreen.value =
+                                    it; HomeScreenViewModel.CloseButtonUtils.isCloseButtonPressed.value =
                                     true
                             }
                             if (!lazyState.isScrollInProgress) {
@@ -206,9 +215,6 @@ fun HomeScreen() {
                             )
                         }
                     }
-                    coroutineScope.launch {
-                        lazyState.animateScrollToItem(lazyState.firstVisibleItemIndex)
-                    }
                 }
                 "News" -> {
                     itemsIndexed(newsHotData.value.component1() + newsRelevanceData.value.component1()) { index, item ->
@@ -255,14 +261,101 @@ fun HomeScreen() {
                 }
                 else -> {
                     item {
-                        Text(
-                            text = "Home Screen",
-                            color = md_theme_dark_primary
+                        MainHomeScreen(
+                            headingName = "Warrior-arts",
+                            dataList = fanArtsHotData.value.take(8)
+                        )
+                        MainHomeScreen(headingName = "News", dataList = newsHotData.value.take(8))
+                        MainHomeScreen(
+                            headingName = "Images",
+                            dataList = imagesHotData.value.take(8)
                         )
                     }
                 }
+            }
+            items(homeScreenViewModel.footerGIFURL.value) { data ->
+                GIFThing(
+                    imgURL = data.footerImg, modifier = Modifier
+                        .background(md_theme_dark_surface)
+                        .padding(bottom = bottomPaddingForGIF)
+                        .fillMaxWidth()
+                        .height(70.dp)
+                )
             }
         }
     }
 }
 // relevance  https://i.redd.it/rby73oyg9eq91.jpg
+
+@Composable
+fun MainHomeScreen(headingName: String, dataList: List<SubRedditData>) {
+        val context = LocalContext.current
+        Box {
+            Text(
+                text = headingName,
+                color = md_theme_dark_onSurface,
+                fontSize = 23.sp,
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 10.dp, bottom = 10.dp),
+                style = MaterialTheme.typography.titleMedium
+            )
+
+        }
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+        ) {
+            items(dataList.component1()) {
+                Card(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .requiredWidth(250.dp)
+                        .requiredHeight(250.dp),
+                    colors = CardDefaults.cardColors(containerColor = md_theme_dark_onPrimary)
+                ) {
+
+                    Column {
+                        ImageThing(
+                            model = ImageRequest.Builder(context).data(it.data.url)
+                                .crossfade(true).build(),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(150.dp)
+                                .layoutId("image"),
+                            onError = painterResource(id = randomLostInternetImg()),
+                            contentScale = ContentScale.Crop
+                        )
+                        Text(
+                            text = it.data.title,
+                            color = md_theme_dark_primary,
+                            fontSize = 18.sp,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Start,
+                            lineHeight = 22.sp,
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 30.dp)
+                                .layoutId("titleForCard")
+                        )
+                        Text(
+                            text = it.data.author,
+                            color = md_theme_dark_primary,
+                            fontSize = 10.sp,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            textAlign = TextAlign.Start,
+                            lineHeight = 10.sp,
+                            modifier = Modifier
+                                .padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 10.dp)
+                                .layoutId("author")
+                        )
+                    }
+                }
+            }
+        }
+
+}

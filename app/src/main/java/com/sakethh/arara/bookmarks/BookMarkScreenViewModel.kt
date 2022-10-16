@@ -1,36 +1,30 @@
 package com.sakethh.arara.bookmarks
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sakethh.arara.RealmDBObject
-import com.sakethh.arara.home.selectedChipStuff.SelectedChipScreenViewModel
-import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.RealmResults
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
-class BookMarkScreenViewModel(private val selectedChipScreenViewModel: SelectedChipScreenViewModel = SelectedChipScreenViewModel()) :
+@Suppress("LocalVariableName", "PropertyName")
+class BookMarkScreenViewModel(val bookMarkRepo: BookMarkRepo = BookMarkRepo()) :
     ViewModel() {
-    val savedData = mutableStateListOf<RealmDBObject>()
+    private val coroutineExceptionHandler =
+        CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
+    private val realmResults = mutableStateListOf<RealmResults<RealmDBObject>>()
+    val bookMarkedData : List<RealmResults<RealmDBObject>> = realmResults
+    val bookMarkedDataSize = mutableStateOf(bookMarkedData.size)
     init {
-        savedData()
-    }
-    private fun savedData() {
-        val data =
-            selectedChipScreenViewModel.selectedChipScreenRealmDB.realm.query<RealmDBObject>("bookMarked == true")
-                .asFlow()
-        viewModelScope.launch {
-            val dbDataProcess = async {
-                data.collect {
-                    it.list.forEach { realmDBObject ->
-                        savedData.add(realmDBObject)
-                    }
-                }
-            }
-            dbDataProcess.await().also {
-                dbDataProcess.cancel()
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+           withContext(Dispatchers.Main){
+               bookMarkRepo.readFromDB().collect { realmList ->
+                   bookMarkedDataSize.value = realmList.list.size.also {
+                       realmResults.add(realmList.list)
+                   }
+               }
+           }
         }
     }
 }

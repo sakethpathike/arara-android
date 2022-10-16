@@ -2,8 +2,8 @@
 
 package com.sakethh.arara.home.selectedChipStuff
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -32,15 +33,14 @@ import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.placeholder
+import com.google.android.material.snackbar.Snackbar
 import com.sakethh.arara.R
-import com.sakethh.arara.RealmDBObject
 import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
-import io.realm.kotlin.ext.query
-import kotlinx.coroutines.launch
 
+@SuppressLint("ResourceAsColor")
 @Composable
 fun SelectedChipComposable(
     imgLink: String,
@@ -49,12 +49,13 @@ fun SelectedChipComposable(
     index: Int,
     indexedValue: Int,
     indexOnClick: (Int) -> Unit,
-    bookMarkText:String = "Bookmark",
-    bookMarkIcon:Int = R.drawable.bookmark_icon,
-    inBookMarkScreen:Boolean = false,
-    inBookMarkScreenOnClick:(()->Unit)? = null
+    bookMarkText: String = "Bookmark",
+    bookMarkIcon: Int = R.drawable.bookmark_icon,
+    inBookMarkScreen: Boolean = false,
+    bookmarkOnClick: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    val view = LocalView.current
     val _index = remember { mutableStateOf(index) }
     val coroutineScope = rememberCoroutineScope()
     val selectedChipScreenViewModel: SelectedChipScreenViewModel = viewModel()
@@ -151,19 +152,20 @@ fun SelectedChipComposable(
                             )
                         },
                         onClick = {
-                            if(inBookMarkScreen){
-                                inBookMarkScreenOnClick?.invoke()
-                            }else{
-                                selectedChipScreenViewModel.bookMarkedImgUrl.value = imgLink
-                                selectedChipScreenViewModel.bookMarkedAuthor.value = author
-                                selectedChipScreenViewModel.bookMarkedTitle.value = title.also {
-                                    selectedChipScreenViewModel.writeToDB().also {
-                                        Toast.makeText(context, "Done:)", Toast.LENGTH_LONG)
-                                            .show()
-                                    }
+                            if (inBookMarkScreen) {
+                                bookmarkOnClick?.invoke()
+                            } else {
+                                SelectedChipScreenViewModel.BookMarkedDataUtils.realmDBObject.apply {
+                                    this.objectKey = imgLink
+                                    this.imgURL = imgLink
+                                    this.bookMarked = true
+                                    this.title = title
+                                    this.author = author
+                                }.also {
+                                    selectedChipScreenViewModel.addToDB()
                                 }
+                                Toast.makeText(context, SelectedChipScreenViewModel.BookMarkedDataUtils.toastMessage.value, Toast.LENGTH_SHORT).show()
                             }
-
                             dropDownMenuEnabled.value = false
                         },
                         leadingIcon = {
@@ -182,19 +184,6 @@ fun SelectedChipComposable(
                             )
                         },
                         onClick = {
-                            val log =
-                                selectedChipScreenViewModel.selectedChipScreenRealmDB.realm.query<RealmDBObject>(
-                                    "bookMarked == true"
-                                ).asFlow()
-                            coroutineScope.launch {
-                                log.collect {
-                                    for (data in it.list) {
-                                        Log.d("REALM_LOG", data.author!!)
-                                    }
-                                }.also {
-                                    selectedChipScreenViewModel.selectedChipScreenRealmDB.realm.close()
-                                }
-                            }
                             dropDownMenuEnabled.value = false
                         },
                         leadingIcon = {

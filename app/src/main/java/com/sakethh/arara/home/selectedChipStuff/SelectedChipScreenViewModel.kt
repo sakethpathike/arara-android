@@ -3,28 +3,26 @@ package com.sakethh.arara.home.selectedChipStuff
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.sakethh.arara.RealmDBObject
+import com.sakethh.arara.bookmarks.BookMarkRepo
+import kotlinx.coroutines.*
 
 @Suppress("LocalVariableName")
-class SelectedChipScreenViewModel() :
+class SelectedChipScreenViewModel(private val bookMarkRepo: BookMarkRepo = BookMarkRepo()) :
     ViewModel() {
     val imageIsLoading = mutableStateOf(false)
-    val bookMarkedTitle = mutableStateOf<String?>(null)
-    val bookMarkedAuthor = mutableStateOf<String?>(null)
-    val bookMarkedImgUrl = mutableStateOf<String?>(null)
-    val selectedChipScreenRealmDB: SelectedChipScreenRealmDB = SelectedChipScreenRealmDB
+
+    object BookMarkedDataUtils {
+        val realmDBObject: RealmDBObject = RealmDBObject()
+        val toastMessage = mutableStateOf("")
+    }
+
     private val coroutineExceptionHandler =
         CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
-    fun writeToDB() {
-          viewModelScope.launch(Dispatchers.IO+ coroutineExceptionHandler) {
-              selectedChipScreenRealmDB.writeToDB(
-                  bookMarked = true,
-                  author = bookMarkedAuthor.value,
-                  imgUrl = bookMarkedImgUrl.value,
-                  title = bookMarkedTitle.value
-              )
-          }
-      }
+
+    fun addToDB() {
+        viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
+            bookMarkRepo.writeToDB(realmDBObject = BookMarkedDataUtils.realmDBObject)
+        }
+    }
 }

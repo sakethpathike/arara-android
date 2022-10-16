@@ -6,6 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sakethh.arara.R
+import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberMusicPlayerLoadingGIF
+import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberMusicPlayerPlayingGIF
+import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberUnreleasedFooterImg
+import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberUnreleasedHeaderImg
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,32 +17,34 @@ import kotlinx.coroutines.launch
 class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()) :
     ViewModel() {
     val rememberData: MutableState<List<UnreleasedResponse>> = mutableStateOf(emptyList())
-    val rememberUnreleasedFooterImg: MutableState<List<UnreleasedFooterImage>> =
-        mutableStateOf(emptyList())
-    val rememberUnreleasedHeaderImg: MutableState<List<UnreleasedArtwork>> =
-        mutableStateOf(emptyList())
-    val rememberMusicPlayerImgURL = mutableStateOf("")
-    val rememberMusicPlayerHDImgURL = mutableStateOf("")
-    val rememberMusicPlayerTitle = mutableStateOf("")
-    val rememberMusicPlayerLyrics = mutableStateOf("")
-    val rememberMusicPlayerDescription = mutableStateOf("")
-    val rememberMusicPlayerDescriptionBy = mutableStateOf("")
-    val rememberMusicPlayerDescriptionOrigin = mutableStateOf("")
-    val rememberMusicPlayerArtworkBy = mutableStateOf("")
-    val rememberMusicPlayerLoadingGIF: MutableState< List<MusicLoadingGIF>> = mutableStateOf(emptyList())
-    val rememberMusicPlayerPlayingGIF : MutableState<  List<MusicPlayingGIF>> = mutableStateOf(emptyList())
-    val rememberMusicPlayerControlImg = listOf(R.drawable.play, R.drawable.pause)
-    val rememberMusicPlayerControl = mutableStateOf(false)
-    val musicPlayerActivate = mutableStateOf(false)
-    val musicAudioURL = mutableStateOf("")
-    val musicPlayerVisibility= mutableStateOf(false)
-    val currentLoadingStatusGIFURL = mutableStateOf("")
-    val currentSongMaxDuration= mutableStateOf(0)
-    val currentSongCurrentDuration= mutableStateOf(0)
-    val currentSongIsPlaying= mutableStateOf(false)
+
+
     object MediaPlayer {
         val mediaPlayer = android.media.MediaPlayer()
+        val rememberUnreleasedFooterImg: MutableState<List<UnreleasedFooterImage>> =
+            mutableStateOf(emptyList())
+        val rememberUnreleasedHeaderImg: MutableState<List<UnreleasedArtwork>> =
+            mutableStateOf(emptyList())
         val musicCompleted = mutableStateOf(false)
+        val musicPlayerActivate = mutableStateOf(false)
+        val rememberMusicPlayerImgURL = mutableStateOf("")
+        val rememberMusicPlayerHDImgURL = mutableStateOf("")
+        val rememberMusicPlayerTitle = mutableStateOf("")
+        val rememberMusicPlayerLyrics = mutableStateOf("")
+        val rememberMusicPlayerDescription = mutableStateOf("")
+        val rememberMusicPlayerDescriptionBy = mutableStateOf("")
+        val rememberMusicPlayerDescriptionOrigin = mutableStateOf("")
+        val rememberMusicPlayerArtworkBy = mutableStateOf("")
+        val rememberMusicPlayerLoadingGIF: MutableState< List<MusicLoadingGIF>> = mutableStateOf(emptyList())
+        val rememberMusicPlayerPlayingGIF : MutableState<  List<MusicPlayingGIF>> = mutableStateOf(emptyList())
+        val rememberMusicPlayerControlImg = listOf(R.drawable.play, R.drawable.pause)
+        val rememberMusicPlayerControl = mutableStateOf(false)
+        val musicAudioURL = mutableStateOf("")
+        val musicPlayerVisibility= mutableStateOf(false)
+        val currentLoadingStatusGIFURL = mutableStateOf("")
+        val currentSongMaxDuration= mutableStateOf(0)
+        val currentSongCurrentDuration= mutableStateOf(0)
+        val currentSongIsPlaying= mutableStateOf(false)
     }
     fun musicDuration(ms:Long): MutableState<String> {
         val duration= mutableStateOf("")

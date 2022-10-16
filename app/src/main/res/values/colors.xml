@@ -8,5 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="dark_surface">#191C1B</color>
-    <color name="topBarColor">#103447</color>
+    <color name="snackBarBGColor">#103447</color>
+    <color name="snackBarTextColor">#AACBE3</color>
 </resources>

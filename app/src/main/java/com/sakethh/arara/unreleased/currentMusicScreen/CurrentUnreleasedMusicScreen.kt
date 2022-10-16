@@ -161,6 +161,7 @@ fun UnreleasedCurrentMusicScreen(
                     .background(md_theme_dark_surface)
                     .verticalScroll(state = rememberScrollState(), enabled = true)
                     .animateContentSize()
+                    .padding(bottom = 150.dp)
             ) {
                 SmallTopAppBar(
                     modifier = Modifier.layoutId("topBar"),

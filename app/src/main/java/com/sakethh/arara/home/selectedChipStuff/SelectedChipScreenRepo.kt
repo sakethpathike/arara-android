@@ -32,26 +32,3 @@ class SelectedChipScreenAPIRepo(private val fetchingAPIDATA: FetchingAPIDATA = F
         return fetchingAPIDATA.getImagesRelevance()
     }
 }
-
-object SelectedChipScreenRealmDB {
-    private val realmConfiguration = RealmConfiguration.create(schema = setOf(RealmDBObject::class))
-    val realm = Realm.open(realmConfiguration)
-    suspend fun writeToDB(
-        author: String?,
-        bookMarked: Boolean,
-        imgUrl: String?,
-        title: String?
-    ): Realm {
-        coroutineScope {
-            realm.write {
-                this.copyToRealm(RealmDBObject().apply {
-                    this.author = author
-                    this.bookMarked = bookMarked
-                    this.imgURL = imgUrl
-                    this.title = title
-                })
-            }
-        }
-        return realm
-    }
-}

@@ -11,5 +11,5 @@ class CurrentMusicScreenViewModel(private val unreleasedViewModel: UnreleasedVie
     val currentImageGifIcons= mutableListOf(R.drawable.image,R.drawable.video_icon)  // defines icon sources
     val currentIsImageIcon= mutableStateOf(true) // defines what icon is current
     val descriptionButtonClicked= mutableStateOf(false)
-    val isCurrentIconPause=unreleasedViewModel.rememberMusicPlayerControl
+    val isCurrentIconPause=UnreleasedViewModel.MediaPlayer.rememberMusicPlayerControl
 }

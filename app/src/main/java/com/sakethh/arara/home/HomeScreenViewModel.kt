@@ -5,15 +5,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipScreenAPIRepo
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
+import com.sakethh.arara.unreleased.UnreleasedFooterImage
+import com.sakethh.arara.unreleased.UnreleasedRepo
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 import kotlinx.coroutines.*
 import java.util.Calendar
+import com.sakethh.arara.R
 
 @Suppress("LocalVariableName", "PropertyName")
-class HomeScreenViewModel(private val selectedChipScreenRepo: SelectedChipScreenAPIRepo = SelectedChipScreenAPIRepo()) :
+class HomeScreenViewModel(
+    private val selectedChipScreenRepo: SelectedChipScreenAPIRepo = SelectedChipScreenAPIRepo(),
+    private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()
+) :
     ViewModel() {
     val currentTime = mutableStateOf("")
     val listForHeader = mutableListOf<String>("Warrior-arts", "News", "Images")
-    val footerGIFURL = mutableStateOf("")
+    object CloseButtonUtils{
+        val closeButtonIcon = mutableListOf(R.drawable.close_icon)
+        val isCloseButtonPressed = mutableStateOf(false)
+    }
+    val footerGIFURL = mutableStateOf<List<UnreleasedFooterImage>>(emptyList())
     val currentTimeLoaded = mutableStateOf(false)
     val fanArtsHotData = mutableStateOf<List<SubRedditData>>(
         emptyList()
@@ -35,17 +46,17 @@ class HomeScreenViewModel(private val selectedChipScreenRepo: SelectedChipScreen
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
             val _fanArtsHotData = getFanArtsHot()
-            fanArtsHotData.value=_fanArtsHotData
+            fanArtsHotData.value = _fanArtsHotData
             val _fanArtsRelevanceData = getFanArtsRelevance()
-            fanArtsRelevanceData.value=_fanArtsRelevanceData
+            fanArtsRelevanceData.value = _fanArtsRelevanceData
             val _newsHotData = getNewsRelevance()
-            newsHotData.value=_newsHotData
+            newsHotData.value = _newsHotData
             val _newsRelevanceData = getNewsHot()
-            newsRelevanceData.value=_newsRelevanceData
+            newsRelevanceData.value = _newsRelevanceData
             val _imagesHotData = getImagesHot()
-            imagesHotData.value=_imagesHotData
+            imagesHotData.value = _imagesHotData
             val _imagesRelevanceData = getImagesRelevance()
-            imagesRelevanceData.value=_imagesRelevanceData
+            imagesRelevanceData.value = _imagesRelevanceData
             when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
                 in 0..4 -> {
                     currentTime.value = "Still Awake?"
@@ -66,6 +77,7 @@ class HomeScreenViewModel(private val selectedChipScreenRepo: SelectedChipScreen
                     currentTime.value = "Everything Fine?"
                 }
             }
+            footerGIFURL.value = getUnreleasedFooterImg()
         }
     }
 
@@ -84,10 +96,16 @@ class HomeScreenViewModel(private val selectedChipScreenRepo: SelectedChipScreen
     private suspend fun getNewsHot(): List<SubRedditData> {
         return selectedChipScreenRepo.getNewsHot()
     }
+
     suspend fun getImagesHot(): List<SubRedditData> {
         return selectedChipScreenRepo.getImagesHot()
     }
+
     suspend fun getImagesRelevance(): List<SubRedditData> {
         return selectedChipScreenRepo.getImagesRelevance()
+    }
+
+    private suspend fun getUnreleasedFooterImg(): List<UnreleasedFooterImage> {
+        return unreleasedRepo.getUnreleasedFooterImg()
     }
 }
