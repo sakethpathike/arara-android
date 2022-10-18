@@ -10,9 +10,7 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberMusi
 import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberMusicPlayerPlayingGIF
 import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberUnreleasedFooterImg
 import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberUnreleasedHeaderImg
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()) :
     ViewModel() {
@@ -35,40 +33,46 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
         val rememberMusicPlayerDescriptionBy = mutableStateOf("")
         val rememberMusicPlayerDescriptionOrigin = mutableStateOf("")
         val rememberMusicPlayerArtworkBy = mutableStateOf("")
-        val rememberMusicPlayerLoadingGIF: MutableState< List<MusicLoadingGIF>> = mutableStateOf(emptyList())
-        val rememberMusicPlayerPlayingGIF : MutableState<  List<MusicPlayingGIF>> = mutableStateOf(emptyList())
+        val rememberMusicPlayerLoadingGIF: MutableState<List<MusicLoadingGIF>> =
+            mutableStateOf(emptyList())
+        val rememberMusicPlayerPlayingGIF: MutableState<List<MusicPlayingGIF>> =
+            mutableStateOf(emptyList())
         val rememberMusicPlayerControlImg = listOf(R.drawable.play, R.drawable.pause)
         val rememberMusicPlayerControl = mutableStateOf(false)
         val musicAudioURL = mutableStateOf("")
-        val musicPlayerVisibility= mutableStateOf(false)
+        val musicPlayerVisibility = mutableStateOf(false)
         val currentLoadingStatusGIFURL = mutableStateOf("")
-        val currentSongMaxDuration= mutableStateOf(0)
-        val currentSongCurrentDuration= mutableStateOf(0)
-        val currentSongIsPlaying= mutableStateOf(false)
+        val currentSongMaxDuration = mutableStateOf(0)
+        val currentSongCurrentDuration = mutableStateOf(0)
+        val currentSongIsPlaying = mutableStateOf(false)
     }
-    fun musicDuration(ms:Long): MutableState<String> {
-        val duration= mutableStateOf("")
+
+    fun musicDuration(ms: Long): MutableState<String> {
+        val duration = mutableStateOf("")
         viewModelScope.launch {
-            val conversion=DateUtils.formatElapsedTime(ms/1000)
-            duration.value=conversion.toString()
+            val conversion = DateUtils.formatElapsedTime(ms / 1000)
+            duration.value = conversion.toString()
         }
         return duration
     }
+
     private val coroutineExceptionHandler =
         CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
 
     init {
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val songsData = getSongsData()
-            rememberData.value = songsData.component1()
-            val headerData = getUnreleasedHeaderImg()
-            rememberUnreleasedHeaderImg.value = headerData
-            val footerData = getUnreleasedFooterImg()
-            rememberUnreleasedFooterImg.value = footerData
-            val loadingGIF = getMusicLoadingGIF()
-            rememberMusicPlayerLoadingGIF.value=loadingGIF
-            val playingGIF = getMusicPlayingGIF()
-            rememberMusicPlayerPlayingGIF.value=playingGIF
+            withContext(Dispatchers.Main) {
+                val songsData = async { getSongsData() }
+                val headerData = async { getUnreleasedHeaderImg() }
+                val footerData = async { getUnreleasedFooterImg() }
+                val loadingGIF = async { getMusicLoadingGIF() }
+                val playingGIF = async { getMusicPlayingGIF() }
+                rememberMusicPlayerPlayingGIF.value = playingGIF.await()
+                rememberData.value = songsData.await().component1()
+                rememberUnreleasedHeaderImg.value = headerData.await()
+                rememberMusicPlayerLoadingGIF.value = loadingGIF.await()
+                rememberUnreleasedFooterImg.value = footerData.await()
+            }
         }
 
     }
@@ -84,6 +88,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     private suspend fun getSongsData(): List<List<UnreleasedResponse>> {
         return unreleasedRepo.getSongsData()
     }
+
     suspend fun getMusicLoadingGIF(): List<MusicLoadingGIF> {
         return unreleasedRepo.getMusicLoadingGIF()
     }
