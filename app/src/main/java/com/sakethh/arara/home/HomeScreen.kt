@@ -34,6 +34,9 @@ import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.currentTimeIsLoaded
+import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.fanartsTopAllTimeData
+import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesTopAllTimeData
+import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.newsTopAllTimeData
 import com.sakethh.arara.home.HomeScreenViewModel.Utils.nonIndexedValue
 import com.sakethh.arara.home.HomeScreenViewModel.Utils.selectedTextForHomeScreen
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipComposable
@@ -59,7 +62,9 @@ fun HomeScreen(navController: NavController) {
     val lazyState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
-
+    val topImagesAllTime8 = remember { imagesTopAllTimeData.value.take(8)}
+    val topNewsAllTime8 = remember { newsTopAllTimeData.value.take(8)}
+    val topFanArtsAllTime8 = remember { fanartsTopAllTimeData.value.take(8)}
     val constraintSet = ConstraintSet {
         val dropDownIcon = createRefFor("dropDownIcon")
         val dropDownComposable = createRefFor("dropDownComposable")
@@ -274,9 +279,7 @@ fun HomeScreen(navController: NavController) {
                     item {
                          MainHomeScreen(
                                 headingName = "Warrior-arts",
-                                dataList = HomeScreenViewModel.RetrievedSubRedditData.fanArtsHotData.value.take(
-                                    8
-                                ),
+                                dataList = topFanArtsAllTime8,
                                 navController = navController,
                                 navigationRoute = "subHomeScreen",constraintSet = constraintSet
                             )
@@ -285,9 +288,7 @@ fun HomeScreen(navController: NavController) {
                     item {
                         MainHomeScreen(
                             headingName = "News",
-                            dataList = HomeScreenViewModel.RetrievedSubRedditData.newsHotData.value.take(
-                                8
-                            ),
+                            dataList = topNewsAllTime8,
                             navController = navController,
                             navigationRoute = "subHomeScreen",constraintSet = constraintSet
                         )
@@ -295,9 +296,7 @@ fun HomeScreen(navController: NavController) {
                     item {
                         MainHomeScreen(
                             headingName = "Images",
-                            dataList = HomeScreenViewModel.RetrievedSubRedditData.imagesHotData.value.take(
-                                8
-                            ),
+                            dataList = topImagesAllTime8,
                             navController = navController,
                             navigationRoute = "subHomeScreen",constraintSet = constraintSet
                         )}

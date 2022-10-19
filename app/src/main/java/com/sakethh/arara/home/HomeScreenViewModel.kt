@@ -12,16 +12,20 @@ import java.util.Calendar
 import com.sakethh.arara.R
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.fanArtsHotData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.fanArtsRelevanceData
+import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.fanartsTopAllTimeData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesHotData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesRelevanceData
+import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesTopAllTimeData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.newsHotData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.newsRelevanceData
+import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.newsTopAllTimeData
 import com.sakethh.arara.home.selectedChipStuff.apiData.Data
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditDataItem
 
 @Suppress("LocalVariableName", "PropertyName")
 class HomeScreenViewModel(
     private val selectedChipScreenRepo: SelectedChipScreenAPIRepo = SelectedChipScreenAPIRepo(),
+    private val homeScreenRepo: HomeScreenRepo = HomeScreenRepo(),
     private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()
 ) :
     ViewModel() {
@@ -44,6 +48,9 @@ class HomeScreenViewModel(
         val newsRelevanceData = mutableStateOf<List<SubRedditData>>(emptyList())
         val imagesHotData = mutableStateOf<List<SubRedditData>>(emptyList())
         val imagesRelevanceData = mutableStateOf<List<SubRedditData>>(emptyList())
+        val imagesTopAllTimeData = mutableStateOf<List<SubRedditData>>(emptyList())
+        val newsTopAllTimeData = mutableStateOf<List<SubRedditData>>(emptyList())
+        val fanartsTopAllTimeData = mutableStateOf<List<SubRedditData>>(emptyList())
     }
 
     object Utils {
@@ -63,12 +70,18 @@ class HomeScreenViewModel(
                 val _newsRelevanceData = async { getNewsHot() }
                 val _imagesHotData = async { getImagesHot() }
                 val _imagesRelevanceData = async { getImagesRelevance() }
+                val _imagesTopAllTimeData = async { getImagesTopAllTime() }
+                val _newsTopAllTimeData = async { getNewsTopAllTime() }
+                val _fanArtsTopAllTimeData = async { getFanartsTopAllTime() }
                 imagesHotData.value = _imagesHotData.await()
                 newsRelevanceData.value = _newsRelevanceData.await()
                 newsHotData.value = _newsHotData.await()
                 fanArtsRelevanceData.value = _fanArtsRelevanceData.await()
                 fanArtsHotData.value = _fanArtsHotData.await()
                 imagesRelevanceData.value = _imagesRelevanceData.await()
+                imagesTopAllTimeData.value = _imagesTopAllTimeData.await()
+                newsTopAllTimeData.value = _newsTopAllTimeData.await()
+                fanartsTopAllTimeData.value = _fanArtsTopAllTimeData.await()
                 when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
                     in 0..4 -> {
                         currentTime.value = "Still Awake?"
@@ -120,6 +133,15 @@ class HomeScreenViewModel(
 
     private suspend fun getUnreleasedFooterImg(): List<UnreleasedFooterImage> {
         return unreleasedRepo.getUnreleasedFooterImg()
+    }
+    suspend fun getFanartsTopAllTime(): List<SubRedditData> {
+        return homeScreenRepo.getFanartsTopAllTime()
+    }
+    suspend fun getNewsTopAllTime(): List<SubRedditData> {
+        return homeScreenRepo.getNewsTopAllTime()
+    }
+    suspend fun getImagesTopAllTime(): List<SubRedditData> {
+        return homeScreenRepo.getImagesTopAllTime()
     }
 }
 

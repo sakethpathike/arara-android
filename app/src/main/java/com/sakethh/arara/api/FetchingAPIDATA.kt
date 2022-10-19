@@ -112,6 +112,33 @@ class FetchingAPIDATA() {
         return data.awaitAll()
     }
 
+    suspend fun getImagesTopAllTime(): List<SubRedditData> {
+        val data = mutableStateListOf<Deferred<SubRedditData>>()
+        coroutineScope {
+            val _data = async { apiData.getImagesTopAllTime() }
+            data.add(_data)
+        }
+        return data.awaitAll()
+    }
+
+    suspend fun getNewsTopAllTime(): List<SubRedditData> {
+        val data = mutableStateListOf<Deferred<SubRedditData>>()
+        coroutineScope {
+            val _data = async { apiData.getNewsTopAllTime() }
+            data.add(_data)
+        }
+        return data.awaitAll()
+    }
+
+    suspend fun getFanartsTopAllTime(): List<SubRedditData> {
+        val data = mutableStateListOf<Deferred<SubRedditData>>()
+        coroutineScope {
+            val _data = async { apiData.getFanArtsTopAllTime() }
+            data.add(_data)
+        }
+        return data.awaitAll()
+    }
+
     interface FetchingAPIDATAInterface {
         @GET(Constants.UNRELEASED)
         suspend fun getSongsData(): List<UnreleasedResponse>
@@ -145,5 +172,14 @@ class FetchingAPIDATA() {
 
         @GET(Constants.SUBREDDIT_IMAGES_Relevance)
         suspend fun getImagesRelevance(): SubRedditData
+
+        @GET(Constants.SUBREDDIT_IMAGES_TOP_ALL_TIME)
+        suspend fun getImagesTopAllTime(): SubRedditData
+
+        @GET(Constants.SUBREDDIT_FANARTS_TOP_ALL_TIME)
+        suspend fun getFanArtsTopAllTime(): SubRedditData
+
+        @GET(Constants.SUBREDDIT_NEWS_TOP_ALL_TIME)
+        suspend fun getNewsTopAllTime(): SubRedditData
     }
 }
