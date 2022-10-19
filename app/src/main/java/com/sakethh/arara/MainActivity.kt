@@ -10,11 +10,9 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sakethh.arara.bookmarks.BookMarkRepo
@@ -39,7 +37,7 @@ class MainActivity() : ComponentActivity() {
                 Scaffold(
                     floatingActionButton = {
                         if (isInternetAvailable(context = this)) {
-                            if(UnreleasedViewModel.MediaPlayer.musicPlayerActivate.value && !UnreleasedViewModel.MediaPlayer.musicCompleted.value){
+                            if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value && !UnreleasedViewModel.UnreleasedUtils.musicCompleted.value){
                                 BottomMusicPlayerUI(
                                     animatedNavController = animatedNavController,
                                     sharedViewModel = sharedViewModel

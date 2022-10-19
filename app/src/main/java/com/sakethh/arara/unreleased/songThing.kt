@@ -1,5 +1,6 @@
 package com.sakethh.arara.unreleased
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
@@ -103,14 +104,26 @@ fun ImageThing(
         modifier = modifier,
         error = onError,
         contentScale = contentScale,
-        onSuccess = {onSuccess?.invoke()},
-        onLoading = {onLoading?.invoke()}
+        onSuccess = { onSuccess?.invoke() },
+        onLoading = { onLoading?.invoke() }
     )
 }
 
 @Composable
-fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
-
+fun SongThing1(
+    songName: String, specificArtwork: String, onClick: () -> Unit,
+    imgModifier: Modifier = Modifier
+        .padding(top = 10.dp)
+        .requiredHeight(50.dp)
+        .padding(start = 10.dp)
+        .requiredWidth(50.dp),
+    titleModifier: Modifier = Modifier,
+    lyricsModifier: Modifier = Modifier
+        .padding(top = 3.dp, bottom = 3.dp)
+        .background(color = md_theme_light_outline)
+        .wrapContentSize()
+        .padding(2.dp)
+) {
     Box(
         modifier = Modifier
             .background(color = md_theme_dark_surface)
@@ -127,12 +140,7 @@ fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
                     .crossfade(true)
                     .build(),
                 contentDescription = "Image for unreleased song from a warrior:)",
-                modifier = Modifier
-                    .padding(top = 10.dp) //gives 10dp padding in top
-                    .requiredHeight(50.dp) // renders height of the image
-                    .padding(start = 10.dp) //gives 10dp padding in left
-                    .requiredWidth(50.dp) //renders width of the image
-                , onError = painterResource(randomLostInternetImg())
+                modifier = imgModifier, onError = painterResource(randomLostInternetImg())
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column(
@@ -147,15 +155,12 @@ fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = md_theme_dark_onSurface
+                    color = md_theme_dark_onSurface,
+                    modifier = titleModifier
                 )
                 Text(
                     text = "Lyrics",
-                    modifier = Modifier
-                        .padding(top = 3.dp, bottom = 3.dp)
-                        .background(color = md_theme_light_outline)
-                        .wrapContentSize()
-                        .padding(2.dp),
+                    modifier = lyricsModifier,
                     style = MaterialTheme.typography.bodySmall,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Normal,
@@ -168,7 +173,12 @@ fun SongThing1(songName: String, specificArtwork: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun ArtBoard(imgURL: String) {
+fun ArtBoard(
+    imgURL: String,
+    @SuppressLint("ModifierParameter") imgModifier: Modifier = Modifier
+        .size(150.dp)
+        .shadow(2.dp)
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,10 +198,7 @@ fun ArtBoard(imgURL: String) {
                 .data(imgURL)
                 .crossfade(true).build(),
             contentDescription = "Image",
-            modifier = Modifier
-                .size(150.dp)
-                .shadow(2.dp)
-                .align(Alignment.Center),
+            modifier = imgModifier.align(Alignment.Center),
             onError = painterResource(
                 R.drawable.image
             )

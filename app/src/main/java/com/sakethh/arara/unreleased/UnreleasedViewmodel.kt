@@ -6,10 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sakethh.arara.R
-import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberMusicPlayerLoadingGIF
-import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberMusicPlayerPlayingGIF
-import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberUnreleasedFooterImg
-import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.rememberUnreleasedHeaderImg
+import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerLoadingGIF
+import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerPlayingGIF
+import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.rememberUnreleasedFooterImg
+import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.rememberUnreleasedHeaderImg
 import kotlinx.coroutines.*
 
 class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()) :
@@ -17,7 +17,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
     val rememberData: MutableState<List<UnreleasedResponse>> = mutableStateOf(emptyList())
 
 
-    object MediaPlayer {
+    object UnreleasedUtils {
         val mediaPlayer = android.media.MediaPlayer()
         val rememberUnreleasedFooterImg: MutableState<List<UnreleasedFooterImage>> =
             mutableStateOf(emptyList())
@@ -45,6 +45,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
         val currentSongMaxDuration = mutableStateOf(0)
         val currentSongCurrentDuration = mutableStateOf(0)
         val currentSongIsPlaying = mutableStateOf(false)
+        val isDataLoaded = mutableStateOf(false)
     }
 
     fun musicDuration(ms: Long): MutableState<String> {
@@ -72,6 +73,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
                 rememberUnreleasedHeaderImg.value = headerData.await()
                 rememberMusicPlayerLoadingGIF.value = loadingGIF.await()
                 rememberUnreleasedFooterImg.value = footerData.await()
+                 UnreleasedUtils.isDataLoaded.value = true
             }
         }
 

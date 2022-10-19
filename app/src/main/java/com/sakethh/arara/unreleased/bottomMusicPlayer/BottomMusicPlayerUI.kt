@@ -94,11 +94,11 @@ fun BottomMusicPlayerUIComposable(
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 val unreleasedViewModel: UnreleasedViewModel = viewModel()
-                val musicControlBoolean = remember { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerControl}
+                val musicControlBoolean = remember { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl}
                 Box(modifier = Modifier.size(20.dp)) {
                     if (!musicControlBoolean.value) {
                         GIFThing(
-                            imgURL = UnreleasedViewModel.MediaPlayer.currentLoadingStatusGIFURL.value, modifier = Modifier
+                            imgURL = UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL.value, modifier = Modifier
                                 .fillMaxSize()
                         )
                     }
@@ -106,7 +106,7 @@ fun BottomMusicPlayerUIComposable(
             }
         }
         val unreleasedViewModel: UnreleasedViewModel = viewModel()
-        val musicControlBoolean = remember { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerControl}
+        val musicControlBoolean = remember { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl}
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -115,7 +115,7 @@ fun BottomMusicPlayerUIComposable(
                 .clickable { onClick.invoke() },
             contentAlignment = Alignment.CenterEnd,
         ) {
-           if(UnreleasedViewModel.MediaPlayer.musicPlayerVisibility.value){
+           if(UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value){
                Image(  // play || pause button exists
                    painter = painterResource(id = onControlClickImg),
                    modifier = Modifier
@@ -135,26 +135,26 @@ fun BottomMusicPlayerUIComposable(
 fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel: SharedViewModel) {
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val unreleasedSongNameForPlayer =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerTitle }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerTitle }
     val unreleasedImgURLForPlayer =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerImgURL }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerImgURL }
     val unreleasedLyricsForPlayer =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerLyrics }
-    val musicControlBoolean = rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerControl }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerLyrics }
+    val musicControlBoolean = rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl }
     val rememberMusicPlayerControlImg =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerControlImg }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControlImg }
     val currentControlIcon = rememberSaveable { mutableListOf(0, 1) }
     val rememberMusicPlayerDescription =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerDescription }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerDescription }
     val rememberMusicPlayerDescriptionBy =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerDescriptionBy }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerDescriptionBy }
     val rememberMusicPlayerDescriptionOrigin =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.rememberMusicPlayerDescriptionOrigin }
-    val rememberMusicPlayerArtworkBy = UnreleasedViewModel.MediaPlayer.rememberMusicPlayerArtworkBy
-    val currentSongMaxDuration = rememberSaveable { UnreleasedViewModel.MediaPlayer.currentSongMaxDuration }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerDescriptionOrigin }
+    val rememberMusicPlayerArtworkBy = UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerArtworkBy
+    val currentSongMaxDuration = rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongMaxDuration }
     val currentSongCurrentDuration =
-        rememberSaveable { UnreleasedViewModel.MediaPlayer.currentSongCurrentDuration }
-    val currentSongIsPlaying = rememberSaveable { UnreleasedViewModel.MediaPlayer.currentSongIsPlaying }
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongCurrentDuration }
+    val currentSongIsPlaying = rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying }
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -168,7 +168,7 @@ fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel
         onClick = {
             val dataForCurrentMusicScreen = UnreleasedScreenCurrentData(
                 currentSongName = unreleasedSongNameForPlayer.value,
-                currentImgUrl = UnreleasedViewModel.MediaPlayer.rememberMusicPlayerHDImgURL.value,
+                currentImgUrl = UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerHDImgURL.value,
                 currentLyrics = unreleasedLyricsForPlayer.value,
                 songDescription = rememberMusicPlayerDescription.value,
                 descriptionBy = rememberMusicPlayerDescriptionBy.value,
@@ -188,10 +188,10 @@ fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel
 
         },
         onControlClick = {
-            if (UnreleasedViewModel.MediaPlayer.mediaPlayer.isPlaying) {
-                UnreleasedViewModel.MediaPlayer.mediaPlayer.pause()
+            if (UnreleasedViewModel.UnreleasedUtils.mediaPlayer.isPlaying) {
+                UnreleasedViewModel.UnreleasedUtils.mediaPlayer.pause()
             } else {
-                UnreleasedViewModel.MediaPlayer.mediaPlayer.start()
+                UnreleasedViewModel.UnreleasedUtils.mediaPlayer.start()
             }
         },
         onControlClickImg = currentControlIcon[0]

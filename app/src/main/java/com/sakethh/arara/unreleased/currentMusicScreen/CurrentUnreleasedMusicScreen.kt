@@ -34,7 +34,7 @@ import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.SharedViewModel
-import com.sakethh.arara.unreleased.UnreleasedViewModel.MediaPlayer.mediaPlayer
+import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
