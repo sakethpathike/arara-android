@@ -1,11 +1,7 @@
 package com.sakethh.arara.home.selectedChipStuff
 
-import com.sakethh.arara.RealmDBObject
 import com.sakethh.arara.api.FetchingAPIDATA
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
-import io.realm.kotlin.Realm
-import io.realm.kotlin.RealmConfiguration
-import kotlinx.coroutines.coroutineScope
 
 class SelectedChipScreenAPIRepo(private val fetchingAPIDATA: FetchingAPIDATA = FetchingAPIDATA()) {
     suspend fun getFanArtsHot(): List<SubRedditData> {

@@ -1,6 +1,7 @@
 package com.sakethh.arara
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
@@ -11,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.datastore.DataStore
+import androidx.datastore.preferences.Preferences
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -22,6 +25,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.sakethh.arara.bookmarks.BookMarkScreen
 import com.sakethh.arara.home.HomeScreen
+import com.sakethh.arara.home.settings.SettingsScreen
 import com.sakethh.arara.home.subHomeScreen.SubHomeScreen
 import com.sakethh.arara.ui.theme.md_theme_dark_onSecondary
 import com.sakethh.arara.ui.theme.md_theme_dark_onSecondaryContainer
@@ -36,7 +40,7 @@ data class BottomNavigationItem(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun Navigation(navController: NavHostController,sharedViewModel: SharedViewModel) {
+fun Navigation(navController: NavHostController,sharedViewModel: SharedViewModel,dataStoreForSettingsScreen : DataStore<Preferences>) {
     AnimatedNavHost(navController = navController, startDestination = "homeScreen") {
         composable(route = "homeScreen", exitTransition = { ExitTransition.None }) {
             HomeScreen(navController = navController)
@@ -52,6 +56,9 @@ fun Navigation(navController: NavHostController,sharedViewModel: SharedViewModel
         }
         composable(route = "unreleased", exitTransition = { ExitTransition.None }) {
             MainUnreleasedScreen()
+        }
+        composable(route = "settings", exitTransition = { ExitTransition.None }) {
+            SettingsScreen(dataStore = dataStoreForSettingsScreen)
         }
         composable(route = "currentPlayingUnreleasedMusicScreen",
             enterTransition = {

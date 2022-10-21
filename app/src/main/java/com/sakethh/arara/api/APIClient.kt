@@ -1,4 +1,4 @@
-package com.sakethh.arara.unreleased
+package com.sakethh.arara.api
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -10,7 +10,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 @SuppressLint("StaticFieldLeak")
-object UnreleasedCache {
+object Caching {
 
     class OnlineInterceptor() : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {

@@ -62,9 +62,9 @@ fun HomeScreen(navController: NavController) {
     val lazyState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
-    val topImagesAllTime8 = remember { imagesTopAllTimeData.value.take(8)}
-    val topNewsAllTime8 = remember { newsTopAllTimeData.value.take(8)}
-    val topFanArtsAllTime8 = remember { fanartsTopAllTimeData.value.take(8)}
+    val topImagesAllTime8 =  imagesTopAllTimeData.value.take(8)
+    val topNewsAllTime8 = newsTopAllTimeData.value.take(8)
+    val topFanArtsAllTime8 = fanartsTopAllTimeData.value.take(8)
     val constraintSet = ConstraintSet {
         val dropDownIcon = createRefFor("dropDownIcon")
         val dropDownComposable = createRefFor("dropDownComposable")
@@ -95,20 +95,32 @@ fun HomeScreen(navController: NavController) {
             if (!currentTimeIsLoaded.value) {
                 Spacer(
                     modifier = Modifier
-                        .padding(top = 50.dp, start = 10.dp, bottom = 15.dp)
+                        .padding(top = 50.dp, start = 15.dp, bottom = 15.dp)
                         .height(45.dp)
                         .width(170.dp)
                         .shimmer()
                 )
             } else {
-                Text(
-                    text = currentTime.value,
-                    fontSize = 23.sp,
-                    color = md_theme_dark_onSurface,
-                    modifier = Modifier
-                        .padding(top = 50.dp, start = 10.dp, bottom = 15.dp),
-                    style = MaterialTheme.typography.titleMedium
-                )
+                Row(modifier = Modifier.fillMaxWidth().wrapContentHeight(), horizontalArrangement = Arrangement.SpaceBetween){
+                    Text(
+                        text = currentTime.value,
+                        fontSize = 23.sp,
+                        color = md_theme_dark_onSurface,
+                        modifier = Modifier
+                            .padding(top = 50.dp, start = 15.dp, bottom = 15.dp),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    IconButton(onClick = {navController.navigate("settings")},modifier = Modifier
+                        .padding(top = 50.dp,end = 15.dp)
+                        .size(28.dp)) {
+                        Image(
+                            painter = painterResource(id = R.drawable.settings_icon),
+                            contentDescription = "settings icon",
+                            modifier = Modifier
+                                .size(28.dp)
+                        )
+                    }
+                }
             }
         }
         stickyHeader {
@@ -130,7 +142,7 @@ fun HomeScreen(navController: NavController) {
                             painter = painterResource(id = HomeScreenViewModel.CloseButtonUtils.closeButtonIcon[0]),
                             contentDescription = "close icon",
                             modifier = Modifier
-                                .padding(start = 10.dp)
+                                .padding(start = 15.dp)
                                 .size(24.dp)
                         )
                     }
@@ -193,7 +205,7 @@ fun HomeScreen(navController: NavController) {
                             containerColor = containerColor,
                             labelColor = labelColor,
                             leadingIconContentColor = iconColor
-                        ), modifier = Modifier.padding(start = 10.dp)
+                        ), modifier = Modifier.padding(start = 15.dp)
                     )
                 }
             }
@@ -347,7 +359,7 @@ fun NonLoadedComposable(constraintSet: ConstraintSet) {
             color = md_theme_dark_onSurface,
             fontSize = 23.sp,
             modifier = Modifier
-                .padding(start = 10.dp)
+                .padding(start = 15.dp)
                 .shimmer(true),
             style = MaterialTheme.typography.titleMedium
         )
@@ -360,7 +372,7 @@ fun NonLoadedComposable(constraintSet: ConstraintSet) {
         items(4) {
                 Card(
                     modifier = Modifier
-                        .padding(start = 10.dp)
+                        .padding(start = 15.dp)
                         .requiredWidth(250.dp)
                         .requiredHeight(235.dp),
                     colors = CardDefaults.cardColors(containerColor = md_theme_dark_onPrimary)
@@ -388,7 +400,7 @@ fun NonLoadedComposable(constraintSet: ConstraintSet) {
                                 textAlign = TextAlign.Start,
                                 lineHeight = 22.sp,
                                 modifier = Modifier
-                                    .padding(start = 10.dp, top = 10.dp, end = 30.dp)
+                                    .padding(start = 15.dp, top = 10.dp, end = 30.dp)
                                     .shimmer(true)
                             )
                             Text(
@@ -402,7 +414,7 @@ fun NonLoadedComposable(constraintSet: ConstraintSet) {
                                 lineHeight = 10.sp,
                                 modifier = Modifier
                                     .padding(
-                                        start = 10.dp,
+                                        start = 15.dp,
                                         top = 10.dp,
                                         end = 10.dp,
                                         bottom = 10.dp
@@ -415,7 +427,7 @@ fun NonLoadedComposable(constraintSet: ConstraintSet) {
 
         }
         item {
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(15.dp))
         }
     }
 }
@@ -441,12 +453,12 @@ fun HomeScreenComposable(
             color = md_theme_dark_onSurface,
             fontSize = 23.sp,
             modifier = Modifier
-                .padding(start = 10.dp),
+                .padding(start = 15.dp),
             style = MaterialTheme.typography.titleMedium
         )
         IconButton(
             onClick = { navController.navigate(navigationRoute) }, modifier = Modifier
-                .padding(end = 10.dp)
+                .padding(end = 15.dp)
                 .size(28.dp)
         ) {
             Image(
@@ -470,7 +482,7 @@ fun HomeScreenComposable(
             ) {
                 Card(
                     modifier = Modifier
-                        .padding(start = 10.dp)
+                        .padding(start = 15.dp)
                         .requiredWidth(250.dp)
                         .requiredHeight(235.dp),
                     colors = CardDefaults.cardColors(containerColor = md_theme_dark_onPrimary)
@@ -498,7 +510,7 @@ fun HomeScreenComposable(
                                 textAlign = TextAlign.Start,
                                 lineHeight = 22.sp,
                                 modifier = Modifier
-                                    .padding(start = 10.dp, top = 10.dp, end = 30.dp)
+                                    .padding(start = 15.dp, top = 10.dp, end = 30.dp)
                             )
                             Text(
                                 text = it.data.author,
@@ -511,7 +523,7 @@ fun HomeScreenComposable(
                                 lineHeight = 10.sp,
                                 modifier = Modifier
                                     .padding(
-                                        start = 10.dp,
+                                        start = 15.dp,
                                         top = 10.dp,
                                         end = 10.dp,
                                         bottom = 10.dp
@@ -625,7 +637,7 @@ fun HomeScreenComposable(
             }
         }
         item {
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(15.dp))
         }
     }
 }

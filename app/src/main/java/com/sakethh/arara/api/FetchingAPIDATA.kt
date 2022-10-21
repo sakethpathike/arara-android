@@ -2,9 +2,7 @@
 
 package com.sakethh.arara.api
 
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import com.sakethh.arara.Constants
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
 import com.sakethh.arara.unreleased.*
@@ -22,7 +20,7 @@ class FetchingAPIDATA() {
         val retrofitBuilder = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(UnreleasedCache.okHttpClient)
+            .client(Caching.okHttpClient)
             .build()
         apiData = retrofitBuilder.create(FetchingAPIDATAInterface::class.java)
     }

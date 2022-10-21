@@ -11,22 +11,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.DataStore
+import androidx.datastore.preferences.Preferences
+import androidx.datastore.preferences.createDataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sakethh.arara.api.Caching.unreleasedCache
+import com.sakethh.arara.api.isInternetAvailable
 import com.sakethh.arara.bookmarks.BookMarkRepo
+import com.sakethh.arara.home.settings.readInAppBrowserSetting
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.*
-import com.sakethh.arara.unreleased.UnreleasedCache.unreleasedCache
 import com.sakethh.arara.unreleased.bottomMusicPlayer.BottomMusicPlayerUI
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity() : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val dataStore = createDataStore("settingsPreferences")
         lifecycleScope.launchWhenCreated {
             window.setBackgroundDrawableResource(android.R.color.transparent)
+            readInAppBrowserSetting(dataStore)
         }
         setContent {
             val systemUIController = rememberSystemUiController()
@@ -71,13 +78,12 @@ class MainActivity() : ComponentActivity() {
                         )
                     }
                 ) {
-                    Navigation(navController = animatedNavController, sharedViewModel = sharedViewModel)
+                    Navigation(navController = animatedNavController, sharedViewModel = sharedViewModel, dataStoreForSettingsScreen = dataStore)
                 }
             }
         }
         unreleasedCache(this)
     }
-
     override fun onDestroy() {
         super.onDestroy()
         BookMarkRepo().realm.close()

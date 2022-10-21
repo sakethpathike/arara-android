@@ -3,7 +3,7 @@ package com.sakethh.arara.home.selectedChipStuff
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sakethh.arara.RealmDBObject
+import com.sakethh.arara.BookMarksDB
 import com.sakethh.arara.bookmarks.BookMarkRepo
 import kotlinx.coroutines.*
 
@@ -13,7 +13,7 @@ class SelectedChipScreenViewModel(private val bookMarkRepo: BookMarkRepo = BookM
     val imageIsLoading = mutableStateOf(false)
 
     object BookMarkedDataUtils {
-        val realmDBObject: RealmDBObject = RealmDBObject()
+        val realmDBObject: BookMarksDB = BookMarksDB()
         val toastMessage = mutableStateOf("")
     }
 
