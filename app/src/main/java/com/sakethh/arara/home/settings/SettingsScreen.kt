@@ -2,6 +2,7 @@ package com.sakethh.arara.home.settings
 
 import android.content.ClipDescription
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
 import androidx.navigation.NavController
+import com.sakethh.arara.BottomNavigationBar
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.R
 import com.sakethh.arara.SharedViewModel
@@ -45,11 +47,17 @@ fun SettingsScreen(
     sharedViewModel: SharedViewModel,
     navController: NavController
 ) {
+    BackHandler {
+        BottomNavigationBar.isBottomBarHidden.value = false
+        navController.navigate("homeScreen"){
+            popUpTo(0)
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
-        165.dp
-    }else{
         80.dp
+    }else{
+        0.dp
     }
     MaterialTheme(typography = Typography) {
         LazyColumn(

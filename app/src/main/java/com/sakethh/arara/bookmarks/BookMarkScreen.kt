@@ -3,6 +3,7 @@
 package com.sakethh.arara.bookmarks
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -37,6 +38,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookMarkScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+    BottomNavigationBar.isBottomBarHidden.value = false
+    BackHandler {
+        BottomNavigationBar.isBottomBarHidden.value = false
+        navController.navigate("homeScreen"){
+            popUpTo(0)
+        }
+    }
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
     val bookMarkScreenViewModel: BookMarkScreenViewModel = viewModel()

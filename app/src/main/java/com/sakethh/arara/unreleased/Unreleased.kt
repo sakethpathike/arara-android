@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.os.Build
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sakethh.arara.*
 import com.sakethh.arara.home.shimmer
@@ -116,7 +118,14 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainUnreleasedScreen() {
+fun MainUnreleasedScreen(navController: NavController) {
+    BackHandler {
+        BottomNavigationBar.isBottomBarHidden.value = false
+        navController.navigate("homeScreen"){
+            popUpTo(0)
+        }
+    }
+    BottomNavigationBar.isBottomBarHidden.value = false
     val systemUIController = rememberSystemUiController()
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(

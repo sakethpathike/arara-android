@@ -176,13 +176,14 @@ fun UnreleasedCurrentMusicScreen(
                             onClick = {
                                 navController.navigate("unreleased")
                             }, modifier = Modifier
-                                .size(24.dp)
+                                .padding(start = 15.dp)
+                                .size(30.dp)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.arrow_right),
                                 contentDescription = null,
                                 modifier = Modifier
-                                    .size(24.dp)
+                                    .size(30.dp)
                                     .rotate(180f)
                             )
                         }

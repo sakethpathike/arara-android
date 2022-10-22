@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -18,6 +20,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
+import com.sakethh.arara.BottomNavigationBar.isBottomBarHidden
 import com.sakethh.arara.bookmarks.BookMarkScreen
 import com.sakethh.arara.home.HomeScreen
 import com.sakethh.arara.home.settings.SettingsScreen
@@ -49,7 +52,7 @@ fun Navigation(navController: NavHostController, sharedViewModel: SharedViewMode
             BookMarkScreen(navController = navController, sharedViewModel= sharedViewModel)
         }
         composable(route = "unreleased", exitTransition = { ExitTransition.None }) {
-            MainUnreleasedScreen()
+            MainUnreleasedScreen(navController = navController)
         }
         composable(route = "settings", exitTransition = { ExitTransition.None }) {
             SettingsScreen(dataStore = dataStoreForSettingsScreen,sharedViewModel = sharedViewModel,navController = navController)
@@ -78,6 +81,14 @@ fun BottomNavigationBar(
     val backStackEntry = navController.currentBackStackEntryAsState()
     val coroutineScope = rememberCoroutineScope()
     val icon = mutableListOf(0)
+     when(backStackEntry.value?.destination?.route){
+         "currentPlayingUnreleasedMusicScreen"  -> { isBottomBarHidden.value = true }
+         "webView"  -> { isBottomBarHidden.value = true }
+         "settings"  -> { isBottomBarHidden.value = true }
+         "subHomeScreen"  -> { isBottomBarHidden.value = true }
+         else -> {
+             isBottomBarHidden.value = false}
+    }
     NavigationBar(
         containerColor = md_theme_dark_primaryContainer,
         contentColor = md_theme_dark_onSecondary
@@ -120,3 +131,6 @@ fun BottomNavigationBar(
         }
     }
 }
+
+object BottomNavigationBar{
+    val isBottomBarHidden =  mutableStateOf(false)}

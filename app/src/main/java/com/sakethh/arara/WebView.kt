@@ -3,6 +3,7 @@ package com.sakethh.arara
 import android.annotation.SuppressLint
 import android.view.View
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.NavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.accompanist.web.LoadingState
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewNavigator
@@ -37,7 +39,13 @@ import com.sakethh.arara.ui.theme.md_theme_dark_tertiary
 @SuppressLint("ClickableViewAccessibility")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WebView(sharedViewModel: SharedViewModel,navController: NavController) {
+fun WebView(sharedViewModel: SharedViewModel, navController: NavController) {
+    BackHandler {
+        BottomNavigationBar.isBottomBarHidden.value = false
+        navController.popBackStack()
+    }
+    val systemUIController = rememberSystemUiController()
+    systemUIController.setStatusBarColor(md_theme_dark_surface)
     val webViewState = rememberWebViewState(url = sharedViewModel._permalink.value)
     val context = LocalContext.current
     val dropDownMenuEnabled = remember { mutableStateOf(false) }
@@ -56,7 +64,8 @@ fun WebView(sharedViewModel: SharedViewModel,navController: NavController) {
             title = {
                 IconButton(
                     onClick = {
-                              navController.popBackStack()
+                        navController.popBackStack()
+                        BottomNavigationBar.isBottomBarHidden.value = false
                     }, modifier = Modifier
                         .size(30.dp)
                 ) {
@@ -115,7 +124,11 @@ fun WebView(sharedViewModel: SharedViewModel,navController: NavController) {
                             onClick = {
                                 localClipboardManager.setText(AnnotatedString(sharedViewModel._permalink.value))
                                 dropDownMenuEnabled.value = false
-                                Toast.makeText(context,"link copied to clipboard",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "link copied to clipboard",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                             leadingIcon = {
                                 Image(

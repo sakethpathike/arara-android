@@ -33,6 +33,7 @@ class MainActivity() : ComponentActivity() {
         lifecycleScope.launchWhenCreated {
             window.setBackgroundDrawableResource(android.R.color.transparent)
             readInAppBrowserSetting(dataStore)
+            BottomNavigationBar.isBottomBarHidden.value = false
         }
         setContent {
             val systemUIController = rememberSystemUiController()
@@ -40,10 +41,10 @@ class MainActivity() : ComponentActivity() {
             val animatedNavController = rememberAnimatedNavController()
             val sharedViewModel: SharedViewModel = viewModel()
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
-               Scaffold(
+                Scaffold(
                     floatingActionButton = {
                         if (isInternetAvailable(context = this)) {
-                            if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value && !UnreleasedViewModel.UnreleasedUtils.musicCompleted.value){
+                            if (UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value && !UnreleasedViewModel.UnreleasedUtils.musicCompleted.value) {
                                 BottomMusicPlayerUI(
                                     animatedNavController = animatedNavController,
                                     sharedViewModel = sharedViewModel
@@ -53,36 +54,43 @@ class MainActivity() : ComponentActivity() {
                     },
                     floatingActionButtonPosition = FabPosition.Center,
                     bottomBar = {
-                        BottomNavigationBar(
-                            navController = animatedNavController, items = listOf(
-                                BottomNavigationItem(
-                                    name = "Home",
-                                    route = "homeScreen",
-                                    selectedIcon = R.drawable.home_filled,
-                                    nonSelectedIcon = R.drawable.home
-                                ),
-                                BottomNavigationItem(
-                                    name = "Unreleased",
-                                    route = "unreleased",
-                                    selectedIcon = R.drawable.unreleased_icon_filled,
-                                    nonSelectedIcon = R.drawable.unreleased_icon
-                                ),
-                                BottomNavigationItem(
-                                    name = "Bookmarks",
-                                    route = "bookmarks",
-                                    selectedIcon = R.drawable.bookmarks_filled,
-                                    nonSelectedIcon = R.drawable.bookmarks
+                        if (!BottomNavigationBar.isBottomBarHidden.value) {
+                            BottomNavigationBar(
+                                navController = animatedNavController, items = listOf(
+                                    BottomNavigationItem(
+                                        name = "Home",
+                                        route = "homeScreen",
+                                        selectedIcon = R.drawable.home_filled,
+                                        nonSelectedIcon = R.drawable.home
+                                    ),
+                                    BottomNavigationItem(
+                                        name = "Unreleased",
+                                        route = "unreleased",
+                                        selectedIcon = R.drawable.unreleased_icon_filled,
+                                        nonSelectedIcon = R.drawable.unreleased_icon
+                                    ),
+                                    BottomNavigationItem(
+                                        name = "Bookmarks",
+                                        route = "bookmarks",
+                                        selectedIcon = R.drawable.bookmarks_filled,
+                                        nonSelectedIcon = R.drawable.bookmarks
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
                 ) {
-                    Navigation(navController = animatedNavController, sharedViewModel = sharedViewModel, dataStoreForSettingsScreen = dataStore)
+                    Navigation(
+                        navController = animatedNavController,
+                        sharedViewModel = sharedViewModel,
+                        dataStoreForSettingsScreen = dataStore
+                    )
                 }
             }
         }
         unreleasedCache(this)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         BookMarkRepo().realm.close()

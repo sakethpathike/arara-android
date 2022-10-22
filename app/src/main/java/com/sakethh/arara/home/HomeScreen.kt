@@ -1,8 +1,10 @@
 package com.sakethh.arara.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -24,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
-import com.sakethh.arara.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.request.ImageRequest
@@ -32,8 +33,8 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.sakethh.arara.GIFThing
-import com.sakethh.arara.SharedViewModel
+import com.sakethh.arara.*
+import com.sakethh.arara.R
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.currentTimeIsLoaded
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.fanartsTopAllTimeData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesTopAllTimeData
@@ -44,7 +45,6 @@ import com.sakethh.arara.home.selectedChipStuff.SelectedChipComposable
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipScreenViewModel
 import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
 import com.sakethh.arara.home.subHomeScreen.SubHomeScreen
-import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.unreleased.UnreleasedViewModel
@@ -54,7 +54,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel) {
-    val context = LocalContext.current
+    val activity = LocalContext.current as? Activity
+    BottomNavigationBar.isBottomBarHidden.value = false
+    BackHandler {
+        activity?.finish()
+    }
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
     val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
