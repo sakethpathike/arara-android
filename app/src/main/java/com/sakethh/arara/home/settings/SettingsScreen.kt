@@ -2,6 +2,7 @@ package com.sakethh.arara.home.settings
 
 import android.content.ClipDescription
 import android.content.Context
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -30,13 +31,15 @@ import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
 import androidx.navigation.NavController
-import com.sakethh.arara.BottomNavigationBar
-import com.sakethh.arara.GIFThing
+import com.sakethh.arara.*
 import com.sakethh.arara.R
-import com.sakethh.arara.SharedViewModel
+import com.sakethh.arara.api.Caching
+import com.sakethh.arara.bookmarks.BookMarkRepo
 import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.UnreleasedViewModel
+import io.realm.kotlin.ext.query
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -45,18 +48,20 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(
     dataStore: DataStore<Preferences>,
     sharedViewModel: SharedViewModel,
-    navController: NavController
+    navController: NavController,
+    bookMarkRepo: BookMarkRepo = BookMarkRepo()
 ) {
     BackHandler {
         BottomNavigationBar.isBottomBarHidden.value = false
-        navController.navigate("homeScreen"){
+        navController.navigate("homeScreen") {
             popUpTo(0)
         }
     }
     val coroutineScope = rememberCoroutineScope()
-    val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
+    val context = LocalContext.current
+    val bottomPaddingForGIF = if (UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value) {
         80.dp
-    }else{
+    } else {
         0.dp
     }
     MaterialTheme(typography = Typography) {
@@ -73,7 +78,7 @@ fun SettingsScreen(
                             onClick = {
                                 navController.navigate("homeScreen")
                             }, modifier = Modifier
-                                .padding(start=10.dp)
+                                .padding(start = 10.dp)
                                 .size(30.dp)
                         ) {
                             Image(
@@ -214,21 +219,57 @@ fun SettingsScreen(
             }
             item {
                 IndividualSettingItemComposable(
-                    modifier = Modifier,
+                    modifier = Modifier.clickable {
+                        coroutineScope.launch {
+                            context.cacheDir.deleteRecursively()
+                        }.also {
+                            Toast.makeText(context, "Cleared cache(s)", Toast.LENGTH_SHORT).show()
+                        }
+                    },
                     title = "Clear cache",
                     description = "You can free up storage by clearing your cache. Your bookmarks won't be removed"
                 )
             }
             item {
                 IndividualSettingItemComposable(
-                    modifier = Modifier,
+                    modifier = Modifier.clickable {
+                        coroutineScope.launch {
+                            bookMarkRepo.realm.write {
+                                val bookMarksData = this.query<BookMarksDB>().find()
+                                this.delete(bookMarksData)
+                            }
+                        }.also {
+                            Toast.makeText(
+                                context,
+                                "Cleared Bookmarks from local database",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
                     title = "Clear Bookmarks",
                     description = "Remove all bookmarks from local database. Your cache won't be removed."
                 )
             }
             item {
                 IndividualSettingItemComposable(
-                    modifier = Modifier,
+                    modifier = Modifier.clickable {
+                        coroutineScope.launch {
+                            val cache = async { context.cacheDir.deleteRecursively()}
+                            val bookMarks = async {
+                                bookMarkRepo.realm.write {
+                                    val bookMarksData = this.query<BookMarksDB>().find()
+                                    this.delete(bookMarksData)
+                                }
+                            }
+                            cache.await()
+                            bookMarks.await()
+                            Toast.makeText(
+                                context,
+                                "Cleared all bookmarks and cache",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
                     title = "Clear complete data",
                     description = "Remove all bookmarks and cache, although cache will be re-added in your local storage when you scroll through screens which will be deleted automatically after 24 Hours accordingly."
                 )
@@ -279,7 +320,7 @@ fun SettingsScreen(
                     imgURL = HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                     modifier = Modifier
                         .background(md_theme_dark_surface)
-                        .padding(top = 10.dp,bottom = bottomPaddingForGIF)
+                        .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                         .fillMaxWidth()
                         .height(70.dp)
                 )
