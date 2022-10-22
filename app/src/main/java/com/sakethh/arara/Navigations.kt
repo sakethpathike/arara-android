@@ -1,7 +1,6 @@
 package com.sakethh.arara
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
@@ -14,15 +13,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.datastore.DataStore
 import androidx.datastore.preferences.Preferences
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.sakethh.arara.bookmarks.BookMarkScreen
 import com.sakethh.arara.home.HomeScreen
 import com.sakethh.arara.home.settings.SettingsScreen
@@ -31,7 +26,6 @@ import com.sakethh.arara.ui.theme.md_theme_dark_onSecondary
 import com.sakethh.arara.ui.theme.md_theme_dark_onSecondaryContainer
 import com.sakethh.arara.ui.theme.md_theme_dark_primaryContainer
 import com.sakethh.arara.unreleased.MainUnreleasedScreen
-import com.sakethh.arara.unreleased.SharedViewModel
 import com.sakethh.arara.unreleased.currentMusicScreen.UnreleasedCurrentMusicScreen
 
 data class BottomNavigationItem(
@@ -40,32 +34,35 @@ data class BottomNavigationItem(
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun Navigation(navController: NavHostController,sharedViewModel: SharedViewModel,dataStoreForSettingsScreen : DataStore<Preferences>) {
+fun Navigation(navController: NavHostController, sharedViewModel: SharedViewModel, dataStoreForSettingsScreen : DataStore<Preferences>) {
     AnimatedNavHost(navController = navController, startDestination = "homeScreen") {
         composable(route = "homeScreen", exitTransition = { ExitTransition.None }) {
-            HomeScreen(navController = navController)
+            HomeScreen(navController = navController, sharedViewModel = sharedViewModel)
         }
         composable(route = "subHomeScreen",
             enterTransition = {
                 slideInHorizontally { 1000 } + fadeIn(tween(300))
             }, exitTransition = { slideOutHorizontally { 1000 } + fadeOut(tween(300)) }) {
-            SubHomeScreen()
+            SubHomeScreen(navController = navController, sharedViewModel = sharedViewModel)
         }
         composable(route = "bookmarks", exitTransition = { ExitTransition.None }) {
-            BookMarkScreen()
+            BookMarkScreen(navController = navController, sharedViewModel= sharedViewModel)
         }
         composable(route = "unreleased", exitTransition = { ExitTransition.None }) {
             MainUnreleasedScreen()
         }
         composable(route = "settings", exitTransition = { ExitTransition.None }) {
-            SettingsScreen(dataStore = dataStoreForSettingsScreen)
+            SettingsScreen(dataStore = dataStoreForSettingsScreen,sharedViewModel = sharedViewModel,navController = navController)
+        }
+        composable(route = "webView", exitTransition = { ExitTransition.None }) {
+               WebView(sharedViewModel = sharedViewModel,navController = navController)
         }
         composable(route = "currentPlayingUnreleasedMusicScreen",
             enterTransition = {
                 slideInHorizontally { 1000 } + fadeIn(tween(300))
             }, exitTransition = { slideOutHorizontally { 1000 } + fadeOut(tween(300)) }) {
             UnreleasedCurrentMusicScreen(
-                navHostController = navController,
+                navController = navController,
                 sharedViewModel = sharedViewModel
             )
         }

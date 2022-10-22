@@ -1,6 +1,7 @@
 package com.sakethh.arara.unreleased.currentMusicScreen
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -33,7 +34,7 @@ import com.sakethh.arara.R
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
-import com.sakethh.arara.unreleased.SharedViewModel
+import com.sakethh.arara.SharedViewModel
 import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPlayer
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -44,8 +45,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun UnreleasedCurrentMusicScreen(
     sharedViewModel: SharedViewModel,
-    navHostController: NavHostController
+    navController: NavHostController
 ) {
+    BackHandler {
+        navController.navigate("unreleased")
+    }
     val systemUIController=rememberSystemUiController()
     val coroutineScope= rememberCoroutineScope()
     LaunchedEffect(key1 = coroutineScope){
@@ -169,15 +173,17 @@ fun UnreleasedCurrentMusicScreen(
                     colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = md_theme_dark_surface),
                     navigationIcon = {
                         IconButton(
-                            onClick = { navHostController.enableOnBackPressed(true) },
-                            modifier = Modifier.size(30.dp)
+                            onClick = {
+                                navController.navigate("unreleased")
+                            }, modifier = Modifier
+                                .size(24.dp)
                         ) {
                             Image(
-                                painter = painterResource(id = R.drawable.dropdown),
-                                contentDescription = "Back To Unreleased Screen",
+                                painter = painterResource(id = R.drawable.arrow_right),
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .rotate(90f)
-                                    .animateContentSize()
+                                    .size(24.dp)
+                                    .rotate(180f)
                             )
                         }
                     }, actions = {

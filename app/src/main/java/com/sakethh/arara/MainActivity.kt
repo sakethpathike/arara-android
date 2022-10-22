@@ -11,8 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.datastore.DataStore
-import androidx.datastore.preferences.Preferences
 import androidx.datastore.preferences.createDataStore
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,8 +21,9 @@ import com.sakethh.arara.api.isInternetAvailable
 import com.sakethh.arara.bookmarks.BookMarkRepo
 import com.sakethh.arara.home.settings.readInAppBrowserSetting
 import com.sakethh.arara.ui.theme.*
-import com.sakethh.arara.unreleased.*
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.bottomMusicPlayer.BottomMusicPlayerUI
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity() : ComponentActivity() {
@@ -39,9 +38,9 @@ class MainActivity() : ComponentActivity() {
             val systemUIController = rememberSystemUiController()
             systemUIController.setNavigationBarColor(md_theme_dark_primaryContainer)
             val animatedNavController = rememberAnimatedNavController()
-            val sharedViewModel:SharedViewModel= viewModel()
+            val sharedViewModel: SharedViewModel = viewModel()
             MaterialTheme(typography = Typography /*(typography variable name from Type.kt)*/) {
-                Scaffold(
+               Scaffold(
                     floatingActionButton = {
                         if (isInternetAvailable(context = this)) {
                             if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value && !UnreleasedViewModel.UnreleasedUtils.musicCompleted.value){

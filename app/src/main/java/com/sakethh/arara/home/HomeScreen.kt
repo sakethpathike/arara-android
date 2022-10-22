@@ -33,6 +33,7 @@ import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sakethh.arara.GIFThing
+import com.sakethh.arara.SharedViewModel
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.currentTimeIsLoaded
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.fanartsTopAllTimeData
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesTopAllTimeData
@@ -46,16 +47,21 @@ import com.sakethh.arara.home.subHomeScreen.SubHomeScreen
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
-    val bottomPaddingForGIF = 90.dp
+    val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
+        165.dp
+    }else{
+        90.dp
+    }
     val homeScreenViewModel: HomeScreenViewModel = viewModel()
     val headerList = remember { homeScreenViewModel.listForHeader }
     val currentTime = remember { homeScreenViewModel.currentTime }
@@ -88,7 +94,8 @@ fun HomeScreen(navController: NavController) {
     LazyColumn(
         modifier = Modifier
             .background(md_theme_dark_surface)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .animateContentSize(),
         state = lazyState
     ) {
         item {
@@ -101,7 +108,9 @@ fun HomeScreen(navController: NavController) {
                         .shimmer()
                 )
             } else {
-                Row(modifier = Modifier.fillMaxWidth().wrapContentHeight(), horizontalArrangement = Arrangement.SpaceBetween){
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(), horizontalArrangement = Arrangement.SpaceBetween){
                     Text(
                         text = currentTime.value,
                         fontSize = 23.sp,
@@ -111,7 +120,7 @@ fun HomeScreen(navController: NavController) {
                         style = MaterialTheme.typography.titleMedium
                     )
                     IconButton(onClick = {navController.navigate("settings")},modifier = Modifier
-                        .padding(top = 50.dp,end = 15.dp)
+                        .padding(top = 50.dp, end = 15.dp)
                         .size(28.dp)) {
                         Image(
                             painter = painterResource(id = R.drawable.settings_icon),
@@ -240,7 +249,10 @@ fun HomeScreen(navController: NavController) {
                                 indexedValue = nonIndexedValue.value,
                                 indexOnClick = {
                                     nonIndexedValue.value = it
-                                }
+                                },
+                                permalink = item.data.permalink,
+                                sharedViewModel = sharedViewModel,
+                                navController = navController
                             )
                         }
                     }
@@ -261,7 +273,10 @@ fun HomeScreen(navController: NavController) {
                                 indexedValue = nonIndexedValue.value,
                                 indexOnClick = {
                                     nonIndexedValue.value = it
-                                }
+                                },
+                                permalink = item.data.permalink,
+                                sharedViewModel = sharedViewModel,
+                                navController = navController
                             )
                         }
                     }
@@ -282,7 +297,10 @@ fun HomeScreen(navController: NavController) {
                                 indexedValue = nonIndexedValue.value,
                                 indexOnClick = {
                                     nonIndexedValue.value = it
-                                }
+                                },
+                                permalink = item.data.permalink,
+                                sharedViewModel = sharedViewModel,
+                                navController = navController
                             )
                         }
                     }
@@ -293,7 +311,8 @@ fun HomeScreen(navController: NavController) {
                                 headingName = "Warrior-arts",
                                 dataList = topFanArtsAllTime8,
                                 navController = navController,
-                                navigationRoute = "subHomeScreen",constraintSet = constraintSet
+                                navigationRoute = "subHomeScreen",constraintSet = constraintSet,
+                             sharedViewModel = sharedViewModel
                             )
 
                     }
@@ -302,7 +321,8 @@ fun HomeScreen(navController: NavController) {
                             headingName = "News",
                             dataList = topNewsAllTime8,
                             navController = navController,
-                            navigationRoute = "subHomeScreen",constraintSet = constraintSet
+                            navigationRoute = "subHomeScreen",constraintSet = constraintSet,
+                            sharedViewModel = sharedViewModel
                         )
                     }
                     item {
@@ -310,7 +330,8 @@ fun HomeScreen(navController: NavController) {
                             headingName = "Images",
                             dataList = topImagesAllTime8,
                             navController = navController,
-                            navigationRoute = "subHomeScreen",constraintSet = constraintSet
+                            navigationRoute = "subHomeScreen",constraintSet = constraintSet,
+                            sharedViewModel = sharedViewModel
                         )}
                     }
                 }
@@ -335,13 +356,15 @@ fun MainHomeScreen(
     dataList: List<SubRedditData>,
     navController: NavController,
     navigationRoute: String,
-    constraintSet: ConstraintSet
+    constraintSet: ConstraintSet,
+    sharedViewModel: SharedViewModel
 ) {  HomeScreenComposable(
             dataList = dataList,
             headingName = headingName,
             navController = navController,
             navigationRoute = navigationRoute,
-            constraintSet = constraintSet
+            constraintSet = constraintSet,
+    sharedViewModel = sharedViewModel
         )
 }
 
@@ -438,7 +461,8 @@ fun HomeScreenComposable(
     headingName: String,
     navController: NavController,
     navigationRoute: String,
-    constraintSet: ConstraintSet
+    constraintSet: ConstraintSet,
+    sharedViewModel:SharedViewModel
 ) {
     val context = LocalContext.current
     val selectedChipScreenViewModel: SelectedChipScreenViewModel = viewModel()
@@ -496,7 +520,11 @@ fun HomeScreenComposable(
                                 contentDescription = "",
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(150.dp),
+                                    .height(150.dp)
+                                    .clickable {
+                                        sharedViewModel.assignPermalink(permalink = "https://www.reddit.com/${it.data.permalink}")
+                                        navController.navigate("webView")
+                                    },
                                 onError = painterResource(id = randomLostInternetImg()),
                                 contentScale = ContentScale.Crop
                             )
@@ -569,6 +597,7 @@ fun HomeScreenComposable(
                                             this.bookMarked = true
                                             this.title = it.data.title
                                             this.author = it.data.author
+                                            this.permalink = "https://www.reddit.com/${it.data.permalink}"
                                         }.also {
                                             selectedChipScreenViewModel.addToDB()
                                         }
@@ -642,11 +671,11 @@ fun HomeScreenComposable(
     }
 }
 
-fun Modifier.shimmer(visible:Boolean = !currentTimeIsLoaded.value): Modifier {
+fun Modifier.shimmer(visible:Boolean = !currentTimeIsLoaded.value,cornerSize: CornerSize = CornerSize(5.dp)): Modifier {
     return this.placeholder(
         visible = visible,
         color = md_theme_dark_onTertiary,
         highlight = PlaceholderHighlight.shimmer(highlightColor = md_theme_dark_primaryContainer),
-        shape = RoundedCornerShape(corner = CornerSize(5.dp))
+        shape = RoundedCornerShape(corner = cornerSize)
     )
 }

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -29,12 +30,10 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.request.ImageRequest
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.fade
-import com.google.accompanist.placeholder.placeholder
-import com.google.android.material.snackbar.Snackbar
 import com.sakethh.arara.R
+import com.sakethh.arara.SharedViewModel
 import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
@@ -43,16 +42,20 @@ import com.sakethh.arara.unreleased.ImageThing
 @SuppressLint("ResourceAsColor")
 @Composable
 fun SelectedChipComposable(
+    navController: NavController,
     imgLink: String,
     title: String,
     author: String,
+    permalink: String,
     index: Int,
     indexedValue: Int,
     indexOnClick: (Int) -> Unit,
     bookMarkText: String = "Bookmark",
     bookMarkIcon: Int = R.drawable.bookmark_icon,
     inBookMarkScreen: Boolean = false,
-    bookmarkOnClick: (() -> Unit)? = null
+    bookmarkOnClick: (() -> Unit)? = null,
+    sharedViewModel: SharedViewModel,
+    bookMarkRedirect : () -> Unit = {}
 ) {
     val context = LocalContext.current
     val view = LocalView.current
@@ -111,11 +114,14 @@ fun SelectedChipComposable(
                     .fillMaxWidth()
                     .height(300.dp)
                     .layoutId("image")
-                    .placeholder(
-                        visible = false,
-                        color = md_theme_dark_onTertiary,
-                        highlight = PlaceholderHighlight.fade(highlightColor = md_theme_dark_primaryContainer)
-                    ),
+                    .clickable {
+                        if(inBookMarkScreen){
+                            bookMarkRedirect()
+                        }else{
+                            sharedViewModel.assignPermalink(permalink = "https://www.reddit.com/$permalink")
+                            navController.navigate("webView")
+                        }
+                    },
                 onError = painterResource(id = randomLostInternetImg()),
                 contentScale = ContentScale.Crop,
                 onLoading = { imageIsLoading.value = true },
@@ -161,10 +167,15 @@ fun SelectedChipComposable(
                                     this.bookMarked = true
                                     this.title = title
                                     this.author = author
+                                    this.permalink = "https://www.reddit.com/$permalink"
                                 }.also {
                                     selectedChipScreenViewModel.addToDB()
                                 }
-                                Toast.makeText(context, SelectedChipScreenViewModel.BookMarkedDataUtils.toastMessage.value, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    SelectedChipScreenViewModel.BookMarkedDataUtils.toastMessage.value,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             dropDownMenuEnabled.value = false
                         },

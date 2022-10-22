@@ -1,9 +1,7 @@
 package com.sakethh.arara.unreleased.bottomMusicPlayer
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import android.widget.Toast
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,16 +24,17 @@ import com.sakethh.arara.GIFThing
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
-import com.sakethh.arara.unreleased.SharedViewModel
+import com.sakethh.arara.SharedViewModel
 import com.sakethh.arara.unreleased.UnreleasedScreenCurrentData
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomMusicPlayerUIComposable(
     songName: String,
     imgUrl: String,
-    onClick:()->Unit,
+    onClick: () -> Unit,
     onControlClick: () -> Unit = {},
     onControlClickImg: Int
 ) {
@@ -48,9 +48,8 @@ fun BottomMusicPlayerUIComposable(
                 width = 1.dp,
                 shape = RoundedCornerShape(5.dp),
                 color = md_theme_dark_secondary
-            )
+            ).bottomMusicPlayerOnClick { onClick.invoke() }
             .background(color = (md_theme_dark_onSecondary))
-
     ) {
         Box(
             modifier = Modifier
@@ -67,17 +66,18 @@ fun BottomMusicPlayerUIComposable(
                     .requiredHeight(45.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
                     .requiredWidth(45.dp) //renders width of the image
-                    .clickable { onClick.invoke() }, onError = painterResource(randomLostInternetImg())
+                    .bottomMusicPlayerOnClick { onClick.invoke() },
+                onError = painterResource(randomLostInternetImg())
             )
         }
         Spacer(modifier = Modifier
             .width(8.dp)
-            .clickable { onClick.invoke() })
+            .bottomMusicPlayerOnClick { onClick.invoke() })
         Box(
             contentAlignment = Alignment.CenterStart, modifier = Modifier
                 .fillMaxHeight()
                 .wrapContentWidth()
-                .clickable { onClick.invoke() }
+                .bottomMusicPlayerOnClick { onClick.invoke() }
         ) {
             Column(
                 modifier = Modifier
@@ -94,11 +94,13 @@ fun BottomMusicPlayerUIComposable(
                 )
                 Spacer(modifier = Modifier.height(3.dp))
                 val unreleasedViewModel: UnreleasedViewModel = viewModel()
-                val musicControlBoolean = remember { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl}
+                val musicControlBoolean =
+                    remember { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl }
                 Box(modifier = Modifier.size(20.dp)) {
                     if (!musicControlBoolean.value) {
                         GIFThing(
-                            imgURL = UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL.value, modifier = Modifier
+                            imgURL = UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL.value,
+                            modifier = Modifier
                                 .fillMaxSize()
                         )
                     }
@@ -106,33 +108,37 @@ fun BottomMusicPlayerUIComposable(
             }
         }
         val unreleasedViewModel: UnreleasedViewModel = viewModel()
-        val musicControlBoolean = remember { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl}
+        val musicControlBoolean =
+            remember { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl }
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
                 .padding(10.dp)
-                .clickable { onClick.invoke() },
+                .bottomMusicPlayerOnClick { onClick.invoke() },
             contentAlignment = Alignment.CenterEnd,
         ) {
-           if(UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value){
-               Image(  // play || pause button exists
-                   painter = painterResource(id = onControlClickImg),
-                   modifier = Modifier
-                       .requiredSize(35.dp)
-                       .clickable {
-                           onControlClick()
-                           musicControlBoolean.value = !musicControlBoolean.value
-                       },
-                   contentDescription = "Play/Pause Icons"
-               )
-           }
+            if (UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value) {
+                Image(  // play || pause button exists
+                    painter = painterResource(id = onControlClickImg),
+                    modifier = Modifier
+                        .requiredSize(35.dp)
+                        .clickable {
+                            onControlClick()
+                            musicControlBoolean.value = !musicControlBoolean.value
+                        },
+                    contentDescription = "Play/Pause Icons"
+                )
+            }
         }
     }
 }
 
 @Composable
-fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel: SharedViewModel) {
+fun BottomMusicPlayerUI(
+    animatedNavController: NavHostController,
+    sharedViewModel: SharedViewModel
+) {
     val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val unreleasedSongNameForPlayer =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerTitle }
@@ -140,7 +146,8 @@ fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerImgURL }
     val unreleasedLyricsForPlayer =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerLyrics }
-    val musicControlBoolean = rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl }
+    val musicControlBoolean =
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl }
     val rememberMusicPlayerControlImg =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControlImg }
     val currentControlIcon = rememberSaveable { mutableListOf(0, 1) }
@@ -150,11 +157,14 @@ fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerDescriptionBy }
     val rememberMusicPlayerDescriptionOrigin =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerDescriptionOrigin }
-    val rememberMusicPlayerArtworkBy = UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerArtworkBy
-    val currentSongMaxDuration = rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongMaxDuration }
+    val rememberMusicPlayerArtworkBy =
+        UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerArtworkBy
+    val currentSongMaxDuration =
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongMaxDuration }
     val currentSongCurrentDuration =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongCurrentDuration }
-    val currentSongIsPlaying = rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying }
+    val currentSongIsPlaying =
+        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying }
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -196,4 +206,18 @@ fun BottomMusicPlayerUI(animatedNavController:NavHostController, sharedViewModel
         },
         onControlClickImg = currentControlIcon[0]
     )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+fun Modifier.bottomMusicPlayerOnClick(onClick: () -> Unit): Modifier = composed{
+    val context = LocalContext.current
+    this.combinedClickable(onLongClick = {
+        UnreleasedViewModel.UnreleasedUtils.mediaPlayer.stop()
+        UnreleasedViewModel.UnreleasedUtils.mediaPlayer.reset()
+        UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value = !UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value
+        UnreleasedViewModel.UnreleasedUtils.musicCompleted.value = !UnreleasedViewModel.UnreleasedUtils.musicCompleted.value
+        Toast.makeText(context,"Closed bottom music player!",Toast.LENGTH_SHORT).show()
+    }, onClick = {
+        onClick.invoke()
+    })
 }

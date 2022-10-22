@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.os.Build
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,7 +61,8 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
         LazyColumn(
             modifier = Modifier
                 .background(md_theme_dark_onTertiary)
-                .padding(bottom = 30.dp),
+                .padding(bottom = 30.dp)
+                .animateContentSize(),
             contentPadding = contentPadding,
         ) {
 

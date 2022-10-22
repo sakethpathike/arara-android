@@ -2,43 +2,56 @@
 
 package com.sakethh.arara.bookmarks
 
+import android.util.Log
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.sakethh.arara.*
 import com.sakethh.arara.R
 import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipComposable
-import com.sakethh.arara.randomNoBookmarksImg
-import com.sakethh.arara.randomNoBookmarksTxt
+import com.sakethh.arara.home.settings.Settings
 import com.sakethh.arara.ui.theme.md_theme_dark_onSurface
 import com.sakethh.arara.ui.theme.md_theme_dark_surface
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookMarkScreen() {
+fun BookMarkScreen(navController: NavController, sharedViewModel: SharedViewModel) {
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
     val bookMarkScreenViewModel: BookMarkScreenViewModel = viewModel()
+    val localUriHandler = LocalUriHandler.current
+    val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
+        135.dp
+    }else{
+         60.dp
+    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(md_theme_dark_surface)
             .padding(bottom = 30.dp)
+            .animateContentSize()
     ) {
         item {
             SmallTopAppBar(
@@ -93,30 +106,30 @@ fun BookMarkScreen() {
                             bookMarkScreenViewModel.bookMarkRepo.deleteFromDB(realmDbObject.imgURL)
                             bookMarkScreenViewModel.bookMarkedData.component1()
                         }
+                    },
+                    permalink = realmDbObject.permalink,
+                    navController = navController,
+                    sharedViewModel = sharedViewModel,
+                    bookMarkRedirect = {
+                        if(Settings.inAppBrowserSetting.value){
+                            sharedViewModel.assignPermalink(permalink = realmDbObject.permalink)
+                            navController.navigate("webView")
+                        }else{
+                          localUriHandler.openUri(realmDbObject.permalink)
+                        }
                     }
                 )
             }
+            items(HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value) { data ->
+                GIFThing(
+                    imgURL = data.footerImg, modifier = Modifier
+                        .background(md_theme_dark_surface)
+                        .padding(bottom = bottomPaddingForGIF)
+                        .fillMaxWidth()
+                        .height(70.dp)
+                )
+            }
         }
-
-
-        /*itemsIndexed(BookMarkRepo.BookMarkedData.bookMarkedData) { index, item ->
-             SelectedChipComposable(
-                 imgLink = item.imgURL,
-                 title = item.title,
-                 author = item.author,
-                 index = index,
-                 indexedValue = HomeScreenViewModel.Utils.nonIndexedValue.value,
-                 indexOnClick = {
-                     HomeScreenViewModel.Utils.nonIndexedValue.value = it
-                 },
-                 bookMarkText = "Remove From Bookmarks",
-                 bookMarkIcon = R.drawable.remove_from_bookmarks,
-                 inBookMarkScreen = true,
-                 bookmarkOnClick = {
-
-                 }
-             )
-         }*/
     }
 }
 

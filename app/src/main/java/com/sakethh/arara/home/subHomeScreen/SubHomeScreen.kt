@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.navigation.NavController
 import coil.request.ImageRequest
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -23,6 +24,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.sakethh.arara.GIFThing
 import com.sakethh.arara.R
+import com.sakethh.arara.SharedViewModel
 import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.home.HomeScreenViewModel.RetrievedSubRedditData.imagesHotData
 import com.sakethh.arara.home.selectedChipStuff.SelectedChipComposable
@@ -34,7 +36,7 @@ import kotlinx.coroutines.launch
     ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalPagerApi::class
 )
 @Composable
-fun SubHomeScreen(headerText: String = "Fanarts") {
+fun SubHomeScreen(headerText: String = "Fanarts", navController: NavController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -128,7 +130,10 @@ fun SubHomeScreen(headerText: String = "Fanarts") {
                                         indexedValue = HomeScreenViewModel.Utils.nonIndexedValue.value,
                                         indexOnClick = {
                                             HomeScreenViewModel.Utils.nonIndexedValue.value = it
-                                        })
+                                        },
+                                        permalink = dataItem.data.permalink,
+                                        navController = navController,
+                                        sharedViewModel = sharedViewModel)
                                 },
                                 SubHomeScreen {
                                     CurrentSubHomeScreen(imgLink = dataItem.data.url,
@@ -138,7 +143,10 @@ fun SubHomeScreen(headerText: String = "Fanarts") {
                                         indexedValue = HomeScreenViewModel.Utils.nonIndexedValue.value,
                                         indexOnClick = {
                                             HomeScreenViewModel.Utils.nonIndexedValue.value = it
-                                        })
+                                        },
+                                        permalink = dataItem.data.permalink,
+                                        navController = navController,
+                                        sharedViewModel = sharedViewModel)
                                 },
                                 SubHomeScreen {
                                     CurrentSubHomeScreen(imgLink = dataItem.data.url,
@@ -148,7 +156,10 @@ fun SubHomeScreen(headerText: String = "Fanarts") {
                                         indexedValue = HomeScreenViewModel.Utils.nonIndexedValue.value,
                                         indexOnClick = {
                                             HomeScreenViewModel.Utils.nonIndexedValue.value = it
-                                        })
+                                        },
+                                        permalink = dataItem.data.permalink,
+                                        navController = navController,
+                                        sharedViewModel = sharedViewModel)
                                 },
                                 SubHomeScreen {
                                     CurrentSubHomeScreen(imgLink = dataItem.data.url,
@@ -158,7 +169,10 @@ fun SubHomeScreen(headerText: String = "Fanarts") {
                                         indexedValue = HomeScreenViewModel.Utils.nonIndexedValue.value,
                                         indexOnClick = {
                                             HomeScreenViewModel.Utils.nonIndexedValue.value = it
-                                        })
+                                        },
+                                    permalink = dataItem.data.permalink,
+                                        navController = navController,
+                                        sharedViewModel = sharedViewModel)
                                 },
                             )
                             screensList[pagerState.currentPage].composable()
@@ -188,6 +202,9 @@ fun CurrentSubHomeScreen(
     index: Int,
     indexedValue: Int,
     indexOnClick: (Int) -> Unit,
+    permalink:String,
+    navController: NavController,
+    sharedViewModel: SharedViewModel
 ) {
     SelectedChipComposable(
         imgLink = imgLink,
@@ -195,7 +212,10 @@ fun CurrentSubHomeScreen(
         author = author,
         index = index,
         indexedValue = indexedValue,
-        indexOnClick = indexOnClick
+        indexOnClick = indexOnClick,
+        permalink = permalink,
+        navController = navController,
+        sharedViewModel = sharedViewModel
     )
 }
 

@@ -8,6 +8,7 @@ class BookMarksDB : RealmObject {
     var title: String = ""
     var author: String = ""
     var bookMarked: Boolean = false
+    var permalink :String = ""
 
     @PrimaryKey
     var objectKey: String = ""
