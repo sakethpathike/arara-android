@@ -1,7 +1,11 @@
 package com.sakethh.arara.unreleased.bottomMusicPlayer
 
+import android.content.Context
+import android.text.format.DateUtils
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,10 +17,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.request.ImageRequest
@@ -27,29 +33,22 @@ import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.SharedViewModel
 import com.sakethh.arara.unreleased.UnreleasedScreenCurrentData
 import com.sakethh.arara.unreleased.UnreleasedViewModel
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BottomMusicPlayerUIComposable(
     songName: String,
     imgUrl: String,
     onClick: () -> Unit,
     onControlClick: () -> Unit = {},
-    onControlClickImg: Int
+    onControlClickImg: Int,
+    modifier: Modifier
 ) {
-    val paddingValue = 20.dp
     Row(
-        modifier = Modifier
-            .padding(start = paddingValue, end = paddingValue)
-            .requiredHeight(65.dp)
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                shape = RoundedCornerShape(5.dp),
-                color = md_theme_dark_secondary
-            ).bottomMusicPlayerOnClick { onClick.invoke() }
-            .background(color = (md_theme_dark_onSecondary))
+        modifier = modifier.clickable { onClick() }
     ) {
         Box(
             modifier = Modifier
@@ -58,26 +57,25 @@ fun BottomMusicPlayerUIComposable(
             contentAlignment = Alignment.CenterStart
         ) {
             ImageThing(
-                model = ImageRequest.Builder(LocalContext.current).data(imgUrl)
-                    .crossfade(true)
+                model = ImageRequest.Builder(LocalContext.current).data(imgUrl).crossfade(true)
                     .build(),
                 contentDescription = "Image for unreleased song from a warrior:)",
                 modifier = Modifier//gives 10dp padding in top
                     .requiredHeight(45.dp) // renders height of the image
                     .padding(start = 10.dp) //gives 10dp padding in left
-                    .requiredWidth(45.dp) //renders width of the image
-                    .bottomMusicPlayerOnClick { onClick.invoke() },
+                    .requiredWidth(45.dp) /*renders width of the image*/,
                 onError = painterResource(randomLostInternetImg())
             )
         }
-        Spacer(modifier = Modifier
-            .width(8.dp)
-            .bottomMusicPlayerOnClick { onClick.invoke() })
+        Spacer(
+            modifier = Modifier
+                .width(8.dp)
+        )
         Box(
-            contentAlignment = Alignment.CenterStart, modifier = Modifier
+            contentAlignment = Alignment.CenterStart,
+            modifier = Modifier
                 .fillMaxHeight()
                 .wrapContentWidth()
-                .bottomMusicPlayerOnClick { onClick.invoke() }
         ) {
             Column(
                 modifier = Modifier
@@ -100,8 +98,7 @@ fun BottomMusicPlayerUIComposable(
                     if (!musicControlBoolean.value) {
                         GIFThing(
                             imgURL = UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL.value,
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
                 }
@@ -114,8 +111,7 @@ fun BottomMusicPlayerUIComposable(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-                .padding(10.dp)
-                .bottomMusicPlayerOnClick { onClick.invoke() },
+                .padding(10.dp),
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value) {
@@ -136,10 +132,9 @@ fun BottomMusicPlayerUIComposable(
 
 @Composable
 fun BottomMusicPlayerUI(
-    animatedNavController: NavHostController,
-    sharedViewModel: SharedViewModel
+    modifier: Modifier,
+    animatedNavController: NavHostController, sharedViewModel: SharedViewModel
 ) {
-    val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val unreleasedSongNameForPlayer =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerTitle }
     val unreleasedImgURLForPlayer =
@@ -159,10 +154,6 @@ fun BottomMusicPlayerUI(
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerDescriptionOrigin }
     val rememberMusicPlayerArtworkBy =
         UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerArtworkBy
-    val currentSongMaxDuration =
-        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongMaxDuration }
-    val currentSongCurrentDuration =
-        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongCurrentDuration }
     val currentSongIsPlaying =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying }
     if (musicControlBoolean.value) {
@@ -173,6 +164,7 @@ fun BottomMusicPlayerUI(
         currentControlIcon[0] = pauseIcon
     }
     BottomMusicPlayerUIComposable(
+        modifier = modifier,
         songName = unreleasedSongNameForPlayer.value,
         imgUrl = unreleasedImgURLForPlayer.value,
         onClick = {
@@ -184,18 +176,10 @@ fun BottomMusicPlayerUI(
                 descriptionBy = rememberMusicPlayerDescriptionBy.value,
                 descriptionOrigin = rememberMusicPlayerDescriptionOrigin.value,
                 artworkBy = rememberMusicPlayerArtworkBy.value,
-                currentSongMaxDuration = unreleasedViewModel.musicDuration(
-                    currentSongMaxDuration.value.toLong()
-                ).value,
-                currentDuration = unreleasedViewModel.musicDuration(
-                    currentSongCurrentDuration.value.toLong()
-                ).value,
-                currentDurationFloat = currentSongCurrentDuration.value.toFloat(),
                 isPlaying = currentSongIsPlaying.value
             )
             sharedViewModel.data(data = dataForCurrentMusicScreen)
             animatedNavController.navigate("currentPlayingUnreleasedMusicScreen")
-
         },
         onControlClick = {
             if (UnreleasedViewModel.UnreleasedUtils.mediaPlayer.isPlaying) {
@@ -206,18 +190,4 @@ fun BottomMusicPlayerUI(
         },
         onControlClickImg = currentControlIcon[0]
     )
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-fun Modifier.bottomMusicPlayerOnClick(onClick: () -> Unit): Modifier = composed{
-    val context = LocalContext.current
-    this.combinedClickable(onLongClick = {
-        UnreleasedViewModel.UnreleasedUtils.mediaPlayer.stop()
-        UnreleasedViewModel.UnreleasedUtils.mediaPlayer.reset()
-        UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value = !UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value
-        UnreleasedViewModel.UnreleasedUtils.musicCompleted.value = !UnreleasedViewModel.UnreleasedUtils.musicCompleted.value
-        Toast.makeText(context,"Closed bottom music player!",Toast.LENGTH_SHORT).show()
-    }, onClick = {
-        onClick.invoke()
-    })
 }

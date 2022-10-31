@@ -25,6 +25,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.accompanist.web.LoadingState
@@ -44,6 +45,7 @@ fun WebView(sharedViewModel: SharedViewModel, navController: NavController) {
         BottomNavigationBar.isBottomBarHidden.value = false
         navController.popBackStack()
     }
+    sharedViewModel.isBottomNavVisible.value=false
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
     val webViewState = rememberWebViewState(url = sharedViewModel._permalink.value)

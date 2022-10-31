@@ -10,6 +10,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +32,7 @@ import androidx.datastore.preferences.Preferences
 import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.preferencesKey
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.sakethh.arara.*
 import com.sakethh.arara.R
@@ -43,13 +46,14 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun SettingsScreen(
     dataStore: DataStore<Preferences>,
     sharedViewModel: SharedViewModel,
     navController: NavController,
-    bookMarkRepo: BookMarkRepo = BookMarkRepo()
+    bookMarkRepo: BookMarkRepo = BookMarkRepo(),
+    bottomSheetScaffoldState: BottomSheetScaffoldState
 ) {
     BackHandler {
         BottomNavigationBar.isBottomBarHidden.value = false
@@ -57,9 +61,10 @@ fun SettingsScreen(
             popUpTo(0)
         }
     }
+    sharedViewModel.isBottomNavVisible.value=false
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    val bottomPaddingForGIF = if (UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value) {
+    val bottomPaddingForGIF = if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
         80.dp
     } else {
         0.dp

@@ -3,6 +3,7 @@ package com.sakethh.arara.unreleased
 import android.annotation.SuppressLint
 import android.media.AudioAttributes
 import android.media.AudioManager
+import android.media.PlaybackParams
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
@@ -10,6 +11,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,11 +26,12 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sakethh.arara.*
 import com.sakethh.arara.home.shimmer
 import com.sakethh.arara.ui.theme.*
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun UnreleasedScreen(itemOnClick: () -> Unit) {
+fun UnreleasedScreen(bottomSheetScaffoldState: BottomSheetScaffoldState,itemOnClick: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
         rememberTopAppBarState()
     ) { false }
@@ -75,7 +80,7 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
             items(unreleasedData.value) { data ->
                 SongThing1(
                     songName = data.songName, specificArtwork = data.imgURL,
-                    onClick =  {
+                    onClick = {
                         musicPlayerImgURL.value = data.imgURL
                         musicPlayerTitle.value = data.songName
                         unreleasedLyricsForPlayer.value = data.lyrics
@@ -87,10 +92,10 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
                         musicPlayerHDImgURL.value = data.imgURLHD
                         itemOnClick()
                     }
-                    )
+                )
             }
             items(footerData) { data ->
-                if (UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value) {
+                if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
                     GIFThing(
                         imgURL = data.footerImg,
                         modifier = Modifier
@@ -115,17 +120,19 @@ fun UnreleasedScreen(itemOnClick: () -> Unit) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainUnreleasedScreen(navController: NavController) {
+fun MainUnreleasedScreen(navController: NavController, bottomSheetScaffoldState: BottomSheetScaffoldState,sharedViewModel: SharedViewModel) {
     BackHandler {
         BottomNavigationBar.isBottomBarHidden.value = false
-        navController.navigate("homeScreen"){
+        navController.navigate("homeScreen") {
             popUpTo(0)
         }
     }
+    val unreleasedViewModel:UnreleasedViewModel= viewModel()
     BottomNavigationBar.isBottomBarHidden.value = false
+    sharedViewModel.isBottomNavVisible.value=true
     val systemUIController = rememberSystemUiController()
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(
@@ -136,7 +143,6 @@ fun MainUnreleasedScreen(navController: NavController) {
             systemUIController.setStatusBarColor(color = md_theme_dark_onTertiary)
         }
     }
-    val unreleasedViewModel: UnreleasedViewModel = viewModel()
     val musicControlBoolean =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl }
     val rememberMusicPlayerControlImg =
@@ -148,11 +154,6 @@ fun MainUnreleasedScreen(navController: NavController) {
     UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerArtworkBy
     val currentGIFURL =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL }
-    val currentSongMaxDuration =
-        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongMaxDuration }
-    val currentSongCurrentDuration =
-        rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongCurrentDuration }
-    rememberSaveable { UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying }
     if (musicControlBoolean.value) {
         val playIcon = rememberMusicPlayerControlImg[0]  //play icon
         currentControlIcon[0] = playIcon
@@ -160,15 +161,13 @@ fun MainUnreleasedScreen(navController: NavController) {
         val pauseIcon = rememberMusicPlayerControlImg[1] //pause icon
         currentControlIcon[0] = pauseIcon
     }
-    if (UnreleasedViewModel.UnreleasedUtils.isDataLoaded.value) {
-        UnreleasedScreen {
-            UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value = true
-            UnreleasedViewModel.UnreleasedUtils.musicCompleted.value = false
-            UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl.value = false
-            UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying.value = false
-            currentGIFURL.value =
-                UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerLoadingGIF.component1()[0].gifURL
-            UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value = false
+
+    if (unreleasedViewModel.isDataLoaded.value) {
+        UnreleasedScreen( bottomSheetScaffoldState= bottomSheetScaffoldState) {
+            sharedViewModel.isBottomNavVisible.value=true
+            coroutineScope.launch {
+                bottomSheetScaffoldState.bottomSheetState.expand()
+            }
             if (Build.VERSION.SDK_INT <= 26) {
                 UnreleasedViewModel.UnreleasedUtils.mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
             } else {
@@ -177,16 +176,19 @@ fun MainUnreleasedScreen(navController: NavController) {
                         .setUsage(AudioAttributes.USAGE_MEDIA).build()
                 )
             }
-            if (UnreleasedViewModel.UnreleasedUtils.mediaPlayer.isPlaying || !UnreleasedViewModel.UnreleasedUtils.mediaPlayer.isPlaying) {
                 UnreleasedViewModel.UnreleasedUtils.mediaPlayer.stop()
                 UnreleasedViewModel.UnreleasedUtils.mediaPlayer.reset().also {
+                    UnreleasedViewModel.UnreleasedUtils.musicCompleted.value = false
+                    UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerControl.value = false
+                    UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying.value = false
+                    currentGIFURL.value =
+                        UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerLoadingGIF.component1()[0].gifURL
+                    UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value = false
                     UnreleasedViewModel.UnreleasedUtils.mediaPlayer.setDataSource(currentAudioURL.value)
                     UnreleasedViewModel.UnreleasedUtils.mediaPlayer.prepareAsync()
                     UnreleasedViewModel.UnreleasedUtils.mediaPlayer.setOnPreparedListener {
                         try {
                             it.start()
-                            currentSongMaxDuration.value = it.duration
-                            currentSongCurrentDuration.value = it.currentPosition
                         } catch (e: Exception) {
                             currentGIFURL.value = Constants.MUSIC_ERROR_GIF
                         }
@@ -197,7 +199,9 @@ fun MainUnreleasedScreen(navController: NavController) {
                             UnreleasedViewModel.UnreleasedUtils.currentSongIsPlaying.value = true
                         }
                         it.setOnCompletionListener {
-                            UnreleasedViewModel.UnreleasedUtils.musicCompleted.value = true
+                            coroutineScope.launch {
+                                bottomSheetScaffoldState.bottomSheetState.collapse()
+                            }
                             UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value = false
                             UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL.value =
                                 Constants.MUSIC_ERROR_GIF
@@ -205,7 +209,7 @@ fun MainUnreleasedScreen(navController: NavController) {
                         }
                     }
                 }
-            }
+
         }
     } else {
         Scaffold(topBar = {
@@ -253,7 +257,7 @@ fun MainUnreleasedScreen(navController: NavController) {
                             .background(color = md_theme_light_outline)
                             .wrapContentSize()
                             .padding(2.dp)
-                            .shimmer(true)
+                            .shimmer(true, cornerSize = CornerSize(0.dp))
                     )
                 }
             }

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,9 +37,11 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun BookMarkScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+fun BookMarkScreen(navController: NavController, sharedViewModel: SharedViewModel,
+                   bottomSheetScaffoldState: BottomSheetScaffoldState
+) {
     BottomNavigationBar.isBottomBarHidden.value = false
     BackHandler {
         BottomNavigationBar.isBottomBarHidden.value = false
@@ -45,11 +49,12 @@ fun BookMarkScreen(navController: NavController, sharedViewModel: SharedViewMode
             popUpTo(0)
         }
     }
+    sharedViewModel.isBottomNavVisible.value=true
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
     val bookMarkScreenViewModel: BookMarkScreenViewModel = viewModel()
     val localUriHandler = LocalUriHandler.current
-    val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
+    val bottomPaddingForGIF = if(bottomSheetScaffoldState.bottomSheetState.isExpanded){
         135.dp
     }else{
          60.dp

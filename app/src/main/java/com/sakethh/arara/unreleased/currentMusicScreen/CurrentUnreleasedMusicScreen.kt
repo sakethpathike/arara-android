@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -35,8 +32,11 @@ import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.SharedViewModel
+import com.sakethh.arara.home.shimmer
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPlayer
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -48,10 +48,16 @@ fun UnreleasedCurrentMusicScreen(
     navController: NavHostController
 ) {
     BackHandler {
-        navController.navigate("unreleased")
+        sharedViewModel.isBottomNavVisible.value=true
+        navController.navigate("unreleased"){
+            popUpTo(0)
+        }
     }
+    sharedViewModel.isBottomNavVisible.value=false
     val systemUIController=rememberSystemUiController()
     val coroutineScope= rememberCoroutineScope()
+    val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
+    val currentValue = "currentMusicScreenViewModel.flowNumber.collectAsState(initial = 0)"
     LaunchedEffect(key1 = coroutineScope){
         coroutineScope.launch {
             delay(100)
@@ -60,7 +66,6 @@ fun UnreleasedCurrentMusicScreen(
     }
     MaterialTheme(typography = Typography) {
         val startAndEndPadding = 20.dp
-        val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
         val constraintsSet = ConstraintSet {
             val topBar = createRefFor("topBar")
             val artWork = createRefFor("artWork")
@@ -319,14 +324,10 @@ fun UnreleasedCurrentMusicScreen(
                             .fillMaxWidth()
                             .wrapContentHeight()
                     ) {
-                        if (sharedViewModel.dataForCurrentMusicScreen.value?.isPlaying == true) {
                             var sliderPosition =
-                                sharedViewModel.dataForCurrentMusicScreen.value?.currentDurationFloat
+                                sharedViewModel.dataForCurrentMusicScreen.value
                             Slider(
-                                value = sliderPosition!!, onValueChange = {
-                                    sliderPosition =
-                                        it
-                                }, valueRange = 0f..sliderPosition!!, modifier = Modifier
+                                value = 400f, onValueChange = {}, valueRange = 0f..400f, modifier = Modifier
                                     .padding(top = 9.dp)
                                     .fillMaxWidth()
                                     .height(5.dp)
@@ -339,7 +340,7 @@ fun UnreleasedCurrentMusicScreen(
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Text(
-                                    text = sharedViewModel.dataForCurrentMusicScreen.value?.currentDuration.toString(),
+                                    text = "currentValue.value.toString()",
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = md_theme_dark_onSurface,
@@ -355,7 +356,7 @@ fun UnreleasedCurrentMusicScreen(
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 Text(
-                                    text = sharedViewModel.dataForCurrentMusicScreen.value?.currentSongMaxDuration.toString(),
+                                    text = currentMusicScreenViewModel.actualDuration,
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = md_theme_dark_onSurface,
@@ -364,7 +365,7 @@ fun UnreleasedCurrentMusicScreen(
                                         .padding(top = 26.dp)
                                 )
                             }
-                        }
+
                     }
                 }
 

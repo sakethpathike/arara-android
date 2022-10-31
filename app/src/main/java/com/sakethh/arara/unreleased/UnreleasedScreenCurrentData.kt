@@ -14,8 +14,5 @@ class UnreleasedScreenCurrentData(
     val descriptionBy: String,
     val descriptionOrigin: String,
     val artworkBy:String,
-    val currentSongMaxDuration: String,
-    val currentDuration:String,
-    val currentDurationFloat:Float,
     val isPlaying:Boolean
 ) : Parcelable

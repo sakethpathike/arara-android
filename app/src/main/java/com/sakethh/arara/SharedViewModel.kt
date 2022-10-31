@@ -16,4 +16,5 @@ class SharedViewModel:ViewModel() {
     fun assignPermalink(permalink:String){
         _permalink.value = permalink
     }
+    val isBottomNavVisible = mutableStateOf(false)
 }

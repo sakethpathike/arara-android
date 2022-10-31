@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -51,17 +53,22 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
-fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel) {
+fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel,
+               bottomSheetScaffoldState: BottomSheetScaffoldState
+) {
     val activity = LocalContext.current as? Activity
     BottomNavigationBar.isBottomBarHidden.value = false
     BackHandler {
         activity?.finish()
     }
+    sharedViewModel.isBottomNavVisible.value=true
     val systemUIController = rememberSystemUiController()
     systemUIController.setStatusBarColor(md_theme_dark_surface)
-    val bottomPaddingForGIF = if(UnreleasedViewModel.UnreleasedUtils.musicPlayerActivate.value){
+    val bottomPaddingForGIF = if(bottomSheetScaffoldState.bottomSheetState.isExpanded){
         165.dp
     }else{
         90.dp

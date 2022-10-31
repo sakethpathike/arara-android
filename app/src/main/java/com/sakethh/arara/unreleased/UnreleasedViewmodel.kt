@@ -1,6 +1,5 @@
 package com.sakethh.arara.unreleased
 
-import android.text.format.DateUtils
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,8 +14,7 @@ import kotlinx.coroutines.*
 class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = UnreleasedRepo()) :
     ViewModel() {
     val rememberData: MutableState<List<UnreleasedResponse>> = mutableStateOf(emptyList())
-
-
+    val isDataLoaded = mutableStateOf(false)
     object UnreleasedUtils {
         val mediaPlayer = android.media.MediaPlayer()
         val rememberUnreleasedFooterImg: MutableState<List<UnreleasedFooterImage>> =
@@ -24,7 +22,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
         val rememberUnreleasedHeaderImg: MutableState<List<UnreleasedArtwork>> =
             mutableStateOf(emptyList())
         val musicCompleted = mutableStateOf(false)
-        val musicPlayerActivate = mutableStateOf(false)
+        val isBottomPlayerVisible = mutableStateOf(false)
         val rememberMusicPlayerImgURL = mutableStateOf("")
         val rememberMusicPlayerHDImgURL = mutableStateOf("")
         val rememberMusicPlayerTitle = mutableStateOf("")
@@ -42,19 +40,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
         val musicAudioURL = mutableStateOf("")
         val musicPlayerVisibility = mutableStateOf(false)
         val currentLoadingStatusGIFURL = mutableStateOf("")
-        val currentSongMaxDuration = mutableStateOf(0)
-        val currentSongCurrentDuration = mutableStateOf(0)
         val currentSongIsPlaying = mutableStateOf(false)
-        val isDataLoaded = mutableStateOf(false)
-    }
-
-    fun musicDuration(ms: Long): MutableState<String> {
-        val duration = mutableStateOf("")
-        viewModelScope.launch {
-            val conversion = DateUtils.formatElapsedTime(ms / 1000)
-            duration.value = conversion.toString()
-        }
-        return duration
     }
 
     private val coroutineExceptionHandler =
@@ -73,7 +59,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
                 rememberUnreleasedHeaderImg.value = headerData.await()
                 rememberMusicPlayerLoadingGIF.value = loadingGIF.await()
                 rememberUnreleasedFooterImg.value = footerData.await()
-                 UnreleasedUtils.isDataLoaded.value = true
+                this@UnreleasedViewModel.isDataLoaded.value = true
             }
         }
 

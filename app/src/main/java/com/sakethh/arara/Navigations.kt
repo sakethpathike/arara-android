@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -35,12 +37,17 @@ data class BottomNavigationItem(
     val name: String, val route: String, val selectedIcon: Int, val nonSelectedIcon: Int
 )
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun Navigation(navController: NavHostController, sharedViewModel: SharedViewModel, dataStoreForSettingsScreen : DataStore<Preferences>) {
+fun Navigation(
+    navController: NavHostController,
+    sharedViewModel: SharedViewModel,
+    dataStoreForSettingsScreen: DataStore<Preferences>,
+    bottomSheetScaffoldState: BottomSheetScaffoldState
+) {
     AnimatedNavHost(navController = navController, startDestination = "homeScreen") {
         composable(route = "homeScreen", exitTransition = { ExitTransition.None }) {
-            HomeScreen(navController = navController, sharedViewModel = sharedViewModel)
+            HomeScreen(navController = navController, sharedViewModel = sharedViewModel,bottomSheetScaffoldState=bottomSheetScaffoldState)
         }
         composable(route = "subHomeScreen",
             enterTransition = {
@@ -49,16 +56,21 @@ fun Navigation(navController: NavHostController, sharedViewModel: SharedViewMode
             SubHomeScreen(navController = navController, sharedViewModel = sharedViewModel)
         }
         composable(route = "bookmarks", exitTransition = { ExitTransition.None }) {
-            BookMarkScreen(navController = navController, sharedViewModel= sharedViewModel)
+            BookMarkScreen(navController = navController, sharedViewModel = sharedViewModel,bottomSheetScaffoldState=bottomSheetScaffoldState)
         }
         composable(route = "unreleased", exitTransition = { ExitTransition.None }) {
-            MainUnreleasedScreen(navController = navController)
+            MainUnreleasedScreen(navController = navController,bottomSheetScaffoldState=bottomSheetScaffoldState,
+                sharedViewModel = sharedViewModel)
         }
         composable(route = "settings", exitTransition = { ExitTransition.None }) {
-            SettingsScreen(dataStore = dataStoreForSettingsScreen,sharedViewModel = sharedViewModel,navController = navController)
+            SettingsScreen(
+                dataStore = dataStoreForSettingsScreen,
+                sharedViewModel = sharedViewModel,
+                navController = navController,bottomSheetScaffoldState=bottomSheetScaffoldState
+            )
         }
         composable(route = "webView", exitTransition = { ExitTransition.None }) {
-               WebView(sharedViewModel = sharedViewModel,navController = navController)
+            WebView(sharedViewModel = sharedViewModel, navController = navController)
         }
         composable(route = "currentPlayingUnreleasedMusicScreen",
             enterTransition = {
@@ -81,13 +93,22 @@ fun BottomNavigationBar(
     val backStackEntry = navController.currentBackStackEntryAsState()
     val coroutineScope = rememberCoroutineScope()
     val icon = mutableListOf(0)
-     when(backStackEntry.value?.destination?.route){
-         "currentPlayingUnreleasedMusicScreen"  -> { isBottomBarHidden.value = true }
-         "webView"  -> { isBottomBarHidden.value = true }
-         "settings"  -> { isBottomBarHidden.value = true }
-         "subHomeScreen"  -> { isBottomBarHidden.value = true }
-         else -> {
-             isBottomBarHidden.value = false}
+    when (backStackEntry.value?.destination?.route) {
+        "currentPlayingUnreleasedMusicScreen" -> {
+            isBottomBarHidden.value = true
+        }
+        "webView" -> {
+            isBottomBarHidden.value = true
+        }
+        "settings" -> {
+            isBottomBarHidden.value = true
+        }
+        "subHomeScreen" -> {
+            isBottomBarHidden.value = true
+        }
+        else -> {
+            isBottomBarHidden.value = false
+        }
     }
     NavigationBar(
         containerColor = md_theme_dark_primaryContainer,
@@ -97,7 +118,11 @@ fun BottomNavigationBar(
             val selected = backStackEntry.value?.destination?.route == item.route
             NavigationBarItem(
                 selected = selected,
-                onClick = { navController.navigate(item.route) },
+                onClick = {
+                    if(backStackEntry.value?.destination?.route != item.route){
+                        navController.navigate(item.route)
+                    }
+                },
                 icon = {
                     if (selected) {
                         icon[0] = item.selectedIcon
@@ -132,5 +157,6 @@ fun BottomNavigationBar(
     }
 }
 
-object BottomNavigationBar{
-    val isBottomBarHidden =  mutableStateOf(false)}
+object BottomNavigationBar {
+    val isBottomBarHidden = mutableStateOf(false)
+}

@@ -11,6 +11,7 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val secondGradient=Color(0xFF000000)
+val TransparentColor=Color(0x0)
 val firstGradient=Color(0xFF434343)
 val backgroundColor= Color(0xFF070606)
 val headerColor= Color(0xD5070606)
