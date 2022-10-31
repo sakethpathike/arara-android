@@ -26,6 +26,8 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sakethh.arara.*
 import com.sakethh.arara.home.shimmer
 import com.sakethh.arara.ui.theme.*
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.isBtmSheetCollapsed
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -161,9 +163,9 @@ fun MainUnreleasedScreen(navController: NavController, bottomSheetScaffoldState:
         val pauseIcon = rememberMusicPlayerControlImg[1] //pause icon
         currentControlIcon[0] = pauseIcon
     }
-
     if (unreleasedViewModel.isDataLoaded.value) {
         UnreleasedScreen( bottomSheetScaffoldState= bottomSheetScaffoldState) {
+            isBtmSheetCollapsed.value=false
             sharedViewModel.isBottomNavVisible.value=true
             coroutineScope.launch {
                 bottomSheetScaffoldState.bottomSheetState.expand()
@@ -202,6 +204,7 @@ fun MainUnreleasedScreen(navController: NavController, bottomSheetScaffoldState:
                             coroutineScope.launch {
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
                             }
+                            UnreleasedViewModel.UnreleasedUtils.musicCompleted.value = true
                             UnreleasedViewModel.UnreleasedUtils.musicPlayerVisibility.value = false
                             UnreleasedViewModel.UnreleasedUtils.currentLoadingStatusGIFURL.value =
                                 Constants.MUSIC_ERROR_GIF
@@ -209,9 +212,8 @@ fun MainUnreleasedScreen(navController: NavController, bottomSheetScaffoldState:
                         }
                     }
                 }
-
         }
-    } else {
+    } else { 
         Scaffold(topBar = {
             SmallTopAppBar(
                 title = {

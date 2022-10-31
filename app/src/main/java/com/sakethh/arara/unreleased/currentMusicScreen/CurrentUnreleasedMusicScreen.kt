@@ -32,11 +32,10 @@ import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.SharedViewModel
-import com.sakethh.arara.home.shimmer
-import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPlayer
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.actualDuration
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.currentDurationFlow
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -57,7 +56,8 @@ fun UnreleasedCurrentMusicScreen(
     val systemUIController=rememberSystemUiController()
     val coroutineScope= rememberCoroutineScope()
     val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
-    val currentValue = "currentMusicScreenViewModel.flowNumber.collectAsState(initial = 0)"
+    val currentDuration = currentDurationFlow().collectAsState(initial = "00:00").value
+    val actualDuration=   actualDuration().collectAsState(initial = "00:00").value
     LaunchedEffect(key1 = coroutineScope){
         coroutineScope.launch {
             delay(100)
@@ -340,7 +340,7 @@ fun UnreleasedCurrentMusicScreen(
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Text(
-                                    text = "currentValue.value.toString()",
+                                    text = currentDuration.toString(),
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = md_theme_dark_onSurface,
@@ -356,7 +356,7 @@ fun UnreleasedCurrentMusicScreen(
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 Text(
-                                    text = currentMusicScreenViewModel.actualDuration,
+                                    text = actualDuration.toString(),
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = md_theme_dark_onSurface,

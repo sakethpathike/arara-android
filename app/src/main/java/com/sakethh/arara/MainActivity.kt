@@ -47,6 +47,8 @@ import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPlayer
 import com.sakethh.arara.unreleased.bottomMusicPlayer.BottomMusicPlayerUI
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
+import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.isBtmSheetCollapsed
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -73,6 +75,7 @@ class MainActivity() : ComponentActivity() {
             val context = LocalContext.current
             val coroutineScope = rememberCoroutineScope()
             val paddingValue = 20.dp
+            val currentUnreleasedViewModel:CurrentMusicScreenViewModel = viewModel()
             MaterialTheme(typography = Typography) {
                 val animatedNavController = rememberAnimatedNavController()
                 val sharedViewModel: SharedViewModel = viewModel()
@@ -113,6 +116,7 @@ class MainActivity() : ComponentActivity() {
                     if (scaffoldState.bottomSheetState.isCollapsed) {
                         mediaPlayer.stop()
                         mediaPlayer.reset()
+isBtmSheetCollapsed.value=true
                     }
                     BottomSheetScaffold(
                         backgroundColor = Color.Transparent,
