@@ -324,7 +324,7 @@ fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel,
                                 navController = navController,
                                 navigationRoute = "subHomeScreen",constraintSet = constraintSet,
                              sharedViewModel = sharedViewModel
-                            )
+                            ) { sharedViewModel.currentHeaderHomeScreen("Fanarts") }
 
                     }
                     item {
@@ -334,7 +334,7 @@ fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel,
                             navController = navController,
                             navigationRoute = "subHomeScreen",constraintSet = constraintSet,
                             sharedViewModel = sharedViewModel
-                        )
+                        ) { sharedViewModel.currentHeaderHomeScreen("News") }
                     }
                     item {
                         MainHomeScreen(
@@ -343,7 +343,7 @@ fun HomeScreen(navController: NavController,sharedViewModel: SharedViewModel,
                             navController = navController,
                             navigationRoute = "subHomeScreen",constraintSet = constraintSet,
                             sharedViewModel = sharedViewModel
-                        )}
+                        ) { sharedViewModel.currentHeaderHomeScreen("Images") }}
                     }
                 }
             }
@@ -368,14 +368,15 @@ fun MainHomeScreen(
     navController: NavController,
     navigationRoute: String,
     constraintSet: ConstraintSet,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    onClick:()->Unit
 ) {  HomeScreenComposable(
             dataList = dataList,
             headingName = headingName,
             navController = navController,
             navigationRoute = navigationRoute,
             constraintSet = constraintSet,
-    sharedViewModel = sharedViewModel
+    sharedViewModel = sharedViewModel,onClick
         )
 }
 
@@ -473,7 +474,8 @@ fun HomeScreenComposable(
     navController: NavController,
     navigationRoute: String,
     constraintSet: ConstraintSet,
-    sharedViewModel:SharedViewModel
+    sharedViewModel:SharedViewModel,
+    onClick:()->Unit
 ) {
     val context = LocalContext.current
     val selectedChipScreenViewModel: SelectedChipScreenViewModel = viewModel()
@@ -492,7 +494,7 @@ fun HomeScreenComposable(
             style = MaterialTheme.typography.titleMedium
         )
         IconButton(
-            onClick = { navController.navigate(navigationRoute) }, modifier = Modifier
+            onClick = { onClick();navController.navigate(navigationRoute) }, modifier = Modifier
                 .padding(end = 15.dp)
                 .size(28.dp)
         ) {

@@ -52,7 +52,6 @@ class CurrentMusicScreenViewModel(private val unreleasedUtils: UnreleasedViewMod
                 }
             }
         }
-
     }
 
     init {

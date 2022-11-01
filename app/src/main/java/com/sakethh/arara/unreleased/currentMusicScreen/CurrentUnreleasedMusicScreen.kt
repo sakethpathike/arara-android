@@ -76,10 +76,6 @@ fun UnreleasedCurrentMusicScreen(
             val progressBarSpacer = createRefFor("progressBarSpacer")
             val progressBarBox = createRefFor("progressBarBox")
             val progressBar = createRefFor("progressBar")
-            val boxAfterProgressBar = createRefFor("boxAfterProgressBar")
-            val mediaControllerPlayPauseButton = createRefFor("mediaControllerPlayPauseButton")
-            val mediaControllerPreviousButton = createRefFor("mediaControllerPreviousButton")
-            val mediaControllerNextButton = createRefFor("mediaControllerNextButton")
             val lyricsBox = createRefFor("lyricsBox")
             constrain(topBar) {
                 top.linkTo(parent.top)
@@ -129,35 +125,13 @@ fun UnreleasedCurrentMusicScreen(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-
             constrain(progressBarBox) {
                 top.linkTo(progressBarSpacer.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }
-            constrain(boxAfterProgressBar) {
-                top.linkTo(progressBarBox.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-            constrain(mediaControllerPlayPauseButton) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-            constrain(mediaControllerPreviousButton) {
-                top.linkTo(mediaControllerPlayPauseButton.top)
-                bottom.linkTo(mediaControllerPlayPauseButton.bottom)
-                end.linkTo(mediaControllerPlayPauseButton.start)
-            }
-            constrain(mediaControllerNextButton) {
-                top.linkTo(mediaControllerPlayPauseButton.top)
-                bottom.linkTo(mediaControllerPlayPauseButton.bottom)
-                start.linkTo(mediaControllerPlayPauseButton.end)
-            }
             constrain(lyricsBox) {
-                top.linkTo(boxAfterProgressBar.bottom)
+                top.linkTo(progressBarBox.bottom)
                 bottom.linkTo(parent.bottom)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
@@ -340,7 +314,7 @@ fun UnreleasedCurrentMusicScreen(
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Text(
-                                    text = currentDuration.toString(),
+                                    text = currentDurationFlow().collectAsState(initial = "00:00").value.toString(),
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = md_theme_dark_onSurface,
@@ -356,7 +330,7 @@ fun UnreleasedCurrentMusicScreen(
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 Text(
-                                    text = actualDuration.toString(),
+                                    text = actualDuration().collectAsState(initial = "00:00").value.toString(),
                                     fontSize = 12.sp,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = md_theme_dark_onSurface,
@@ -368,81 +342,12 @@ fun UnreleasedCurrentMusicScreen(
 
                     }
                 }
-
-                val currentIconState = currentMusicScreenViewModel.currentIsPauseIcon
-                val currentPlayPauseIcons = currentMusicScreenViewModel.currentPlayPauseIcons
-                val currentImageState = remember { mutableListOf(0, 1) }
-                if (currentMusicScreenViewModel.isCurrentIconPause.value) {
-                    val playIcon = currentPlayPauseIcons[0]
-                    currentImageState[0] = playIcon
-                } else {
-                    val pauseIcon = currentPlayPauseIcons[1]
-                    currentImageState[0] = pauseIcon
-                }
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .padding(top = 20.dp, start = startAndEndPadding, end = startAndEndPadding)
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .layoutId("boxAfterProgressBar")
-                ) {
-                    ConstraintLayout(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(), constraintSet = constraintsSet
-                    ) {
-                        IconButton(modifier = Modifier
-                            .layoutId("mediaControllerPreviousButton"), onClick = {}) {
-                            Image(
-                                painter = painterResource(id = R.drawable.previoustrack),
-                                modifier = Modifier
-                                    .padding(end = 30.dp)
-                                    .requiredSize(35.dp),
-                                contentDescription = "PreviousButton"
-                            )
-                        }
-                        IconButton(
-                            // play||pause buttons
-                            onClick = {
-                                currentIconState.value = !currentIconState.value
-                                if (currentIconState.value) {
-                                    mediaPlayer.start()
-                                } else {
-                                    mediaPlayer.pause()
-                                }
-                            },
-                            modifier = Modifier
-                                .requiredSize(50.dp)
-                                .background(color = md_theme_dark_onSurface, shape = CircleShape)
-                                .layoutId("mediaControllerPlayPauseButton"),
-                        ) {
-                            Image(
-                                painter = painterResource(id = currentImageState[0]),
-                                modifier = Modifier
-                                    .requiredSize(30.dp),
-                                contentDescription = "Play/Pause Icons"
-                            )
-                        }
-                        IconButton(
-                            onClick = { },
-                            modifier = Modifier.layoutId("mediaControllerNextButton")
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.nexttrack),
-                                modifier = Modifier
-                                    .padding(start = 30.dp)
-                                    .requiredSize(35.dp),
-                                contentDescription = "NextButton"
-                            )
-                        }
-                    }
-                }
                 // lyrics thing:
                 Box(
                     modifier = Modifier
                         .padding(
                             top = 35.dp,
-                            bottom = startAndEndPadding,
+                            bottom =0.dp,
                             start = startAndEndPadding,
                             end = startAndEndPadding
                         )

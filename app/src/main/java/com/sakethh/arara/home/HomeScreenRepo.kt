@@ -5,7 +5,7 @@ import com.sakethh.arara.home.selectedChipStuff.apiData.SubRedditData
 
 class HomeScreenRepo(private val fetchingAPIDATA: FetchingAPIDATA= FetchingAPIDATA()) {
     suspend fun getFanartsTopAllTime(): List<SubRedditData> {
-        return fetchingAPIDATA.getFanartsTopAllTime()
+        return fetchingAPIDATA.getFanArtsTopAllTime()
     }
     suspend fun getNewsTopAllTime(): List<SubRedditData> {
         return fetchingAPIDATA.getNewsTopAllTime()

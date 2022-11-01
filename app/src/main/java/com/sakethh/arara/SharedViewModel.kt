@@ -9,12 +9,16 @@ class SharedViewModel:ViewModel() {
     private set
     var _permalink = mutableStateOf("")
         private set
+    val _currentHeaderHomeScreen = mutableStateOf("")
 
     fun data(data: UnreleasedScreenCurrentData){
         dataForCurrentMusicScreen.value=data
     }
     fun assignPermalink(permalink:String){
         _permalink.value = permalink
+    }
+    fun currentHeaderHomeScreen(currentSubHomeScreen:String){
+        _currentHeaderHomeScreen.value = currentSubHomeScreen
     }
     val isBottomNavVisible = mutableStateOf(false)
 }
