@@ -49,6 +49,7 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPla
 import com.sakethh.arara.unreleased.bottomMusicPlayer.BottomMusicPlayerUI
 import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel
 import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.isBtmSheetCollapsed
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -59,6 +60,7 @@ class MainActivity() : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val dataStore = createDataStore("settingsPreferences")
         lifecycleScope.launchWhenCreated {
+            delay(50)
             window.setBackgroundDrawableResource(android.R.color.transparent)
             readInAppBrowserSetting(dataStore)
             BottomNavigationBar.isBottomBarHidden.value = false

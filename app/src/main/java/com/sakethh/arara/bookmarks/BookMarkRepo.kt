@@ -9,8 +9,7 @@ import io.realm.kotlin.notifications.ResultsChange
 import io.realm.kotlin.types.RealmObject
 import kotlinx.coroutines.flow.Flow
 
-class BookMarkRepo(private val realmObject: RealmObject = BookMarksDB()) {
-
+class BookMarkRepo(realmObject: RealmObject = BookMarksDB()) {
     private val realmConfiguration = RealmConfiguration.create(setOf(realmObject::class))
     val realm = Realm.open(realmConfiguration)
     suspend fun writeToDB(realmDBObject: BookMarksDB) {

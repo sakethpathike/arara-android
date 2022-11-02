@@ -135,6 +135,7 @@ fun BottomMusicPlayerUI(
     modifier: Modifier,
     animatedNavController: NavHostController, sharedViewModel: SharedViewModel
 ) {
+    val localContext= LocalContext.current
     val unreleasedSongNameForPlayer =
         rememberSaveable { UnreleasedViewModel.UnreleasedUtils.rememberMusicPlayerTitle }
     val unreleasedImgURLForPlayer =
@@ -179,7 +180,7 @@ fun BottomMusicPlayerUI(
                 isPlaying = currentSongIsPlaying.value
             )
             sharedViewModel.data(data = dataForCurrentMusicScreen)
-            animatedNavController.navigate("currentPlayingUnreleasedMusicScreen")
+                animatedNavController.navigate("currentPlayingUnreleasedMusicScreen")
         },
         onControlClick = {
             if (UnreleasedViewModel.UnreleasedUtils.mediaPlayer.isPlaying) {

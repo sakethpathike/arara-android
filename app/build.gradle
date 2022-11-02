@@ -92,7 +92,7 @@ dependencies {
     implementation 'io.realm.kotlin:library-base:1.2.0'
     implementation "com.google.accompanist:accompanist-pager:0.25.0" // Pager
     implementation "com.google.accompanist:accompanist-pager-indicators:0.25.0" // Pager Indicators
-
+    implementation("commons-io:commons-io:2.11.0")
     implementation 'androidx.datastore:datastore-preferences:1.0.0-alpha01'
     implementation 'com.google.accompanist:accompanist-webview:0.26.5-rc'
 }

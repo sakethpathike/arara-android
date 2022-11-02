@@ -53,7 +53,7 @@ fun Navigation(
             enterTransition = {
                 slideInHorizontally { 1000 } + fadeIn(tween(300))
             }, exitTransition = { slideOutHorizontally { 1000 } + fadeOut(tween(300)) }) {
-            SubHomeScreen(navController = navController, sharedViewModel = sharedViewModel)
+            SubHomeScreen(navController = navController, sharedViewModel = sharedViewModel,bottomSheetScaffoldState=bottomSheetScaffoldState)
         }
         composable(route = "bookmarks", exitTransition = { ExitTransition.None }) {
             BookMarkScreen(navController = navController, sharedViewModel = sharedViewModel,bottomSheetScaffoldState=bottomSheetScaffoldState)
@@ -78,7 +78,8 @@ fun Navigation(
             }, exitTransition = { slideOutHorizontally { 1000 } + fadeOut(tween(300)) }) {
             UnreleasedCurrentMusicScreen(
                 navController = navController,
-                sharedViewModel = sharedViewModel
+                sharedViewModel = sharedViewModel,
+                scaffoldState = bottomSheetScaffoldState
             )
         }
     }

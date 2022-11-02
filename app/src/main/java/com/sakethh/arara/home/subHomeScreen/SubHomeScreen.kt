@@ -5,6 +5,8 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -38,10 +41,12 @@ import com.sakethh.arara.unreleased.ImageThing
 import kotlinx.coroutines.launch
 
 @OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalPagerApi::class
+    ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalPagerApi::class,
+    ExperimentalMaterialApi::class
 )
 @Composable
-fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel,
+                  bottomSheetScaffoldState: BottomSheetScaffoldState) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     BackHandler {
@@ -50,7 +55,12 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
             popUpTo(0)
         }
     }
-    val subHomeScreenViewModel: SubHomeScreenVM = viewModel()
+    val bottomPaddingForGIF = if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+        80.dp
+    } else {
+        0.dp
+    }
+    sharedViewModel.isBottomNavVisible.value=false
     MaterialTheme(typography = Typography) {
         Column(modifier = Modifier.background(md_theme_dark_surface)) {
             LazyColumn(
@@ -125,7 +135,8 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     HotScreen(
                                         dataList = SubHomeScreenVM.Fanarts.hot.value,
                                         navController = navController,
-                                        sharedViewModel = sharedViewModel
+                                        sharedViewModel = sharedViewModel,
+                                        bottomPaddingForGIF =bottomPaddingForGIF
                                     )
                                 } else {
                                     NonLoadedComposable()
@@ -138,7 +149,8 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     HotScreen(
                                         dataList = SubHomeScreenVM.News.hot.value,
                                         navController = navController,
-                                        sharedViewModel = sharedViewModel
+                                        sharedViewModel = sharedViewModel,
+                                        bottomPaddingForGIF =bottomPaddingForGIF
                                     )
                                 } else {
                                     NonLoadedComposable()
@@ -151,7 +163,8 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     HotScreen(
                                         dataList = SubHomeScreenVM.Images.hot.value,
                                         navController = navController,
-                                        sharedViewModel = sharedViewModel
+                                        sharedViewModel = sharedViewModel,
+                                    bottomPaddingForGIF =bottomPaddingForGIF
                                     )
                                 } else {
                                     NonLoadedComposable()
@@ -169,7 +182,8 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     RelevanceScreen(
                                         dataList = SubHomeScreenVM.Fanarts.relevance.value,
                                         navController = navController,
-                                        sharedViewModel = sharedViewModel
+                                        sharedViewModel = sharedViewModel,
+                                        bottomPaddingForGIF =bottomPaddingForGIF
                                     )
                                 } else {
                                     NonLoadedComposable()
@@ -181,7 +195,8 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     RelevanceScreen(
                                         dataList = SubHomeScreenVM.News.relevance.value,
                                         navController = navController,
-                                        sharedViewModel = sharedViewModel
+                                        sharedViewModel = sharedViewModel,
+                                        bottomPaddingForGIF =bottomPaddingForGIF
                                     )
                                 } else {
                                     NonLoadedComposable()
@@ -193,7 +208,8 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     RelevanceScreen(
                                         dataList = SubHomeScreenVM.Images.relevance.value,
                                         navController = navController,
-                                        sharedViewModel = sharedViewModel
+                                        sharedViewModel = sharedViewModel,
+                                        bottomPaddingForGIF =bottomPaddingForGIF
                                     )
                                 } else {
                                     NonLoadedComposable()
@@ -213,6 +229,7 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     topPastMonth = SubHomeScreenVM.Fanarts.topPastMonth.value,
                                     topPastWeek = SubHomeScreenVM.Fanarts.topPastWeek.value,
                                     topPastYear = SubHomeScreenVM.Fanarts.topPastYear.value,
+                                    bottomPaddingForGIF =bottomPaddingForGIF
                                 )
                             }
                             "News" -> {
@@ -225,6 +242,7 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     topPastMonth = SubHomeScreenVM.News.topPastMonth.value,
                                     topPastWeek = SubHomeScreenVM.News.topPastWeek.value,
                                     topPastYear = SubHomeScreenVM.News.topPastYear.value,
+                                    bottomPaddingForGIF =bottomPaddingForGIF
                                 )
 
                             }
@@ -238,6 +256,7 @@ fun SubHomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                                     topPastMonth = SubHomeScreenVM.News.topPastMonth.value,
                                     topPastWeek = SubHomeScreenVM.News.topPastWeek.value,
                                     topPastYear = SubHomeScreenVM.News.topPastYear.value,
+                                    bottomPaddingForGIF =bottomPaddingForGIF
                                 )
                             }
                         }
@@ -358,11 +377,13 @@ val tabsList = listOf(
     TabsData(name = "Top")
 )
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HotScreen(
     dataList: List<SubRedditData>,
     navController: NavController,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    bottomPaddingForGIF:Dp
 ) {
     LazyColumn(modifier = Modifier.background(md_theme_dark_surface)) {
         itemsIndexed(dataList.component1()) { index, item ->
@@ -393,6 +414,7 @@ fun HotScreen(
                 HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                 modifier = Modifier
                     .background(md_theme_dark_surface)
+                    .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                     .fillMaxWidth()
                     .height(70.dp)
             )
@@ -404,7 +426,8 @@ fun HotScreen(
 fun RelevanceScreen(
     dataList: List<SubRedditData>,
     navController: NavController,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    bottomPaddingForGIF:Dp
 ) {
     LazyColumn(modifier = Modifier.background(md_theme_dark_surface)) {
         itemsIndexed(dataList.component1()) { index, item ->
@@ -436,6 +459,7 @@ fun RelevanceScreen(
                 HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                 modifier = Modifier
                     .background(md_theme_dark_surface)
+                    .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                     .fillMaxWidth()
                     .height(70.dp)
             )
@@ -453,7 +477,8 @@ fun TopScreen(
     topPastWeek: List<SubRedditData>,
     topPastYear: List<SubRedditData>,
     navController: NavController,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
+    bottomPaddingForGIF:Dp
 ) {
     if (SubHomeScreenVM.Fanarts.isDataLoaded.value && SubHomeScreenVM.Images.isDataLoaded.value && SubHomeScreenVM.News.isDataLoaded.value) {
         val subHomeScreenVM: SubHomeScreenVM = viewModel()
@@ -565,6 +590,7 @@ fun TopScreen(
                             HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                             modifier = Modifier
                                 .background(md_theme_dark_surface)
+                                .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                                 .fillMaxWidth()
                                 .height(70.dp)
                         )
@@ -605,6 +631,7 @@ fun TopScreen(
                                 HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                                 modifier = Modifier
                                     .background(md_theme_dark_surface)
+                                    .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                                     .fillMaxWidth()
                                     .height(70.dp)
                             )
@@ -647,6 +674,7 @@ fun TopScreen(
                                 HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                                 modifier = Modifier
                                     .background(md_theme_dark_surface)
+                                    .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                                     .fillMaxWidth()
                                     .height(70.dp)
                             )
@@ -688,6 +716,7 @@ fun TopScreen(
                                 HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                                 modifier = Modifier
                                     .background(md_theme_dark_surface)
+                                    .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                                     .fillMaxWidth()
                                     .height(70.dp)
                             )
@@ -729,6 +758,7 @@ fun TopScreen(
                                 HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                                 modifier = Modifier
                                     .background(md_theme_dark_surface)
+                                    .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                                     .fillMaxWidth()
                                     .height(70.dp)
                             )
@@ -765,6 +795,7 @@ fun TopScreen(
                             HomeScreenViewModel.RetrievedSubRedditData.footerGIFURL.value[0].footerImg,
                             modifier = Modifier
                                 .background(md_theme_dark_surface)
+                                .padding(top = 10.dp, bottom = bottomPaddingForGIF)
                                 .fillMaxWidth()
                                 .height(70.dp)
                         )

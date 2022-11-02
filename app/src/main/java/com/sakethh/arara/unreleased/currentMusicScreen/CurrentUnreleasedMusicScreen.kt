@@ -7,6 +7,8 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,33 +34,33 @@ import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
 import com.sakethh.arara.SharedViewModel
+import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.UnreleasedViewModel.UnreleasedUtils.mediaPlayer
-import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.actualDuration
-import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.currentDurationFlow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun UnreleasedCurrentMusicScreen(
     sharedViewModel: SharedViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    scaffoldState: BottomSheetScaffoldState
 ) {
     BackHandler {
-        sharedViewModel.isBottomNavVisible.value=true
-        navController.navigate("unreleased"){
+        sharedViewModel.isBottomNavVisible.value = true
+        navController.navigate("unreleased") {
             popUpTo(0)
         }
     }
-    sharedViewModel.isBottomNavVisible.value=false
-    val systemUIController=rememberSystemUiController()
-    val coroutineScope= rememberCoroutineScope()
+    sharedViewModel.isBottomNavVisible.value = false
+    val systemUIController = rememberSystemUiController()
+    val coroutineScope = rememberCoroutineScope()
     val currentMusicScreenViewModel: CurrentMusicScreenViewModel = viewModel()
-    val currentDuration = currentDurationFlow().collectAsState(initial = "00:00").value
-    val actualDuration=   actualDuration().collectAsState(initial = "00:00").value
-    LaunchedEffect(key1 = coroutineScope){
+    LaunchedEffect(key1 = coroutineScope) {
         coroutineScope.launch {
             delay(100)
             systemUIController.setStatusBarColor(color = md_theme_dark_surface)
@@ -138,253 +140,265 @@ fun UnreleasedCurrentMusicScreen(
             }
         }
         ConstraintLayout(
-                constraintSet = constraintsSet,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(md_theme_dark_surface)
-                    .verticalScroll(state = rememberScrollState(), enabled = true)
-                    .animateContentSize()
-                    .padding(bottom = 150.dp)
-            ) {
-                SmallTopAppBar(
-                    modifier = Modifier.layoutId("topBar"),
-                    title = {},
-                    colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = md_theme_dark_surface),
-                    navigationIcon = {
-                        IconButton(
-                            onClick = {
-                                navController.navigate("unreleased")
-                            }, modifier = Modifier
-                                .padding(start = 15.dp)
+            constraintSet = constraintsSet,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(md_theme_dark_surface)
+                .verticalScroll(state = rememberScrollState(), enabled = true)
+                .animateContentSize()
+                .padding(bottom = 150.dp)
+        ) {
+            SmallTopAppBar(
+                modifier = Modifier.layoutId("topBar"),
+                title = {},
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = md_theme_dark_surface),
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate("unreleased")
+                        }, modifier = Modifier
+                            .padding(start = 15.dp)
+                            .size(30.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.arrow_right),
+                            contentDescription = null,
+                            modifier = Modifier
                                 .size(30.dp)
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.arrow_right),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(30.dp)
-                                    .rotate(180f)
-                            )
-                        }
-                    }, actions = {
-                        val image = remember { mutableListOf(0) }
-                        val mediaIcons = currentMusicScreenViewModel.currentImageGifIcons
-                        if (currentMusicScreenViewModel.currentIsImageIcon.value) {
-                            image[0] = mediaIcons[0]
-                        } else {
-                            image[0] = mediaIcons[1]
-                        }
-                        IconButton(
-                            onClick = {
-                                currentMusicScreenViewModel.currentIsImageIcon.value =
-                                    !currentMusicScreenViewModel.currentIsImageIcon.value
-                            }
-                        ) {
-                            Image(
-                                painter = painterResource(id = image[0]),
-                                contentDescription = "gif/image can be  selected from here",
-                                modifier = Modifier.size(30.dp)
-                            )
-                        }
+                                .rotate(180f)
+                        )
                     }
-                )
-                Spacer(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .layoutId("topSpaceHeader")
-                )
+                }, actions = {
+                    val image = remember { mutableListOf(0) }
+                    val mediaIcons = currentMusicScreenViewModel.currentImageGifIcons
+                    if (currentMusicScreenViewModel.currentIsImageIcon.value) {
+                        image[0] = mediaIcons[0]
+                    } else {
+                        image[0] = mediaIcons[1]
+                    }
+                    IconButton(
+                        onClick = {
+                            currentMusicScreenViewModel.currentIsImageIcon.value =
+                                !currentMusicScreenViewModel.currentIsImageIcon.value
+                        }
+                    ) {
+                        Image(
+                            painter = painterResource(id = image[0]),
+                            contentDescription = "gif/image can be  selected from here",
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                }
+            )
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .layoutId("topSpaceHeader")
+            )
 
-                ImageThing(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(sharedViewModel.dataForCurrentMusicScreen.value?.currentImgUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Image Of Current Music Which is Playing",
-                    modifier = Modifier
-                        .requiredSize(300.dp)
-                        .layoutId("artWork")
-                        .shadow(2.dp),
-                    onError = painterResource(id = randomLostInternetImg())
-                )
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .padding(start = startAndEndPadding, end = startAndEndPadding)
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .layoutId("titleAndIconAndDescription")
-                        .animateContentSize()
-                ) {
-                    ConstraintLayout(constraintSet = constraintsSet) {
-                        Row(
+            ImageThing(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(sharedViewModel.dataForCurrentMusicScreen.value?.currentImgUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = "Image Of Current Music Which is Playing",
+                modifier = Modifier
+                    .requiredSize(300.dp)
+                    .layoutId("artWork")
+                    .shadow(2.dp),
+                onError = painterResource(id = randomLostInternetImg())
+            )
+            BoxWithConstraints(
+                modifier = Modifier
+                    .padding(start = startAndEndPadding, end = startAndEndPadding)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .layoutId("titleAndIconAndDescription")
+                    .animateContentSize()
+            ) {
+                ConstraintLayout(constraintSet = constraintsSet) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .layoutId("titleAndIcon")
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .requiredWidthIn(min = 250.dp)
+                                .wrapContentHeight(),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            Text(
+                                text = sharedViewModel.dataForCurrentMusicScreen.value?.currentSongName!!,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = md_theme_dark_onSurface,
+                                maxLines = 1,
+                                fontSize = 20.sp,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .wrapContentHeight()
-                                .layoutId("titleAndIcon")
+                                .wrapContentHeight(),
+                            contentAlignment = Alignment.CenterEnd
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .requiredWidthIn(min = 250.dp)
-                                    .wrapContentHeight(),
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                Text(
-                                    text = sharedViewModel.dataForCurrentMusicScreen.value?.currentSongName!!,
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = md_theme_dark_onSurface,
-                                    maxLines = 1,
-                                    fontSize = 20.sp,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                IconButton(onClick = {
-                                    currentMusicScreenViewModel.descriptionButtonClicked.value =
-                                        !currentMusicScreenViewModel.descriptionButtonClicked.value
-                                }, modifier = Modifier.size(25.dp)) {
-                                    if (currentMusicScreenViewModel.descriptionButtonClicked.value) {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.dropdown),
-                                            contentDescription = "Description",
-                                            modifier = Modifier
-                                                .rotate(180f)
-                                                .animateContentSize()
-                                        )
-                                    } else {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.dropdown),
-                                            contentDescription = "Description"
-                                        )
-                                    }
+                            IconButton(onClick = {
+                                currentMusicScreenViewModel.descriptionButtonClicked.value =
+                                    !currentMusicScreenViewModel.descriptionButtonClicked.value
+                            }, modifier = Modifier.size(25.dp)) {
+                                if (currentMusicScreenViewModel.descriptionButtonClicked.value) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.dropdown),
+                                        contentDescription = "Description",
+                                        modifier = Modifier
+                                            .rotate(180f)
+                                            .animateContentSize()
+                                    )
+                                } else {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.dropdown),
+                                        contentDescription = "Description"
+                                    )
                                 }
                             }
                         }
-                        if (currentMusicScreenViewModel.descriptionButtonClicked.value) {
-                            Text(
-                                text = "${sharedViewModel.dataForCurrentMusicScreen.value?.songDescription}\n\nDescription Via:- ${sharedViewModel.dataForCurrentMusicScreen.value?.descriptionBy} from ${sharedViewModel.dataForCurrentMusicScreen.value?.descriptionOrigin}.\nArtwork stolen from ${sharedViewModel.dataForCurrentMusicScreen.value?.artworkBy}:)",
-                                fontSize = 16.sp,
-                                lineHeight = 20.sp,
-                                color = md_theme_dark_onSurface,
-                                style = MaterialTheme.typography.bodySmall,
-                                textAlign = TextAlign.Start,
-                                modifier = Modifier
-                                    .padding(top = 5.dp)
-                                    .layoutId("descriptionText")
-                            )
-                        }
+                    }
+                    if (currentMusicScreenViewModel.descriptionButtonClicked.value) {
+                        Text(
+                            text = "${sharedViewModel.dataForCurrentMusicScreen.value?.songDescription}\n\nDescription Via:- ${sharedViewModel.dataForCurrentMusicScreen.value?.descriptionBy} from ${sharedViewModel.dataForCurrentMusicScreen.value?.descriptionOrigin}.\nArtwork stolen from ${sharedViewModel.dataForCurrentMusicScreen.value?.artworkBy}:)",
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            color = md_theme_dark_onSurface,
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier
+                                .padding(top = 5.dp)
+                                .layoutId("descriptionText")
+                        )
                     }
                 }
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                        .layoutId("progressBarSpacer")
-                )
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .padding(start = startAndEndPadding, end = startAndEndPadding, top = 5.dp)
+            }
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(5.dp)
+                    .layoutId("progressBarSpacer")
+            )
+            BoxWithConstraints(
+                modifier = Modifier
+                    .padding(start = startAndEndPadding, end = startAndEndPadding, top = 5.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .animateContentSize()
+                    .layoutId("progressBarBox")
+            ) {
+                ConstraintLayout(
+                    constraintSet = constraintsSet, modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .animateContentSize()
-                        .layoutId("progressBarBox")
                 ) {
-                    ConstraintLayout(
-                        constraintSet = constraintsSet, modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                    ) {
-                            var sliderPosition =
-                                sharedViewModel.dataForCurrentMusicScreen.value
-                            Slider(
-                                value = 400f, onValueChange = {}, valueRange = 0f..400f, modifier = Modifier
-                                    .padding(top = 9.dp)
-                                    .fillMaxWidth()
-                                    .height(5.dp)
-                                    .layoutId("progressBar")
+                    if (currentMusicScreenViewModel.isMusicPlaying().collectAsState(initial = false).value as Boolean && !scaffoldState.bottomSheetState.isCollapsed) {
+                        Slider(
+                            value = currentMusicScreenViewModel.currentDurationFloatFlow().collectAsState(initial = 0f).value.toString()
+                                .toFloat(),
+                            onValueChange = {
+                                mediaPlayer.seekTo(it.toInt())
+                            },
+                            valueRange = 0f..mediaPlayer.duration.toFloat(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .layoutId("progressBar"),
+                            colors = SliderDefaults.colors(
+                                thumbColor = md_theme_dark_onSurface,
+                                activeTrackColor = md_theme_dark_onSurface,
+                                inactiveTrackColor = md_theme_dark_secondary
                             )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                Text(
-                                    text = currentDurationFlow().collectAsState(initial = "00:00").value.toString(),
-                                    fontSize = 12.sp,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = md_theme_dark_onSurface,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .padding(top = 26.dp)
-                                )
-                            }
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                Text(
-                                    text = actualDuration().collectAsState(initial = "00:00").value.toString(),
-                                    fontSize = 12.sp,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = md_theme_dark_onSurface,
-                                    fontWeight = FontWeight.SemiBold,
-                                    modifier = Modifier
-                                        .padding(top = 26.dp)
-                                )
-                            }
-
-                    }
-                }
-                // lyrics thing:
-                Box(
-                    modifier = Modifier
-                        .padding(
-                            top = 35.dp,
-                            bottom =0.dp,
-                            start = startAndEndPadding,
-                            end = startAndEndPadding
                         )
-                        .fillMaxWidth()
-                        .height(350.dp)
-                        .background(md_theme_dark_onSecondary, shape = RoundedCornerShape(10.dp))
-                        .layoutId("lyricsBox")
-                ) {
-                    Text(
-                        modifier = Modifier.padding(start = 15.dp, top = 15.dp),
-                        text = "LYRICS",
-                        textAlign = TextAlign.Start,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = md_theme_dark_secondary
-                    )
-                    Column(
+                    }
+                    Box(
                         modifier = Modifier
-                            .padding(start = 15.dp, end = 25.dp, bottom = 20.dp)
+                            .padding(top = 15.dp)
                             .fillMaxWidth()
-                            .fillMaxHeight()
-                            .padding(top = 45.dp)
-                            .verticalScroll(
-                                rememberScrollState()
-                            )
+                            .wrapContentHeight(),
+                        contentAlignment = Alignment.CenterStart
                     ) {
-
                         Text(
-                            fontSize = 25.sp,
-                            text = sharedViewModel.dataForCurrentMusicScreen.value?.currentLyrics!!.toString(),
-                            textAlign = TextAlign.Start,
-                            lineHeight = 30.sp,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = md_theme_dark_secondary
+                            text = currentMusicScreenViewModel.currentDurationFlow().collectAsState(initial = "00:00").value.toString(),
+                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = md_theme_dark_onSurface,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(top = 26.dp)
+                        )
+                    }
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 15.dp)
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
+                        Text(
+                            text = currentMusicScreenViewModel.actualDuration().collectAsState(initial = "00:00").value.toString(),
+                            fontSize = 12.sp,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = md_theme_dark_onSurface,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier
+                                .padding(top = 26.dp)
                         )
                     }
 
                 }
             }
+            // lyrics thing:
+            Box(
+                modifier = Modifier
+                    .padding(
+                        top = 35.dp,
+                        bottom = 0.dp,
+                        start = startAndEndPadding,
+                        end = startAndEndPadding
+                    )
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .background(md_theme_dark_onSecondary, shape = RoundedCornerShape(10.dp))
+                    .layoutId("lyricsBox")
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 15.dp, top = 15.dp),
+                    text = "LYRICS",
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = md_theme_dark_secondary
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(start = 15.dp, end = 25.dp, bottom = 20.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(top = 45.dp)
+                        .verticalScroll(
+                            rememberScrollState()
+                        )
+                ) {
+
+                    Text(
+                        fontSize = 25.sp,
+                        text = sharedViewModel.dataForCurrentMusicScreen.value?.currentLyrics!!.toString(),
+                        textAlign = TextAlign.Start,
+                        lineHeight = 30.sp,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = md_theme_dark_secondary
+                    )
+                }
+
+            }
         }
     }
+}

@@ -1,5 +1,6 @@
 package com.sakethh.arara.unreleased
 
+import android.text.format.DateUtils
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -41,6 +42,7 @@ class UnreleasedViewModel(private val unreleasedRepo: UnreleasedRepo = Unrelease
         val musicPlayerVisibility = mutableStateOf(false)
         val currentLoadingStatusGIFURL = mutableStateOf("")
         val currentSongIsPlaying = mutableStateOf(false)
+        val currentDuration=DateUtils.formatElapsedTime(mediaPlayer.duration.toLong()).toString()
     }
 
     private val coroutineExceptionHandler =

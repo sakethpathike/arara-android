@@ -90,7 +90,6 @@ fun randomNoBookmarksImg(): Int {
     return listOf(
         R.drawable.bookmarks_null1,
         R.drawable.bookmarks_null2,
-        R.drawable.bookmarks_null3,
         R.drawable.bookmarks_null4,
         R.drawable.bookmarks_null5,
         R.drawable.four_no_internet,

@@ -628,24 +628,6 @@ fun HomeScreenComposable(
                                             modifier = Modifier.size(24.dp)
                                         )
                                     })
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = "Download",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = md_theme_dark_tertiary
-                                        )
-                                    },
-                                    onClick = {
-                                        dropDownMenuEnabled.value = false
-                                    },
-                                    leadingIcon = {
-                                        Image(
-                                            painter = painterResource(id = R.drawable.download_icon),
-                                            contentDescription = "download_icon",
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                    })
                                 DropdownMenuItem(text = {
                                     Text(
                                         text = "Share",

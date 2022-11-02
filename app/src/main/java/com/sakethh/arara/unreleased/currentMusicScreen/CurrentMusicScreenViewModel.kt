@@ -1,6 +1,7 @@
 package com.sakethh.arara.unreleased.currentMusicScreen
 
 import android.text.format.DateUtils
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.sakethh.arara.unreleased.UnreleasedViewModel
 import com.sakethh.arara.unreleased.currentMusicScreen.CurrentMusicScreenViewModel.CurrentMusicScreenUtils.isBtmSheetCollapsed
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
@@ -26,37 +28,61 @@ class CurrentMusicScreenViewModel(private val unreleasedUtils: UnreleasedViewMod
     val descriptionButtonClicked = mutableStateOf(false)
     val isCurrentIconPause = unreleasedUtils.rememberMusicPlayerControl
 
+
     object CurrentMusicScreenUtils {
         val isBtmSheetCollapsed = mutableStateOf(false)
-        fun currentDurationFlow(): Flow<Any> {
-            return flow {
-                while (!UnreleasedViewModel.UnreleasedUtils.musicCompleted.value && !isBtmSheetCollapsed.value) {
-                    delay(1000L)
-                    emit(
-                        DateUtils.formatElapsedTime((UnreleasedViewModel.UnreleasedUtils.mediaPlayer.currentPosition / 1000).toLong())
-                            .toString()
-                    )
-                }
+    }
+
+    fun currentDurationFlow(): Flow<Any> {
+        return flow {
+            while (!UnreleasedViewModel.UnreleasedUtils.musicCompleted.value && !isBtmSheetCollapsed.value) {
+                delay(1000L)
+                emit(
+                    DateUtils.formatElapsedTime((UnreleasedViewModel.UnreleasedUtils.mediaPlayer.currentPosition / 1000).toLong())
+                        .toString()
+                )
             }
         }
+    }
 
-        fun actualDuration(): Flow<Any> {
-            return flow {
-                while (!UnreleasedViewModel.UnreleasedUtils.musicCompleted.value && !isBtmSheetCollapsed.value) {
+    fun currentDurationFloatFlow(): Flow<Any> {
+        return flow {
+            while (!UnreleasedViewModel.UnreleasedUtils.musicCompleted.value && !isBtmSheetCollapsed.value) {
+                delay(1000L)
+                emit(
+                    UnreleasedViewModel.UnreleasedUtils.mediaPlayer.currentPosition
+                )
+            }
+        }
+    }
+
+    fun isMusicPlaying(): Flow<Any> {
+        return flow {
+            if (UnreleasedViewModel.UnreleasedUtils.mediaPlayer.duration != 0) {
+                while (true) {
                     delay(1000L)
-                    val _actualDuration = UnreleasedViewModel.UnreleasedUtils.mediaPlayer.duration
-                    emit(
-                        DateUtils.formatElapsedTime(_actualDuration.toLong() / 1000).toString()
-                    )
-                    delay(1000L)
+                    if (!UnreleasedViewModel.UnreleasedUtils.mediaPlayer.isPlaying) {
+                        emit(false)
+                    } else {
+                        emit(true)
+                    }
                 }
             }
         }
     }
 
-    init {
-        CurrentMusicScreenUtils.currentDurationFlow()
-        CurrentMusicScreenUtils.actualDuration()
+    fun actualDuration(): Flow<Any> {
+        return flow {
+            while (!UnreleasedViewModel.UnreleasedUtils.musicCompleted.value && !isBtmSheetCollapsed.value) {
+                delay(1000L)
+                val _actualDuration =
+                    UnreleasedViewModel.UnreleasedUtils.mediaPlayer.duration
+                emit(
+                    DateUtils.formatElapsedTime(_actualDuration.toLong() / 1000).toString()
+                )
+                delay(1000L)
+            }
+        }
     }
 
 }

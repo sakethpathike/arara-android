@@ -4,6 +4,8 @@ package com.sakethh.arara.home.selectedChipStuff
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
+import android.os.FileUtils
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -38,6 +40,9 @@ import com.sakethh.arara.home.HomeScreenViewModel
 import com.sakethh.arara.randomLostInternetImg
 import com.sakethh.arara.ui.theme.*
 import com.sakethh.arara.unreleased.ImageThing
+import java.io.File
+import java.net.URI
+import java.net.URL
 
 @SuppressLint("ResourceAsColor")
 @Composable
@@ -183,24 +188,6 @@ fun SelectedChipComposable(
                             Image(
                                 painter = painterResource(id = bookMarkIcon),
                                 contentDescription = "bookmark_icon",
-                                modifier = Modifier.size(24.dp)
-                            )
-                        })
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "Download",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = md_theme_dark_tertiary
-                            )
-                        },
-                        onClick = {
-                            dropDownMenuEnabled.value = false
-                        },
-                        leadingIcon = {
-                            Image(
-                                painter = painterResource(id = R.drawable.download_icon),
-                                contentDescription = "download_icon",
                                 modifier = Modifier.size(24.dp)
                             )
                         })
