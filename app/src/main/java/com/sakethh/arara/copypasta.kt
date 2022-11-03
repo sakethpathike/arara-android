@@ -1,27 +1,5 @@
 package com.sakethh.arara
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.request.ImageRequest
-import com.google.accompanist.pager.HorizontalPager
-import com.sakethh.arara.home.HomeScreenViewModel
-import com.sakethh.arara.home.subHomeScreen.CurrentSubHomeScreen
-import com.sakethh.arara.home.subHomeScreen.SubHomeScreen
-import com.sakethh.arara.home.subHomeScreen.tabsList
-import com.sakethh.arara.ui.theme.md_theme_dark_onSurface
-import com.sakethh.arara.ui.theme.md_theme_dark_surface
-import com.sakethh.arara.unreleased.ImageThing
-import kotlinx.coroutines.launch
-
 /*
 
 Column(modifier = Modifier.background(md_theme_dark_surface)) {
